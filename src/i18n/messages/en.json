@@ -1,0 +1,426 @@
+{
+  "common": {
+    "brandName": "mkpdfs",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "copy": "Copy",
+    "copied": "Copied!",
+    "close": "Close",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "submit": "Submit",
+    "search": "Search",
+    "filter": "Filter",
+    "sort": "Sort",
+    "refresh": "Refresh",
+    "download": "Download",
+    "upload": "Upload",
+    "perMonth": "/mo"
+  },
+  "metadata": {
+    "title": "mkpdfs - PDF Generation at Scale",
+    "description": "Generate beautiful PDFs at scale. Upload Handlebars templates, call our API, and get professional PDFs instantly."
+  },
+  "nav": {
+    "features": "Features",
+    "pricing": "Pricing",
+    "docs": "Docs",
+    "signIn": "Sign in",
+    "getStarted": "Get Started",
+    "dashboard": "Dashboard",
+    "templates": "Templates",
+    "generate": "Generate",
+    "apiKeys": "API Keys",
+    "usage": "Usage",
+    "settings": "Settings",
+    "billing": "Billing",
+    "signOut": "Sign out"
+  },
+  "landing": {
+    "hero": {
+      "title": "Generate PDFs",
+      "titleHighlight": "at Scale",
+      "subtitle": "Upload Handlebars templates, call our API, and get beautiful PDFs instantly. Perfect for invoices, reports, certificates, and more.",
+      "cta": "Start for Free",
+      "viewDocs": "View Documentation"
+    },
+    "features": {
+      "title": "Everything you need for PDF generation",
+      "subtitle": "Powerful features to help you generate professional PDFs at any scale.",
+      "handlebars": {
+        "name": "Handlebars Templates",
+        "description": "Upload your Handlebars templates and generate PDFs with dynamic data. Full support for partials, helpers, and conditionals."
+      },
+      "fast": {
+        "name": "Lightning Fast",
+        "description": "Generate PDFs in milliseconds with our optimized rendering engine. Support for sync and async generation."
+      },
+      "api": {
+        "name": "Simple API",
+        "description": "RESTful API with comprehensive documentation. Generate PDFs with a single HTTP request."
+      },
+      "secure": {
+        "name": "Secure by Default",
+        "description": "Enterprise-grade security with AWS Cognito authentication, encrypted API keys, and user isolation."
+      },
+      "analytics": {
+        "name": "Usage Analytics",
+        "description": "Track your PDF generation with detailed usage statistics and real-time dashboards."
+      },
+      "team": {
+        "name": "Team Collaboration",
+        "description": "Share templates and API keys across your team with role-based access control."
+      }
+    },
+    "pricing": {
+      "title": "Simple, transparent pricing",
+      "subtitle": "Start free, scale as you grow. No hidden fees.",
+      "mostPopular": "Most Popular",
+      "contactSales": "Contact Sales",
+      "free": {
+        "name": "Free",
+        "description": "Perfect for hobbyists and testing",
+        "features": {
+          "pdfs": "100 PDFs per month",
+          "templates": "5 templates",
+          "keys": "1 API key",
+          "fileSize": "10MB max file size",
+          "support": "Email support"
+        }
+      },
+      "starter": {
+        "name": "Starter",
+        "description": "For small projects and startups",
+        "features": {
+          "pdfs": "1,000 PDFs per month",
+          "templates": "50 templates",
+          "keys": "3 API keys",
+          "fileSize": "25MB max file size",
+          "support": "Priority email support"
+        }
+      },
+      "professional": {
+        "name": "Professional",
+        "description": "For growing businesses",
+        "features": {
+          "pdfs": "10,000 PDFs per month",
+          "templates": "500 templates",
+          "keys": "10 API keys",
+          "fileSize": "50MB max file size",
+          "support": "Priority support",
+          "branding": "Custom branding"
+        }
+      },
+      "enterprise": {
+        "name": "Enterprise",
+        "description": "For large organizations",
+        "features": {
+          "pdfs": "Unlimited PDFs",
+          "templates": "Unlimited templates",
+          "keys": "Unlimited API keys",
+          "fileSize": "100MB max file size",
+          "support": "Dedicated support",
+          "integrations": "Custom integrations",
+          "sla": "SLA guarantee"
+        }
+      }
+    },
+    "cta": {
+      "title": "Ready to generate PDFs?",
+      "subtitle": "Join thousands of developers using mkpdfs to generate professional documents.",
+      "button": "Start for Free",
+      "learnMore": "Learn more"
+    },
+    "footer": {
+      "copyright": "© {year} mkpdfs. All rights reserved.",
+      "privacy": "Privacy",
+      "terms": "Terms"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Welcome back",
+      "subtitle": "Sign in to your mkpdfs account",
+      "email": "Email",
+      "emailPlaceholder": "you@example.com",
+      "password": "Password",
+      "passwordPlaceholder": "Enter your password",
+      "forgotPassword": "Forgot password?",
+      "submit": "Sign In",
+      "noAccount": "Don't have an account?",
+      "signUp": "Sign up",
+      "checkingSession": "Checking session..."
+    },
+    "register": {
+      "title": "Create an account",
+      "subtitle": "Start generating PDFs in minutes",
+      "name": "Full Name",
+      "namePlaceholder": "John Doe",
+      "email": "Email",
+      "emailPlaceholder": "you@example.com",
+      "password": "Password",
+      "passwordPlaceholder": "Create a password",
+      "confirmPassword": "Confirm Password",
+      "confirmPasswordPlaceholder": "Confirm your password",
+      "submit": "Create Account",
+      "hasAccount": "Already have an account?",
+      "signIn": "Sign in",
+      "confirmEmail": "Please check your email to confirm your account.",
+      "passwordRequirements": "Password must be at least 8 characters"
+    },
+    "forgotPassword": {
+      "title": "Forgot your password?",
+      "subtitle": "Enter your email and we'll send you a reset link",
+      "email": "Email",
+      "emailPlaceholder": "you@example.com",
+      "submit": "Send Reset Link",
+      "backToLogin": "Back to login",
+      "success": "Check your email for the reset link."
+    },
+    "resetPassword": {
+      "title": "Reset your password",
+      "subtitle": "Enter your new password",
+      "code": "Reset Code",
+      "codePlaceholder": "Enter code from email",
+      "newPassword": "New Password",
+      "newPasswordPlaceholder": "Enter new password",
+      "confirmPassword": "Confirm Password",
+      "confirmPasswordPlaceholder": "Confirm new password",
+      "submit": "Reset Password",
+      "success": "Password reset successfully. You can now sign in."
+    }
+  },
+  "dashboard": {
+    "welcome": "Welcome back, {name}!",
+    "welcomeDefault": "Welcome back!",
+    "subtitle": "Here's what's happening with your PDF generation today.",
+    "stats": {
+      "pdfsGenerated": "PDFs Generated",
+      "templates": "Templates",
+      "apiKeys": "API Keys"
+    },
+    "quickActions": {
+      "title": "Quick Actions",
+      "generatePdf": {
+        "name": "Generate PDF",
+        "description": "Create a PDF from your templates"
+      },
+      "uploadTemplate": {
+        "name": "Upload Template",
+        "description": "Add a new Handlebars template"
+      },
+      "viewUsage": {
+        "name": "View Usage",
+        "description": "Check your monthly statistics"
+      }
+    },
+    "gettingStarted": {
+      "title": "Get Started with mkpdfs",
+      "intro": "Follow these steps to start generating PDFs:",
+      "step1": "Upload a Handlebars template",
+      "step2": "Create an API key",
+      "step2Suffix": "for programmatic access",
+      "step3": "Generate your first PDF",
+      "uploadFirstTemplate": "Upload Your First Template"
+    }
+  },
+  "templates": {
+    "title": "Templates",
+    "subtitle": "Manage your Handlebars templates for PDF generation.",
+    "upload": "Upload Template",
+    "empty": {
+      "title": "No templates yet",
+      "description": "Upload your first Handlebars template to start generating PDFs.",
+      "action": "Upload Template"
+    },
+    "card": {
+      "uploaded": "Uploaded {date}",
+      "size": "Size: {size}",
+      "download": "Download",
+      "delete": "Delete",
+      "deleteConfirm": "Are you sure you want to delete this template?"
+    },
+    "uploadDialog": {
+      "title": "Upload Template",
+      "description": "Upload a Handlebars template file (.hbs or .html)",
+      "selectFile": "Select File",
+      "dragDrop": "or drag and drop",
+      "fileTypes": "HBS, HTML up to 10MB",
+      "name": "Template Name",
+      "namePlaceholder": "invoice-template",
+      "submit": "Upload",
+      "success": "Template uploaded successfully",
+      "error": "Failed to upload template"
+    }
+  },
+  "generate": {
+    "title": "Generate PDF",
+    "subtitle": "Select a template and provide data to generate a PDF.",
+    "selectTemplate": "Select Template",
+    "selectTemplatePlaceholder": "Choose a template",
+    "jsonData": "JSON Data",
+    "jsonDataPlaceholder": "Enter your template data as JSON",
+    "jsonDataHint": "Enter the data that will be merged with your Handlebars template.",
+    "submit": "Generate PDF",
+    "generating": "Generating...",
+    "success": "PDF generated successfully!",
+    "error": "Failed to generate PDF",
+    "noTemplates": "No templates available. Please upload a template first.",
+    "invalidJson": "Invalid JSON format"
+  },
+  "apiKeys": {
+    "title": "API Keys",
+    "subtitle": "Manage your API keys for programmatic access.",
+    "create": "Create API Key",
+    "empty": {
+      "title": "No API keys yet",
+      "description": "Create an API key to start using the mkpdfs API.",
+      "action": "Create API Key"
+    },
+    "card": {
+      "created": "Created {date}",
+      "lastUsed": "Last used: {date}",
+      "neverUsed": "Never used",
+      "copy": "Copy",
+      "copied": "Copied!",
+      "revoke": "Revoke",
+      "revokeConfirm": "Are you sure you want to revoke this API key? This action cannot be undone."
+    },
+    "createDialog": {
+      "title": "Create API Key",
+      "description": "Create a new API key for programmatic access to the mkpdfs API.",
+      "name": "Key Name",
+      "namePlaceholder": "my-api-key",
+      "nameHint": "A descriptive name to identify this key.",
+      "submit": "Create Key",
+      "success": "API key created successfully. Make sure to copy it now - you won't be able to see it again!",
+      "error": "Failed to create API key"
+    },
+    "warning": "Keep your API keys secure. Do not share them publicly or commit them to version control."
+  },
+  "usage": {
+    "title": "Usage",
+    "subtitle": "Track your PDF generation and resource usage.",
+    "currentPeriod": "Current Billing Period",
+    "periodRange": "{start} - {end}",
+    "pdfsGenerated": {
+      "title": "PDFs Generated",
+      "used": "{used} of {limit}",
+      "unlimited": "Unlimited"
+    },
+    "templates": {
+      "title": "Templates",
+      "used": "{used} of {limit}"
+    },
+    "apiKeys": {
+      "title": "API Keys",
+      "used": "{used} of {limit}"
+    },
+    "storage": {
+      "title": "Storage Used",
+      "used": "{used} of {limit}"
+    },
+    "upgrade": "Upgrade Plan",
+    "recentActivity": "Recent Activity",
+    "noActivity": "No recent activity"
+  },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Manage your account settings and preferences.",
+    "profile": {
+      "title": "Profile",
+      "description": "Update your personal information.",
+      "name": "Full Name",
+      "email": "Email",
+      "emailHint": "Contact support to change your email.",
+      "save": "Save Changes",
+      "success": "Profile updated successfully",
+      "error": "Failed to update profile"
+    },
+    "password": {
+      "title": "Change Password",
+      "description": "Update your account password.",
+      "current": "Current Password",
+      "currentPlaceholder": "Enter current password",
+      "new": "New Password",
+      "newPlaceholder": "Enter new password",
+      "confirm": "Confirm New Password",
+      "confirmPlaceholder": "Confirm new password",
+      "submit": "Update Password",
+      "success": "Password updated successfully",
+      "error": "Failed to update password",
+      "mismatch": "Passwords do not match"
+    },
+    "preferences": {
+      "title": "Preferences",
+      "description": "Customize your experience.",
+      "language": "Language",
+      "theme": "Theme",
+      "themeLight": "Light",
+      "themeDark": "Dark",
+      "themeSystem": "System"
+    },
+    "danger": {
+      "title": "Danger Zone",
+      "description": "Irreversible and destructive actions.",
+      "deleteAccount": "Delete Account",
+      "deleteAccountDescription": "Permanently delete your account and all associated data.",
+      "deleteConfirm": "Are you sure you want to delete your account? This action cannot be undone."
+    }
+  },
+  "billing": {
+    "title": "Billing",
+    "subtitle": "Manage your subscription and payment methods.",
+    "currentPlan": {
+      "title": "Current Plan",
+      "free": "Free",
+      "starter": "Starter",
+      "professional": "Professional",
+      "enterprise": "Enterprise",
+      "renewsOn": "Renews on {date}",
+      "upgrade": "Upgrade Plan",
+      "manage": "Manage Subscription"
+    },
+    "paymentMethod": {
+      "title": "Payment Method",
+      "noMethod": "No payment method on file",
+      "addMethod": "Add Payment Method",
+      "cardEnding": "Card ending in {last4}",
+      "expires": "Expires {date}",
+      "update": "Update"
+    },
+    "invoices": {
+      "title": "Billing History",
+      "noInvoices": "No invoices yet",
+      "date": "Date",
+      "amount": "Amount",
+      "status": "Status",
+      "download": "Download",
+      "paid": "Paid",
+      "pending": "Pending",
+      "failed": "Failed"
+    },
+    "plans": {
+      "title": "Available Plans",
+      "current": "Current",
+      "select": "Select Plan",
+      "features": "Features"
+    }
+  },
+  "errors": {
+    "generic": "Something went wrong. Please try again.",
+    "notFound": "Page not found",
+    "unauthorized": "You must be logged in to access this page.",
+    "forbidden": "You don't have permission to access this resource.",
+    "networkError": "Network error. Please check your connection.",
+    "serverError": "Server error. Please try again later.",
+    "validationError": "Please check your input and try again."
+  }
+}

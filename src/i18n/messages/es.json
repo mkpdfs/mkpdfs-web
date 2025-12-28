@@ -1,0 +1,426 @@
+{
+  "common": {
+    "brandName": "mkpdfs",
+    "loading": "Cargando...",
+    "error": "Error",
+    "success": "Éxito",
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "create": "Crear",
+    "copy": "Copiar",
+    "copied": "¡Copiado!",
+    "close": "Cerrar",
+    "back": "Atrás",
+    "next": "Siguiente",
+    "previous": "Anterior",
+    "submit": "Enviar",
+    "search": "Buscar",
+    "filter": "Filtrar",
+    "sort": "Ordenar",
+    "refresh": "Actualizar",
+    "download": "Descargar",
+    "upload": "Subir",
+    "perMonth": "/mes"
+  },
+  "metadata": {
+    "title": "mkpdfs - Generación de PDFs a Escala",
+    "description": "Genera PDFs profesionales a escala. Sube plantillas Handlebars, llama a nuestra API y obtén PDFs al instante."
+  },
+  "nav": {
+    "features": "Características",
+    "pricing": "Precios",
+    "docs": "Documentación",
+    "signIn": "Iniciar sesión",
+    "getStarted": "Comenzar",
+    "dashboard": "Panel",
+    "templates": "Plantillas",
+    "generate": "Generar",
+    "apiKeys": "Claves API",
+    "usage": "Uso",
+    "settings": "Configuración",
+    "billing": "Facturación",
+    "signOut": "Cerrar sesión"
+  },
+  "landing": {
+    "hero": {
+      "title": "Genera PDFs",
+      "titleHighlight": "a Escala",
+      "subtitle": "Sube plantillas Handlebars, llama a nuestra API y obtén PDFs hermosos al instante. Perfecto para facturas, informes, certificados y más.",
+      "cta": "Comenzar Gratis",
+      "viewDocs": "Ver Documentación"
+    },
+    "features": {
+      "title": "Todo lo que necesitas para generar PDFs",
+      "subtitle": "Características potentes para generar PDFs profesionales a cualquier escala.",
+      "handlebars": {
+        "name": "Plantillas Handlebars",
+        "description": "Sube tus plantillas Handlebars y genera PDFs con datos dinámicos. Soporte completo para parciales, helpers y condicionales."
+      },
+      "fast": {
+        "name": "Ultra Rápido",
+        "description": "Genera PDFs en milisegundos con nuestro motor de renderizado optimizado. Soporte para generación síncrona y asíncrona."
+      },
+      "api": {
+        "name": "API Simple",
+        "description": "API RESTful con documentación completa. Genera PDFs con una sola petición HTTP."
+      },
+      "secure": {
+        "name": "Seguro por Defecto",
+        "description": "Seguridad de nivel empresarial con autenticación AWS Cognito, claves API encriptadas y aislamiento de usuarios."
+      },
+      "analytics": {
+        "name": "Análisis de Uso",
+        "description": "Rastrea tu generación de PDFs con estadísticas detalladas y paneles en tiempo real."
+      },
+      "team": {
+        "name": "Colaboración en Equipo",
+        "description": "Comparte plantillas y claves API con tu equipo con control de acceso basado en roles."
+      }
+    },
+    "pricing": {
+      "title": "Precios simples y transparentes",
+      "subtitle": "Comienza gratis, escala según crezcas. Sin costos ocultos.",
+      "mostPopular": "Más Popular",
+      "contactSales": "Contactar Ventas",
+      "free": {
+        "name": "Gratis",
+        "description": "Perfecto para aficionados y pruebas",
+        "features": {
+          "pdfs": "100 PDFs por mes",
+          "templates": "5 plantillas",
+          "keys": "1 clave API",
+          "fileSize": "Tamaño máx. 10MB",
+          "support": "Soporte por email"
+        }
+      },
+      "starter": {
+        "name": "Inicial",
+        "description": "Para pequeños proyectos y startups",
+        "features": {
+          "pdfs": "1,000 PDFs por mes",
+          "templates": "50 plantillas",
+          "keys": "3 claves API",
+          "fileSize": "Tamaño máx. 25MB",
+          "support": "Soporte prioritario por email"
+        }
+      },
+      "professional": {
+        "name": "Profesional",
+        "description": "Para negocios en crecimiento",
+        "features": {
+          "pdfs": "10,000 PDFs por mes",
+          "templates": "500 plantillas",
+          "keys": "10 claves API",
+          "fileSize": "Tamaño máx. 50MB",
+          "support": "Soporte prioritario",
+          "branding": "Marca personalizada"
+        }
+      },
+      "enterprise": {
+        "name": "Empresarial",
+        "description": "Para grandes organizaciones",
+        "features": {
+          "pdfs": "PDFs ilimitados",
+          "templates": "Plantillas ilimitadas",
+          "keys": "Claves API ilimitadas",
+          "fileSize": "Tamaño máx. 100MB",
+          "support": "Soporte dedicado",
+          "integrations": "Integraciones personalizadas",
+          "sla": "Garantía SLA"
+        }
+      }
+    },
+    "cta": {
+      "title": "¿Listo para generar PDFs?",
+      "subtitle": "Únete a miles de desarrolladores que usan mkpdfs para generar documentos profesionales.",
+      "button": "Comenzar Gratis",
+      "learnMore": "Saber más"
+    },
+    "footer": {
+      "copyright": "© {year} mkpdfs. Todos los derechos reservados.",
+      "privacy": "Privacidad",
+      "terms": "Términos"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Bienvenido de nuevo",
+      "subtitle": "Inicia sesión en tu cuenta mkpdfs",
+      "email": "Correo electrónico",
+      "emailPlaceholder": "tu@ejemplo.com",
+      "password": "Contraseña",
+      "passwordPlaceholder": "Ingresa tu contraseña",
+      "forgotPassword": "¿Olvidaste tu contraseña?",
+      "submit": "Iniciar Sesión",
+      "noAccount": "¿No tienes cuenta?",
+      "signUp": "Regístrate",
+      "checkingSession": "Verificando sesión..."
+    },
+    "register": {
+      "title": "Crear una cuenta",
+      "subtitle": "Comienza a generar PDFs en minutos",
+      "name": "Nombre completo",
+      "namePlaceholder": "Juan Pérez",
+      "email": "Correo electrónico",
+      "emailPlaceholder": "tu@ejemplo.com",
+      "password": "Contraseña",
+      "passwordPlaceholder": "Crea una contraseña",
+      "confirmPassword": "Confirmar contraseña",
+      "confirmPasswordPlaceholder": "Confirma tu contraseña",
+      "submit": "Crear Cuenta",
+      "hasAccount": "¿Ya tienes cuenta?",
+      "signIn": "Inicia sesión",
+      "confirmEmail": "Por favor revisa tu correo para confirmar tu cuenta.",
+      "passwordRequirements": "La contraseña debe tener al menos 8 caracteres"
+    },
+    "forgotPassword": {
+      "title": "¿Olvidaste tu contraseña?",
+      "subtitle": "Ingresa tu correo y te enviaremos un enlace de recuperación",
+      "email": "Correo electrónico",
+      "emailPlaceholder": "tu@ejemplo.com",
+      "submit": "Enviar Enlace",
+      "backToLogin": "Volver a iniciar sesión",
+      "success": "Revisa tu correo para el enlace de recuperación."
+    },
+    "resetPassword": {
+      "title": "Restablecer contraseña",
+      "subtitle": "Ingresa tu nueva contraseña",
+      "code": "Código de restablecimiento",
+      "codePlaceholder": "Ingresa el código del correo",
+      "newPassword": "Nueva contraseña",
+      "newPasswordPlaceholder": "Ingresa nueva contraseña",
+      "confirmPassword": "Confirmar contraseña",
+      "confirmPasswordPlaceholder": "Confirma nueva contraseña",
+      "submit": "Restablecer Contraseña",
+      "success": "Contraseña restablecida exitosamente. Ya puedes iniciar sesión."
+    }
+  },
+  "dashboard": {
+    "welcome": "¡Bienvenido de nuevo, {name}!",
+    "welcomeDefault": "¡Bienvenido de nuevo!",
+    "subtitle": "Esto es lo que está pasando con tu generación de PDFs hoy.",
+    "stats": {
+      "pdfsGenerated": "PDFs Generados",
+      "templates": "Plantillas",
+      "apiKeys": "Claves API"
+    },
+    "quickActions": {
+      "title": "Acciones Rápidas",
+      "generatePdf": {
+        "name": "Generar PDF",
+        "description": "Crea un PDF desde tus plantillas"
+      },
+      "uploadTemplate": {
+        "name": "Subir Plantilla",
+        "description": "Agrega una nueva plantilla Handlebars"
+      },
+      "viewUsage": {
+        "name": "Ver Uso",
+        "description": "Revisa tus estadísticas mensuales"
+      }
+    },
+    "gettingStarted": {
+      "title": "Comenzar con mkpdfs",
+      "intro": "Sigue estos pasos para empezar a generar PDFs:",
+      "step1": "Sube una plantilla Handlebars",
+      "step2": "Crea una clave API",
+      "step2Suffix": "para acceso programático",
+      "step3": "Genera tu primer PDF",
+      "uploadFirstTemplate": "Sube Tu Primera Plantilla"
+    }
+  },
+  "templates": {
+    "title": "Plantillas",
+    "subtitle": "Administra tus plantillas Handlebars para generación de PDFs.",
+    "upload": "Subir Plantilla",
+    "empty": {
+      "title": "Sin plantillas aún",
+      "description": "Sube tu primera plantilla Handlebars para empezar a generar PDFs.",
+      "action": "Subir Plantilla"
+    },
+    "card": {
+      "uploaded": "Subido {date}",
+      "size": "Tamaño: {size}",
+      "download": "Descargar",
+      "delete": "Eliminar",
+      "deleteConfirm": "¿Estás seguro de que quieres eliminar esta plantilla?"
+    },
+    "uploadDialog": {
+      "title": "Subir Plantilla",
+      "description": "Sube un archivo de plantilla Handlebars (.hbs o .html)",
+      "selectFile": "Seleccionar Archivo",
+      "dragDrop": "o arrastra y suelta",
+      "fileTypes": "HBS, HTML hasta 10MB",
+      "name": "Nombre de Plantilla",
+      "namePlaceholder": "plantilla-factura",
+      "submit": "Subir",
+      "success": "Plantilla subida exitosamente",
+      "error": "Error al subir plantilla"
+    }
+  },
+  "generate": {
+    "title": "Generar PDF",
+    "subtitle": "Selecciona una plantilla y proporciona datos para generar un PDF.",
+    "selectTemplate": "Seleccionar Plantilla",
+    "selectTemplatePlaceholder": "Elige una plantilla",
+    "jsonData": "Datos JSON",
+    "jsonDataPlaceholder": "Ingresa los datos de tu plantilla como JSON",
+    "jsonDataHint": "Ingresa los datos que se fusionarán con tu plantilla Handlebars.",
+    "submit": "Generar PDF",
+    "generating": "Generando...",
+    "success": "¡PDF generado exitosamente!",
+    "error": "Error al generar PDF",
+    "noTemplates": "No hay plantillas disponibles. Por favor sube una plantilla primero.",
+    "invalidJson": "Formato JSON inválido"
+  },
+  "apiKeys": {
+    "title": "Claves API",
+    "subtitle": "Administra tus claves API para acceso programático.",
+    "create": "Crear Clave API",
+    "empty": {
+      "title": "Sin claves API aún",
+      "description": "Crea una clave API para empezar a usar la API de mkpdfs.",
+      "action": "Crear Clave API"
+    },
+    "card": {
+      "created": "Creada {date}",
+      "lastUsed": "Último uso: {date}",
+      "neverUsed": "Nunca usada",
+      "copy": "Copiar",
+      "copied": "¡Copiado!",
+      "revoke": "Revocar",
+      "revokeConfirm": "¿Estás seguro de que quieres revocar esta clave API? Esta acción no se puede deshacer."
+    },
+    "createDialog": {
+      "title": "Crear Clave API",
+      "description": "Crea una nueva clave API para acceso programático a la API de mkpdfs.",
+      "name": "Nombre de Clave",
+      "namePlaceholder": "mi-clave-api",
+      "nameHint": "Un nombre descriptivo para identificar esta clave.",
+      "submit": "Crear Clave",
+      "success": "Clave API creada exitosamente. Asegúrate de copiarla ahora - ¡no podrás verla de nuevo!",
+      "error": "Error al crear clave API"
+    },
+    "warning": "Mantén tus claves API seguras. No las compartas públicamente ni las incluyas en control de versiones."
+  },
+  "usage": {
+    "title": "Uso",
+    "subtitle": "Rastrea tu generación de PDFs y uso de recursos.",
+    "currentPeriod": "Período de Facturación Actual",
+    "periodRange": "{start} - {end}",
+    "pdfsGenerated": {
+      "title": "PDFs Generados",
+      "used": "{used} de {limit}",
+      "unlimited": "Ilimitado"
+    },
+    "templates": {
+      "title": "Plantillas",
+      "used": "{used} de {limit}"
+    },
+    "apiKeys": {
+      "title": "Claves API",
+      "used": "{used} de {limit}"
+    },
+    "storage": {
+      "title": "Almacenamiento Usado",
+      "used": "{used} de {limit}"
+    },
+    "upgrade": "Mejorar Plan",
+    "recentActivity": "Actividad Reciente",
+    "noActivity": "Sin actividad reciente"
+  },
+  "settings": {
+    "title": "Configuración",
+    "subtitle": "Administra la configuración y preferencias de tu cuenta.",
+    "profile": {
+      "title": "Perfil",
+      "description": "Actualiza tu información personal.",
+      "name": "Nombre Completo",
+      "email": "Correo Electrónico",
+      "emailHint": "Contacta a soporte para cambiar tu correo.",
+      "save": "Guardar Cambios",
+      "success": "Perfil actualizado exitosamente",
+      "error": "Error al actualizar perfil"
+    },
+    "password": {
+      "title": "Cambiar Contraseña",
+      "description": "Actualiza la contraseña de tu cuenta.",
+      "current": "Contraseña Actual",
+      "currentPlaceholder": "Ingresa contraseña actual",
+      "new": "Nueva Contraseña",
+      "newPlaceholder": "Ingresa nueva contraseña",
+      "confirm": "Confirmar Nueva Contraseña",
+      "confirmPlaceholder": "Confirma nueva contraseña",
+      "submit": "Actualizar Contraseña",
+      "success": "Contraseña actualizada exitosamente",
+      "error": "Error al actualizar contraseña",
+      "mismatch": "Las contraseñas no coinciden"
+    },
+    "preferences": {
+      "title": "Preferencias",
+      "description": "Personaliza tu experiencia.",
+      "language": "Idioma",
+      "theme": "Tema",
+      "themeLight": "Claro",
+      "themeDark": "Oscuro",
+      "themeSystem": "Sistema"
+    },
+    "danger": {
+      "title": "Zona de Peligro",
+      "description": "Acciones irreversibles y destructivas.",
+      "deleteAccount": "Eliminar Cuenta",
+      "deleteAccountDescription": "Elimina permanentemente tu cuenta y todos los datos asociados.",
+      "deleteConfirm": "¿Estás seguro de que quieres eliminar tu cuenta? Esta acción no se puede deshacer."
+    }
+  },
+  "billing": {
+    "title": "Facturación",
+    "subtitle": "Administra tu suscripción y métodos de pago.",
+    "currentPlan": {
+      "title": "Plan Actual",
+      "free": "Gratis",
+      "starter": "Inicial",
+      "professional": "Profesional",
+      "enterprise": "Empresarial",
+      "renewsOn": "Se renueva el {date}",
+      "upgrade": "Mejorar Plan",
+      "manage": "Administrar Suscripción"
+    },
+    "paymentMethod": {
+      "title": "Método de Pago",
+      "noMethod": "Sin método de pago registrado",
+      "addMethod": "Agregar Método de Pago",
+      "cardEnding": "Tarjeta terminada en {last4}",
+      "expires": "Expira {date}",
+      "update": "Actualizar"
+    },
+    "invoices": {
+      "title": "Historial de Facturación",
+      "noInvoices": "Sin facturas aún",
+      "date": "Fecha",
+      "amount": "Monto",
+      "status": "Estado",
+      "download": "Descargar",
+      "paid": "Pagado",
+      "pending": "Pendiente",
+      "failed": "Fallido"
+    },
+    "plans": {
+      "title": "Planes Disponibles",
+      "current": "Actual",
+      "select": "Seleccionar Plan",
+      "features": "Características"
+    }
+  },
+  "errors": {
+    "generic": "Algo salió mal. Por favor intenta de nuevo.",
+    "notFound": "Página no encontrada",
+    "unauthorized": "Debes iniciar sesión para acceder a esta página.",
+    "forbidden": "No tienes permiso para acceder a este recurso.",
+    "networkError": "Error de red. Por favor verifica tu conexión.",
+    "serverError": "Error del servidor. Por favor intenta más tarde.",
+    "validationError": "Por favor verifica tu entrada e intenta de nuevo."
+  }
+}

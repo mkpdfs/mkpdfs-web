@@ -1,0 +1,129 @@
+import type { Config } from 'tailwindcss'
+
+const config: Config = {
+  content: [
+    './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/components/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/app/**/*.{js,ts,jsx,tsx,mdx}',
+  ],
+  theme: {
+    extend: {
+      colors: {
+        // mkpdfs Blue/Purple Tech Theme
+        primary: {
+          DEFAULT: '#3B82F6',         // Blue-500
+          accent: '#2563EB',          // Blue-600
+          light: '#EFF6FF',           // Blue-50
+          50: '#EFF6FF',
+          100: '#DBEAFE',
+          200: '#BFDBFE',
+          300: '#93C5FD',
+          400: '#60A5FA',
+          500: '#3B82F6',
+          600: '#2563EB',
+          700: '#1D4ED8',
+          800: '#1E40AF',
+          900: '#1E3A8A',
+          foreground: '#ffffff',
+        },
+        secondary: {
+          DEFAULT: '#8B5CF6',         // Violet-500
+          light: '#EDE9FE',           // Violet-100
+          50: '#F5F3FF',
+          100: '#EDE9FE',
+          200: '#DDD6FE',
+          300: '#C4B5FD',
+          400: '#A78BFA',
+          500: '#8B5CF6',
+          600: '#7C3AED',
+          700: '#6D28D9',
+          800: '#5B21B6',
+          900: '#4C1D95',
+          foreground: '#ffffff',
+        },
+        // Gradient colors
+        gradient: {
+          start: '#3B82F6',           // Blue
+          end: '#8B5CF6',             // Violet
+        },
+        // Semantic colors
+        background: '#ffffff',
+        foreground: {
+          DEFAULT: '#1F2937',         // Gray-800
+          dark: '#111827',            // Gray-900
+          light: '#6B7280',           // Gray-500
+        },
+        muted: {
+          DEFAULT: '#F3F4F6',         // Gray-100
+          foreground: '#6B7280',      // Gray-500
+        },
+        card: {
+          DEFAULT: '#ffffff',
+          foreground: '#111827',
+        },
+        border: '#E5E7EB',            // Gray-200
+        input: '#E5E7EB',
+        ring: '#3B82F6',
+        accent: {
+          DEFAULT: '#EFF6FF',
+          foreground: '#1E40AF',
+        },
+        destructive: {
+          DEFAULT: '#EF4444',
+          foreground: '#ffffff',
+        },
+        success: {
+          DEFAULT: '#22C55E',
+          foreground: '#ffffff',
+        },
+        warning: {
+          DEFAULT: '#F59E0B',
+          foreground: '#111827',
+        },
+        info: {
+          DEFAULT: '#3B82F6',
+          foreground: '#ffffff',
+        },
+      },
+      borderRadius: {
+        lg: '0.5rem',
+        md: 'calc(0.5rem - 2px)',
+        sm: 'calc(0.5rem - 4px)',
+      },
+      fontFamily: {
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+      },
+      backgroundImage: {
+        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+        'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
+        'hero-gradient': 'linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%)',
+      },
+      keyframes: {
+        'accordion-down': {
+          from: { height: '0' },
+          to: { height: 'var(--radix-accordion-content-height)' },
+        },
+        'accordion-up': {
+          from: { height: 'var(--radix-accordion-content-height)' },
+          to: { height: '0' },
+        },
+        'fade-in': {
+          from: { opacity: '0' },
+          to: { opacity: '1' },
+        },
+        'slide-up': {
+          from: { transform: 'translateY(10px)', opacity: '0' },
+          to: { transform: 'translateY(0)', opacity: '1' },
+        },
+      },
+      animation: {
+        'accordion-down': 'accordion-down 0.2s ease-out',
+        'accordion-up': 'accordion-up 0.2s ease-out',
+        'fade-in': 'fade-in 0.3s ease-out',
+        'slide-up': 'slide-up 0.4s ease-out',
+      },
+    },
+  },
+  plugins: [],
+}
+export default config
