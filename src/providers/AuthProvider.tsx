@@ -8,7 +8,8 @@ import React, {
   useCallback,
   useMemo,
 } from 'react'
-import { useRouter, usePathname } from 'next/navigation'
+import { usePathname } from 'next/navigation'
+import { useRouter } from '@/i18n/routing'
 import {
   initializeAuth,
   signIn as authSignIn,
@@ -69,6 +70,20 @@ const PROTECTED_ROUTES = [
 
 // Session check interval (5 minutes)
 const SESSION_CHECK_INTERVAL = 5 * 60 * 1000
+
+// Supported locales
+const LOCALES = ['en', 'es']
+
+// Helper to strip locale prefix from pathname
+function getPathWithoutLocale(pathname: string): string {
+  for (const locale of LOCALES) {
+    if (pathname === `/${locale}`) return '/'
+    if (pathname.startsWith(`/${locale}/`)) {
+      return pathname.slice(locale.length + 1)
+    }
+  }
+  return pathname
+}
 
 interface AuthProviderProps {
   children: React.ReactNode
@@ -224,13 +239,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
   useEffect(() => {
     if (state.isInitializing || state.isLoading) return
 
+    // Strip locale prefix for route matching
+    const basePath = getPathWithoutLocale(pathname)
+
     const isPublicRoute = PUBLIC_ROUTES.some((route) => {
-      if (route === '/') return pathname === '/'
-      return pathname.startsWith(route)
+      if (route === '/') return basePath === '/'
+      return basePath.startsWith(route)
     })
 
     const isProtectedRoute = PROTECTED_ROUTES.some((route) =>
-      pathname.startsWith(route)
+      basePath.startsWith(route)
     )
 
     if (!state.isAuthenticated && isProtectedRoute) {
@@ -238,7 +256,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       router.push('/login')
     } else if (
       state.isAuthenticated &&
-      (pathname === '/login' || pathname === '/register')
+      (basePath === '/login' || basePath === '/register')
     ) {
       // Redirect to dashboard if authenticated and on login/register page
       router.push('/dashboard')
