@@ -5,7 +5,7 @@ import { locales, defaultLocale } from './config'
 export const routing = defineRouting({
   locales,
   defaultLocale,
-  localePrefix: 'as-needed', // Only show prefix for non-default locale
+  localePrefix: 'always', // Always show locale prefix for reliable routing
 })
 
 // Lightweight wrappers around Next.js' navigation APIs
