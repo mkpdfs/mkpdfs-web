@@ -1,8 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
-import Link from 'next/link'
+import { Link, useRouter } from '@/i18n/routing'
 import { useAuth } from '@/providers'
 import { confirmSignUp } from '@/lib/auth'
 import { Button, Input, Label, Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter, PageLoader } from '@/components/ui'
@@ -81,7 +80,14 @@ export default function RegisterPage() {
     const result = await confirmSignUp(email, verificationCode)
 
     if (result.success) {
-      router.push('/login?verified=true')
+      // Auto-login after verification
+      const signInResult = await signIn(email, password)
+      if (signInResult) {
+        router.push('/dashboard')
+      } else {
+        // Fallback: redirect to login if auto-login fails
+        router.push('/login')
+      }
     } else {
       setLocalError(result.error || 'Invalid verification code')
     }
