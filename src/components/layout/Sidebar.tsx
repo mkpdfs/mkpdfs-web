@@ -11,6 +11,7 @@ import {
   Settings,
   CreditCard,
   FileText as Logo,
+  Store,
 } from 'lucide-react'
 
 export function Sidebar() {
@@ -20,6 +21,7 @@ export function Sidebar() {
 
   const navigation = [
     { name: t('dashboard'), href: '/dashboard', icon: LayoutDashboard },
+    { name: t('marketplace'), href: '/marketplace', icon: Store },
     { name: t('templates'), href: '/templates', icon: FileText },
     { name: t('generate'), href: '/generate', icon: Sparkles },
     { name: t('apiKeys'), href: '/api-keys', icon: Key },
