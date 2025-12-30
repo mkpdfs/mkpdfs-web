@@ -17,6 +17,7 @@ import type {
   ApiResponse,
   GenerateAITemplateRequest,
   GenerateAITemplateResponse,
+  MarketplaceTemplate,
 } from '@/types'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'
@@ -199,4 +200,44 @@ export async function generateAITemplate(
     method: 'POST',
     body: JSON.stringify(request),
   })
+}
+
+// ============================================
+// Marketplace (public endpoints + authenticated use)
+// ============================================
+
+export async function getMarketplaceTemplates(category?: string): Promise<MarketplaceTemplate[]> {
+  const params = category && category !== 'all' ? `?category=${category}` : ''
+  const response = await fetch(`${API_URL}/marketplace/templates${params}`)
+  if (!response.ok) {
+    throw new Error('Failed to fetch marketplace templates')
+  }
+  const data = await response.json()
+  return data.templates || []
+}
+
+export async function getMarketplaceTemplate(templateId: string): Promise<MarketplaceTemplate> {
+  const response = await fetch(`${API_URL}/marketplace/templates/${templateId}`)
+  if (!response.ok) {
+    throw new Error('Template not found')
+  }
+  const data = await response.json()
+  return data.template
+}
+
+export async function getMarketplaceTemplatePreview(templateId: string): Promise<MarketplaceTemplate> {
+  const response = await fetch(`${API_URL}/marketplace/templates/${templateId}/preview`)
+  if (!response.ok) {
+    throw new Error('Template not found')
+  }
+  const data = await response.json()
+  return data.template
+}
+
+export async function useMarketplaceTemplate(templateId: string): Promise<Template> {
+  const response = await authFetch<{ message: string; template: Template }>(
+    `/marketplace/templates/${templateId}/use`,
+    { method: 'POST' }
+  )
+  return response.template
 }

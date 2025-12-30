@@ -125,3 +125,20 @@ export interface GenerateAITemplateResponse {
   sampleData: Record<string, unknown>
   remainingGenerations: number
 }
+
+// Marketplace types
+export type MarketplaceCategory = 'business' | 'certificates' | 'marketing' | 'personal'
+
+export interface MarketplaceTemplate {
+  templateId: string
+  category: MarketplaceCategory
+  name: string
+  description: string
+  s3Key: string
+  sampleDataJson: string
+  tags: string[]
+  popularity: number
+  createdAt: string
+  updatedAt: string
+  content?: string // Only returned by preview endpoint
+}

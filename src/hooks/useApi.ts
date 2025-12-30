@@ -18,6 +18,10 @@ import {
   getUsage,
   generatePdf,
   generateAITemplate,
+  getMarketplaceTemplates,
+  getMarketplaceTemplate,
+  getMarketplaceTemplatePreview,
+  useMarketplaceTemplate as copyMarketplaceTemplate,
 } from '@/lib/api'
 import type {
   MkpdfsUser,
@@ -27,6 +31,7 @@ import type {
   UsageStats,
   GeneratePdfRequest,
   GeneratePdfResponse,
+  GenerateAITemplateRequest,
 } from '@/types'
 
 // ============================================
@@ -38,6 +43,8 @@ export const queryKeys = {
   templates: ['templates'] as const,
   tokens: ['tokens'] as const,
   usage: ['usage'] as const,
+  marketplaceTemplates: (category?: string) => ['marketplace', 'templates', category] as const,
+  marketplaceTemplate: (id: string) => ['marketplace', 'template', id] as const,
 }
 
 // ============================================
@@ -168,6 +175,62 @@ export function useGeneratePdf() {
   return useMutation({
     mutationFn: (request: GeneratePdfRequest) => generatePdf(request),
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.usage })
+    },
+  })
+}
+
+// ============================================
+// AI Template Generation Hooks
+// ============================================
+
+export function useGenerateAITemplate() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (request: GenerateAITemplateRequest) => generateAITemplate(request),
+    onSuccess: () => {
+      // Refresh profile to update remaining AI generations count
+      queryClient.invalidateQueries({ queryKey: queryKeys.profile })
+      queryClient.invalidateQueries({ queryKey: queryKeys.usage })
+    },
+  })
+}
+
+// ============================================
+// Marketplace Hooks
+// ============================================
+
+export function useMarketplaceTemplates(category?: string) {
+  return useQuery({
+    queryKey: queryKeys.marketplaceTemplates(category),
+    queryFn: () => getMarketplaceTemplates(category),
+  })
+}
+
+export function useMarketplaceTemplate(templateId: string) {
+  return useQuery({
+    queryKey: queryKeys.marketplaceTemplate(templateId),
+    queryFn: () => getMarketplaceTemplate(templateId),
+    enabled: !!templateId,
+  })
+}
+
+export function useMarketplaceTemplatePreview(templateId: string) {
+  return useQuery({
+    queryKey: [...queryKeys.marketplaceTemplate(templateId), 'preview'] as const,
+    queryFn: () => getMarketplaceTemplatePreview(templateId),
+    enabled: !!templateId,
+  })
+}
+
+export function useCopyMarketplaceTemplate() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (templateId: string) => copyMarketplaceTemplate(templateId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.templates })
       queryClient.invalidateQueries({ queryKey: queryKeys.usage })
     },
   })

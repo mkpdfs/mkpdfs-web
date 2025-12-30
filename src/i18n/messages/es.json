@@ -22,7 +22,9 @@
     "refresh": "Actualizar",
     "download": "Descargar",
     "upload": "Subir",
-    "perMonth": "/mes"
+    "perMonth": "/mes",
+    "upgradeRequired": "Mejora a {plan} o superior para acceder a esta función.",
+    "upgradeNow": "Mejorar Ahora"
   },
   "metadata": {
     "title": "mkpdfs - Generación de PDFs a Escala",
@@ -263,6 +265,10 @@
     "title": "Plantillas",
     "subtitle": "Administra tus plantillas Handlebars para generación de PDFs.",
     "upload": "Subir Plantilla",
+    "tabs": {
+      "upload": "Subir",
+      "aiGenerate": "Generar con IA"
+    },
     "empty": {
       "title": "Sin plantillas aún",
       "description": "Sube tu primera plantilla Handlebars para empezar a generar PDFs.",
@@ -469,5 +475,25 @@
     "networkError": "Error de red. Por favor verifica tu conexión.",
     "serverError": "Error del servidor. Por favor intenta más tarde.",
     "validationError": "Por favor verifica tu entrada e intenta de nuevo."
+  },
+  "ai": {
+    "featureName": "Generación de Plantillas con IA",
+    "remainingGenerations": "Generaciones IA",
+    "unlimited": "Ilimitado",
+    "limitReached": "Límite mensual alcanzado",
+    "promptLabel": "Describe tu plantilla",
+    "promptPlaceholder": "ej., Plantilla de factura con logo de empresa, tabla de artículos con cantidad, descripción, precio unitario y total, sección de cálculo de impuestos, y términos de pago al final...",
+    "generating": "Generando...",
+    "generateButton": "Generar Plantilla",
+    "generateError": "Error de Generación",
+    "templateTab": "Plantilla",
+    "dataTab": "Datos de Ejemplo",
+    "pdfPreview": "Vista Previa PDF",
+    "generatingPreview": "Generando vista previa...",
+    "previewUnavailable": "Vista previa no disponible",
+    "regenerate": "Regenerar",
+    "saveTemplate": "Guardar Plantilla",
+    "saveSuccess": "Plantilla guardada exitosamente",
+    "saveError": "Error al guardar plantilla"
   }
 }
