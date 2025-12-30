@@ -32,6 +32,7 @@ export interface Template {
   name: string
   description?: string
   s3Key: string
+  sourceMarketplaceId?: string // Links to original marketplace template if copied
   createdAt: string
   updatedAt: string
 }
@@ -141,4 +142,5 @@ export interface MarketplaceTemplate {
   createdAt: string
   updatedAt: string
   content?: string // Only returned by preview endpoint
+  thumbnailUrl?: string | null // Public S3 URL for thumbnail image
 }

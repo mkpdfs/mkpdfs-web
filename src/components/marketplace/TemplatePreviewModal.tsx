@@ -3,16 +3,18 @@
 import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/Button'
 import { Spinner } from '@/components/ui/Spinner'
-import { X, Plus, Code, FileText } from 'lucide-react'
+import { X, Plus, Code, FileText, Check } from 'lucide-react'
 import type { MarketplaceTemplate } from '@/types'
 import { useMarketplaceTemplatePreview, useGeneratePdf } from '@/hooks/useApi'
 import { getCategoryLabel } from './CategoryTabs'
+import { useTranslations } from 'next-intl'
 
 interface TemplatePreviewModalProps {
   template: MarketplaceTemplate | null
   onClose: () => void
   onUse: (template: MarketplaceTemplate) => void
   isUseLoading?: boolean
+  isAdded?: boolean
 }
 
 export function TemplatePreviewModal({
@@ -20,7 +22,11 @@ export function TemplatePreviewModal({
   onClose,
   onUse,
   isUseLoading,
+  isAdded,
 }: TemplatePreviewModalProps) {
+  const t = useTranslations('marketplace.preview')
+  const categoryT = useTranslations('marketplace.categories')
+
   const [activeTab, setActiveTab] = useState<'preview' | 'code' | 'data'>('preview')
   const [pdfUrl, setPdfUrl] = useState<string | null>(null)
 
@@ -50,7 +56,7 @@ export function TemplatePreviewModal({
             <h2 className="text-xl font-semibold text-gray-900">{template.name}</h2>
             <p className="mt-1 text-sm text-gray-500">
               <span className="rounded-full bg-primary-50 px-2 py-0.5 text-xs font-medium text-primary">
-                {getCategoryLabel(template.category)}
+                {getCategoryLabel(template.category, categoryT)}
               </span>
             </p>
           </div>
@@ -61,6 +67,17 @@ export function TemplatePreviewModal({
             <X className="h-5 w-5" />
           </button>
         </div>
+
+        {/* Thumbnail Preview */}
+        {template.thumbnailUrl && (
+          <div className="border-b bg-gray-50 px-6 py-4">
+            <img
+              src={template.thumbnailUrl}
+              alt={template.name}
+              className="mx-auto max-h-64 rounded-lg object-contain shadow-sm"
+            />
+          </div>
+        )}
 
         {/* Tabs */}
         <div className="flex border-b px-6">
@@ -73,7 +90,7 @@ export function TemplatePreviewModal({
             }`}
           >
             <FileText className="h-4 w-4" />
-            Template
+            {t('template')}
           </button>
           <button
             onClick={() => setActiveTab('data')}
@@ -84,7 +101,7 @@ export function TemplatePreviewModal({
             }`}
           >
             <Code className="h-4 w-4" />
-            Sample Data
+            {t('sampleData')}
           </button>
         </div>
 
@@ -97,7 +114,7 @@ export function TemplatePreviewModal({
           ) : activeTab === 'preview' ? (
             <div className="rounded-lg border bg-gray-50 p-4">
               <pre className="max-h-96 overflow-auto text-sm">
-                <code>{previewData?.content || 'Loading template...'}</code>
+                <code>{previewData?.content || t('loadingTemplate')}</code>
               </pre>
             </div>
           ) : (
@@ -129,16 +146,27 @@ export function TemplatePreviewModal({
         {/* Footer */}
         <div className="flex items-center justify-end gap-3 border-t px-6 py-4">
           <Button variant="outline" onClick={onClose}>
-            Close
+            {t('close')}
           </Button>
-          <Button onClick={() => onUse(template)} disabled={isUseLoading}>
-            {isUseLoading ? (
-              <Spinner size="sm" className="mr-2" />
-            ) : (
-              <Plus className="mr-1.5 h-4 w-4" />
-            )}
-            Add to My Templates
-          </Button>
+          {isAdded ? (
+            <Button
+              variant="outline"
+              className="border-green-500 text-green-600 hover:bg-green-50 hover:text-green-700"
+              disabled
+            >
+              <Check className="mr-1.5 h-4 w-4" />
+              {t('added')}
+            </Button>
+          ) : (
+            <Button onClick={() => onUse(template)} disabled={isUseLoading}>
+              {isUseLoading ? (
+                <Spinner size="sm" className="mr-2" />
+              ) : (
+                <Plus className="mr-1.5 h-4 w-4" />
+              )}
+              {t('useTemplate')}
+            </Button>
+          )}
         </div>
       </div>
     </div>
