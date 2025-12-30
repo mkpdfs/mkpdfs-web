@@ -1,15 +1,18 @@
 'use client'
 
 import { useState, useEffect, Suspense } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
-import Link from 'next/link'
+import { useSearchParams } from 'next/navigation'
+import { Link, useRouter } from '@/i18n/routing'
 import { confirmForgotPassword } from '@/lib/auth'
 import { Button, Input, Label, Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter, PageLoader } from '@/components/ui'
 import { FileText, Eye, EyeOff, Check, X, ArrowLeft } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 
 function ResetPasswordForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const t = useTranslations('auth.resetPassword')
+  const register = useTranslations('auth.register')
 
   const [email, setEmail] = useState('')
   const [code, setCode] = useState('')
@@ -29,11 +32,11 @@ function ResetPasswordForm() {
 
   // Password requirements
   const passwordRequirements = [
-    { label: 'At least 8 characters', met: password.length >= 8 },
-    { label: 'Contains uppercase letter', met: /[A-Z]/.test(password) },
-    { label: 'Contains lowercase letter', met: /[a-z]/.test(password) },
-    { label: 'Contains number', met: /[0-9]/.test(password) },
-    { label: 'Contains special character', met: /[^A-Za-z0-9]/.test(password) },
+    { label: register('requirements.minLength'), met: password.length >= 8 },
+    { label: register('requirements.uppercase'), met: /[A-Z]/.test(password) },
+    { label: register('requirements.lowercase'), met: /[a-z]/.test(password) },
+    { label: register('requirements.number'), met: /[0-9]/.test(password) },
+    { label: register('requirements.specialChar'), met: /[^A-Za-z0-9]/.test(password) },
   ]
 
   const allRequirementsMet = passwordRequirements.every((req) => req.met)
@@ -43,12 +46,12 @@ function ResetPasswordForm() {
     e.preventDefault()
 
     if (!allRequirementsMet) {
-      setError('Password does not meet requirements')
+      setError(register('passwordNotMet'))
       return
     }
 
     if (!passwordsMatch) {
-      setError('Passwords do not match')
+      setError(register('passwordMismatch'))
       return
     }
 
@@ -60,7 +63,7 @@ function ResetPasswordForm() {
     if (result.success) {
       router.push('/login?reset=true')
     } else {
-      setError(result.error || 'Failed to reset password')
+      setError(result.error || t('failedToReset'))
     }
 
     setIsSubmitting(false)
@@ -73,9 +76,9 @@ function ResetPasswordForm() {
           <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-primary to-secondary">
             <FileText className="h-6 w-6 text-white" />
           </div>
-          <CardTitle className="text-2xl">Set new password</CardTitle>
+          <CardTitle className="text-2xl">{t('title')}</CardTitle>
           <CardDescription>
-            Enter the code from your email and your new password
+            {t('subtitle')}
           </CardDescription>
         </CardHeader>
 
@@ -88,11 +91,11 @@ function ResetPasswordForm() {
             )}
 
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">{t('email')}</Label>
               <Input
                 id="email"
                 type="email"
-                placeholder="you@example.com"
+                placeholder={t('emailPlaceholder')}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -101,11 +104,11 @@ function ResetPasswordForm() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="code">Reset Code</Label>
+              <Label htmlFor="code">{t('code')}</Label>
               <Input
                 id="code"
                 type="text"
-                placeholder="Enter 6-digit code"
+                placeholder={t('codePlaceholder')}
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
                 required
@@ -116,12 +119,12 @@ function ResetPasswordForm() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password">New Password</Label>
+              <Label htmlFor="password">{t('newPassword')}</Label>
               <div className="relative">
                 <Input
                   id="password"
                   type={showPassword ? 'text' : 'password'}
-                  placeholder="Create a new password"
+                  placeholder={t('newPasswordPlaceholder')}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
@@ -162,11 +165,11 @@ function ResetPasswordForm() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirm New Password</Label>
+              <Label htmlFor="confirmPassword">{t('confirmPassword')}</Label>
               <Input
                 id="confirmPassword"
                 type="password"
-                placeholder="Confirm your new password"
+                placeholder={t('confirmPasswordPlaceholder')}
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
@@ -174,7 +177,7 @@ function ResetPasswordForm() {
                 error={confirmPassword.length > 0 && !passwordsMatch}
               />
               {confirmPassword.length > 0 && !passwordsMatch && (
-                <p className="text-xs text-destructive">Passwords do not match</p>
+                <p className="text-xs text-destructive">{register('passwordMismatch')}</p>
               )}
             </div>
           </CardContent>
@@ -186,7 +189,7 @@ function ResetPasswordForm() {
               isLoading={isSubmitting}
               disabled={!email || !code || !allRequirementsMet || !passwordsMatch}
             >
-              Reset Password
+              {t('submit')}
             </Button>
 
             <Link
@@ -194,7 +197,7 @@ function ResetPasswordForm() {
               className="flex items-center justify-center gap-2 text-sm text-muted-foreground hover:text-foreground"
             >
               <ArrowLeft className="h-4 w-4" />
-              Back to sign in
+              {t('backToLogin')}
             </Link>
           </CardFooter>
         </form>
@@ -204,8 +207,9 @@ function ResetPasswordForm() {
 }
 
 export default function ResetPasswordPage() {
+  const t = useTranslations('common')
   return (
-    <Suspense fallback={<PageLoader message="Loading..." />}>
+    <Suspense fallback={<PageLoader message={t('loading')} />}>
       <ResetPasswordForm />
     </Suspense>
   )

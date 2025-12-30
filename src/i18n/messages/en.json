@@ -173,28 +173,55 @@
       "hasAccount": "Already have an account?",
       "signIn": "Sign in",
       "confirmEmail": "Please check your email to confirm your account.",
-      "passwordRequirements": "Password must be at least 8 characters"
+      "passwordRequirements": "Password must be at least 8 characters",
+      "requirements": {
+        "minLength": "At least 8 characters",
+        "uppercase": "Contains uppercase letter",
+        "lowercase": "Contains lowercase letter",
+        "number": "Contains number",
+        "specialChar": "Contains special character"
+      },
+      "passwordMismatch": "Passwords do not match",
+      "passwordNotMet": "Password does not meet requirements",
+      "verify": {
+        "title": "Verify your email",
+        "subtitle": "We sent a verification code to {email}",
+        "code": "Verification Code",
+        "codePlaceholder": "Enter 6-digit code",
+        "submit": "Verify Email",
+        "backToRegister": "Back to registration",
+        "invalidCode": "Invalid verification code"
+      }
     },
     "forgotPassword": {
-      "title": "Forgot your password?",
-      "subtitle": "Enter your email and we'll send you a reset link",
+      "title": "Reset your password",
+      "subtitle": "Enter your email and we'll send you a reset code",
       "email": "Email",
       "emailPlaceholder": "you@example.com",
-      "submit": "Send Reset Link",
-      "backToLogin": "Back to login",
-      "success": "Check your email for the reset link."
+      "submit": "Send Reset Code",
+      "backToLogin": "Back to sign in",
+      "success": "Check your email for the reset link.",
+      "successTitle": "Check your email",
+      "successSubtitle": "We sent a password reset code to {email}",
+      "checkInbox": "Check your inbox for a password reset code. It may take a few minutes to arrive.",
+      "enterCode": "Enter Reset Code",
+      "failedToSend": "Failed to send reset email"
     },
     "resetPassword": {
-      "title": "Reset your password",
-      "subtitle": "Enter your new password",
+      "title": "Set new password",
+      "subtitle": "Enter the code from your email and your new password",
+      "email": "Email",
+      "emailPlaceholder": "you@example.com",
       "code": "Reset Code",
-      "codePlaceholder": "Enter code from email",
+      "codePlaceholder": "Enter 6-digit code",
       "newPassword": "New Password",
-      "newPasswordPlaceholder": "Enter new password",
-      "confirmPassword": "Confirm Password",
-      "confirmPasswordPlaceholder": "Confirm new password",
+      "newPasswordPlaceholder": "Create a new password",
+      "confirmPassword": "Confirm New Password",
+      "confirmPasswordPlaceholder": "Confirm your new password",
       "submit": "Reset Password",
-      "success": "Password reset successfully. You can now sign in."
+      "success": "Password reset successfully. You can now sign in.",
+      "backToLogin": "Back to sign in",
+      "failedToReset": "Failed to reset password"
     }
   },
   "dashboard": {
@@ -238,7 +265,9 @@
     "empty": {
       "title": "No templates yet",
       "description": "Upload your first Handlebars template to start generating PDFs.",
-      "action": "Upload Template"
+      "action": "Upload Template",
+      "noResults": "No templates found",
+      "tryAgain": "Try a different search term."
     },
     "card": {
       "uploaded": "Uploaded {date}",
@@ -249,7 +278,8 @@
     },
     "uploadDialog": {
       "title": "Upload Template",
-      "description": "Upload a Handlebars template file (.hbs or .html)",
+      "description": "Description (optional)",
+      "descriptionPlaceholder": "Enter description",
       "selectFile": "Select File",
       "dragDrop": "or drag and drop",
       "fileTypes": "HBS, HTML up to 10MB",
@@ -262,31 +292,36 @@
   },
   "generate": {
     "title": "Generate PDF",
-    "subtitle": "Select a template and provide data to generate a PDF.",
-    "selectTemplate": "Select Template",
-    "selectTemplatePlaceholder": "Choose a template",
+    "subtitle": "Create a PDF from your templates with custom data.",
+    "configuration": "Configuration",
+    "selectTemplate": "Template",
+    "selectTemplatePlaceholder": "Select a template...",
     "jsonData": "JSON Data",
-    "jsonDataPlaceholder": "Enter your template data as JSON",
+    "jsonDataPlaceholder": "'{'\"key\": \"value\"'}'",
     "jsonDataHint": "Enter the data that will be merged with your Handlebars template.",
     "submit": "Generate PDF",
     "generating": "Generating...",
-    "success": "PDF generated successfully!",
-    "error": "Failed to generate PDF",
-    "noTemplates": "No templates available. Please upload a template first.",
-    "invalidJson": "Invalid JSON format"
+    "success": "PDF Generated",
+    "successDescription": "Your PDF is ready to download.",
+    "error": "Generation Failed",
+    "noTemplates": "Please select a template.",
+    "invalidJson": "Invalid JSON",
+    "preview": "Preview",
+    "previewPlaceholder": "Your generated PDF will appear here."
   },
   "apiKeys": {
     "title": "API Keys",
-    "subtitle": "Manage your API keys for programmatic access.",
+    "subtitle": "Manage API keys for programmatic access to mkpdfs.",
     "create": "Create API Key",
+    "yourKeys": "Your API Keys",
     "empty": {
       "title": "No API keys yet",
-      "description": "Create an API key to start using the mkpdfs API.",
+      "description": "No API keys yet. Create one above.",
       "action": "Create API Key"
     },
     "card": {
       "created": "Created {date}",
-      "lastUsed": "Last used: {date}",
+      "lastUsed": "Last used {date}",
       "neverUsed": "Never used",
       "copy": "Copy",
       "copied": "Copied!",
@@ -297,13 +332,13 @@
       "title": "Create API Key",
       "description": "Create a new API key for programmatic access to the mkpdfs API.",
       "name": "Key Name",
-      "namePlaceholder": "my-api-key",
+      "namePlaceholder": "API Key Name (e.g., Production, Development)",
       "nameHint": "A descriptive name to identify this key.",
       "submit": "Create Key",
-      "success": "API key created successfully. Make sure to copy it now - you won't be able to see it again!",
+      "success": "API Key Created",
       "error": "Failed to create API key"
     },
-    "warning": "Keep your API keys secure. Do not share them publicly or commit them to version control."
+    "warning": "Save this key now - it won't be shown again!"
   },
   "usage": {
     "title": "Usage",
@@ -416,6 +451,8 @@
   },
   "errors": {
     "generic": "Something went wrong. Please try again.",
+    "limitReached": "Limit Reached",
+    "generationFailed": "Generation Failed",
     "notFound": "Page not found",
     "unauthorized": "You must be logged in to access this page.",
     "forbidden": "You don't have permission to access this resource.",

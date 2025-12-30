@@ -5,70 +5,75 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, Button } fro
 import { CreditCard, Check, Zap, Loader2, ExternalLink } from 'lucide-react'
 import { useProfile } from '@/hooks/useApi'
 import { createCheckoutSession, createPortalSession } from '@/lib/api'
-
-const plans = [
-  {
-    id: 'free',
-    name: 'Free',
-    price: '$0',
-    description: 'For hobbyists and testing',
-    features: [
-      '100 PDFs per month',
-      '5 templates',
-      '1 API key',
-      '10MB max file size',
-      'Email support',
-    ],
-  },
-  {
-    id: 'basic',
-    name: 'Basic',
-    price: '$29.99',
-    description: 'For small projects',
-    features: [
-      '1,000 PDFs per month',
-      '50 templates',
-      '3 API keys',
-      '25MB max file size',
-      'Priority email support',
-    ],
-    popular: true,
-  },
-  {
-    id: 'professional',
-    name: 'Professional',
-    price: '$99.99',
-    description: 'For growing businesses',
-    features: [
-      '10,000 PDFs per month',
-      '500 templates',
-      '10 API keys',
-      '50MB max file size',
-      'Priority support',
-      'Custom branding',
-    ],
-  },
-  {
-    id: 'enterprise',
-    name: 'Enterprise',
-    price: 'Custom',
-    description: 'For large organizations',
-    features: [
-      'Unlimited PDFs',
-      'Unlimited templates',
-      'Unlimited API keys',
-      '100MB max file size',
-      'Dedicated support',
-      'Custom integrations',
-      'SLA guarantee',
-    ],
-  },
-]
+import { useTranslations } from 'next-intl'
 
 export default function BillingPage() {
   const { data: profile, isLoading } = useProfile()
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null)
   const [loadingPortal, setLoadingPortal] = useState(false)
+  const t = useTranslations('billing')
+  const pricing = useTranslations('landing.pricing')
+  const common = useTranslations('common')
+  const errors = useTranslations('errors')
+
+  const plans = [
+    {
+      id: 'free',
+      name: pricing('free.name'),
+      price: '$0',
+      description: pricing('free.description'),
+      features: [
+        pricing('free.features.pdfs'),
+        pricing('free.features.templates'),
+        pricing('free.features.keys'),
+        pricing('free.features.fileSize'),
+        pricing('free.features.support'),
+      ],
+    },
+    {
+      id: 'basic',
+      name: pricing('starter.name'),
+      price: '$29.99',
+      description: pricing('starter.description'),
+      features: [
+        pricing('starter.features.pdfs'),
+        pricing('starter.features.templates'),
+        pricing('starter.features.keys'),
+        pricing('starter.features.fileSize'),
+        pricing('starter.features.support'),
+      ],
+      popular: true,
+    },
+    {
+      id: 'professional',
+      name: pricing('professional.name'),
+      price: '$99.99',
+      description: pricing('professional.description'),
+      features: [
+        pricing('professional.features.pdfs'),
+        pricing('professional.features.templates'),
+        pricing('professional.features.keys'),
+        pricing('professional.features.fileSize'),
+        pricing('professional.features.support'),
+        pricing('professional.features.branding'),
+      ],
+    },
+    {
+      id: 'enterprise',
+      name: pricing('enterprise.name'),
+      price: pricing('contactSales'),
+      description: pricing('enterprise.description'),
+      features: [
+        pricing('enterprise.features.pdfs'),
+        pricing('enterprise.features.templates'),
+        pricing('enterprise.features.keys'),
+        pricing('enterprise.features.fileSize'),
+        pricing('enterprise.features.support'),
+        pricing('enterprise.features.integrations'),
+        pricing('enterprise.features.sla'),
+      ],
+    },
+  ]
 
   const currentPlan = profile?.subscription?.plan || 'free'
   const hasStripeSubscription = !!profile?.subscription?.stripeCustomerId
@@ -85,7 +90,7 @@ export default function BillingPage() {
       window.location.href = url
     } catch (error) {
       console.error('Failed to create checkout session:', error)
-      alert('Failed to start checkout. Please try again.')
+      alert(errors('generic'))
     } finally {
       setLoadingPlan(null)
     }
@@ -98,7 +103,7 @@ export default function BillingPage() {
       window.location.href = url
     } catch (error) {
       console.error('Failed to create portal session:', error)
-      alert('Failed to open billing portal. Please try again.')
+      alert(errors('generic'))
     } finally {
       setLoadingPortal(false)
     }
@@ -106,11 +111,11 @@ export default function BillingPage() {
 
   const getPlanDisplayName = (plan: string) => {
     const planMap: Record<string, string> = {
-      free: 'Free',
-      starter: 'Basic',
-      basic: 'Basic',
-      professional: 'Professional',
-      enterprise: 'Enterprise',
+      free: t('currentPlan.free'),
+      starter: t('currentPlan.starter'),
+      basic: t('currentPlan.starter'),
+      professional: t('currentPlan.professional'),
+      enterprise: t('currentPlan.enterprise'),
     }
     return planMap[plan] || plan
   }
@@ -121,7 +126,7 @@ export default function BillingPage() {
       starter: '$29.99',
       basic: '$29.99',
       professional: '$99.99',
-      enterprise: 'Custom',
+      enterprise: pricing('contactSales'),
     }
     return priceMap[plan] || '$0'
   }
@@ -137,9 +142,9 @@ export default function BillingPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-foreground-dark">Billing</h1>
+        <h1 className="text-2xl font-bold text-foreground-dark">{t('title')}</h1>
         <p className="mt-1 text-sm text-foreground-light">
-          Manage your subscription and billing information.
+          {t('subtitle')}
         </p>
       </div>
 
@@ -148,7 +153,7 @@ export default function BillingPage() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-lg">
             <CreditCard className="h-5 w-5" />
-            Current Plan
+            {t('currentPlan.title')}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -158,7 +163,7 @@ export default function BillingPage() {
                 {getPlanDisplayName(currentPlan)}
               </p>
               <p className="text-sm text-foreground-light">
-                {getPlanPrice(currentPlan)}/month
+                {getPlanPrice(currentPlan)}{common('perMonth')}
               </p>
             </div>
             <div className="flex gap-2">
@@ -173,13 +178,13 @@ export default function BillingPage() {
                   ) : (
                     <ExternalLink className="mr-2 h-4 w-4" />
                   )}
-                  Manage Subscription
+                  {t('currentPlan.manage')}
                 </Button>
               )}
               {currentPlan === 'free' && (
                 <Button onClick={() => handleUpgrade('basic')}>
                   <Zap className="mr-2 h-4 w-4" />
-                  Upgrade Plan
+                  {t('currentPlan.upgrade')}
                 </Button>
               )}
             </div>
@@ -189,7 +194,7 @@ export default function BillingPage() {
 
       {/* Available Plans */}
       <div>
-        <h2 className="mb-4 text-lg font-semibold text-foreground-dark">Available Plans</h2>
+        <h2 className="mb-4 text-lg font-semibold text-foreground-dark">{t('plans.title')}</h2>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {plans.map((plan) => {
             const isCurrent = currentPlan === plan.id ||
@@ -204,7 +209,7 @@ export default function BillingPage() {
                 {plan.popular && (
                   <div className="absolute -top-3 left-1/2 -translate-x-1/2">
                     <span className="rounded-full bg-primary px-3 py-1 text-xs font-medium text-white">
-                      Popular
+                      {pricing('mostPopular')}
                     </span>
                   </div>
                 )}
@@ -215,14 +220,14 @@ export default function BillingPage() {
                 <CardContent>
                   <p className="text-3xl font-bold text-foreground-dark">
                     {plan.price}
-                    {plan.price !== 'Custom' && (
-                      <span className="text-sm font-normal text-foreground-light">/month</span>
+                    {plan.price !== pricing('contactSales') && (
+                      <span className="text-sm font-normal text-foreground-light">{common('perMonth')}</span>
                     )}
                   </p>
 
                   <ul className="mt-4 space-y-2">
-                    {plan.features.map((feature) => (
-                      <li key={feature} className="flex items-center gap-2 text-sm text-foreground-light">
+                    {plan.features.map((feature, index) => (
+                      <li key={index} className="flex items-center gap-2 text-sm text-foreground-light">
                         <Check className="h-4 w-4 text-success" />
                         {feature}
                       </li>
@@ -239,12 +244,12 @@ export default function BillingPage() {
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     ) : null}
                     {isCurrent
-                      ? 'Current Plan'
+                      ? t('plans.current')
                       : plan.id === 'free'
-                        ? 'Free Tier'
-                        : plan.price === 'Custom'
-                          ? 'Contact Sales'
-                          : 'Upgrade'}
+                        ? t('currentPlan.free')
+                        : plan.price === pricing('contactSales')
+                          ? pricing('contactSales')
+                          : t('plans.select')}
                   </Button>
                 </CardContent>
               </Card>

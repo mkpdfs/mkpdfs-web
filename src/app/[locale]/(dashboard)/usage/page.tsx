@@ -3,38 +3,41 @@
 import { useUsage } from '@/hooks/useApi'
 import { Card, CardHeader, CardTitle, CardContent, Spinner } from '@/components/ui'
 import { formatNumber } from '@/lib/utils'
-import { BarChart3, FileText, Key, TrendingUp } from 'lucide-react'
+import { FileText, Key, TrendingUp } from 'lucide-react'
+import { useTranslations, useLocale } from 'next-intl'
 
-function formatPeriod(yearMonth: string): string {
-  if (!yearMonth) return 'Current Period'
+function formatPeriod(yearMonth: string, locale: string): string {
+  if (!yearMonth) return ''
   const [year, month] = yearMonth.split('-')
   const date = new Date(parseInt(year), parseInt(month) - 1, 1)
-  return date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
+  return date.toLocaleDateString(locale, { month: 'long', year: 'numeric' })
 }
 
 export default function UsagePage() {
   const { data: usage, isLoading } = useUsage()
+  const t = useTranslations('usage')
+  const locale = useLocale()
 
   const usageData = usage?.usage
   const usageStats = [
     {
-      name: 'PDFs Generated',
+      key: 'pdfsGenerated',
       value: usageData?.pdfGenerations ?? 0,
-      limit: 100, // TODO: Get from subscription
+      limit: 100,
       icon: FileText,
       color: 'bg-primary',
     },
     {
-      name: 'Templates Uploaded',
+      key: 'templates',
       value: usageData?.templatesUploaded ?? 0,
-      limit: 5, // TODO: Get from subscription
+      limit: 5,
       icon: FileText,
       color: 'bg-secondary',
     },
     {
-      name: 'API Keys Created',
+      key: 'apiKeys',
       value: usageData?.tokensCreated ?? 0,
-      limit: 3, // TODO: Get from subscription
+      limit: 3,
       icon: Key,
       color: 'bg-info',
     },
@@ -43,9 +46,9 @@ export default function UsagePage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-foreground-dark">Usage</h1>
+        <h1 className="text-2xl font-bold text-foreground-dark">{t('title')}</h1>
         <p className="mt-1 text-sm text-foreground-light">
-          Monitor your monthly usage and limits.
+          {t('subtitle')}
         </p>
       </div>
 
@@ -64,9 +67,9 @@ export default function UsagePage() {
                     <TrendingUp className="h-5 w-5 text-primary" />
                   </div>
                   <div>
-                    <p className="text-sm text-foreground-light">Current Billing Period</p>
+                    <p className="text-sm text-foreground-light">{t('currentPeriod')}</p>
                     <p className="font-medium text-foreground-dark">
-                      {formatPeriod(usage.currentPeriod)}
+                      {formatPeriod(usage.currentPeriod, locale)}
                     </p>
                   </div>
                 </div>
@@ -79,11 +82,11 @@ export default function UsagePage() {
             {usageStats.map((stat) => {
               const percentage = (stat.value / stat.limit) * 100
               return (
-                <Card key={stat.name}>
+                <Card key={stat.key}>
                   <CardHeader className="pb-2">
                     <div className="flex items-center justify-between">
                       <CardTitle className="text-sm font-medium text-foreground-light">
-                        {stat.name}
+                        {t(`${stat.key}.title`)}
                       </CardTitle>
                       <stat.icon className="h-4 w-4 text-muted-foreground" />
                     </div>
@@ -103,7 +106,7 @@ export default function UsagePage() {
                         />
                       </div>
                       <p className="mt-1 text-sm text-foreground-light">
-                        {percentage.toFixed(0)}% used
+                        {t(`${stat.key}.used`, { used: stat.value, limit: stat.limit })}
                       </p>
                     </div>
                   </CardContent>

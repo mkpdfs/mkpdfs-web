@@ -1,16 +1,18 @@
 'use client'
 
 import { useState } from 'react'
-import Link from 'next/link'
+import { Link } from '@/i18n/routing'
 import { forgotPassword } from '@/lib/auth'
 import { Button, Input, Label, Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui'
 import { FileText, ArrowLeft, Mail } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const t = useTranslations('auth.forgotPassword')
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -22,7 +24,7 @@ export default function ForgotPasswordPage() {
     if (result.success) {
       setIsSuccess(true)
     } else {
-      setError(result.error || 'Failed to send reset email')
+      setError(result.error || t('failedToSend'))
     }
 
     setIsSubmitting(false)
@@ -40,12 +42,12 @@ export default function ForgotPasswordPage() {
             )}
           </div>
           <CardTitle className="text-2xl">
-            {isSuccess ? 'Check your email' : 'Reset your password'}
+            {isSuccess ? t('successTitle') : t('title')}
           </CardTitle>
           <CardDescription>
             {isSuccess
-              ? `We sent a password reset code to ${email}`
-              : 'Enter your email and we\'ll send you a reset code'}
+              ? t('successSubtitle', { email })
+              : t('subtitle')}
           </CardDescription>
         </CardHeader>
 
@@ -59,11 +61,11 @@ export default function ForgotPasswordPage() {
               )}
 
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email">{t('email')}</Label>
                 <Input
                   id="email"
                   type="email"
-                  placeholder="you@example.com"
+                  placeholder={t('emailPlaceholder')}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -79,7 +81,7 @@ export default function ForgotPasswordPage() {
                 isLoading={isSubmitting}
                 disabled={!email}
               >
-                Send Reset Code
+                {t('submit')}
               </Button>
 
               <Link
@@ -87,20 +89,20 @@ export default function ForgotPasswordPage() {
                 className="flex items-center justify-center gap-2 text-sm text-muted-foreground hover:text-foreground"
               >
                 <ArrowLeft className="h-4 w-4" />
-                Back to sign in
+                {t('backToLogin')}
               </Link>
             </CardFooter>
           </form>
         ) : (
           <CardContent className="space-y-4">
             <div className="rounded-md bg-success/10 p-4 text-center text-sm text-success">
-              Check your inbox for a password reset code. It may take a few minutes to arrive.
+              {t('checkInbox')}
             </div>
 
             <div className="flex flex-col gap-3">
               <Link href={`/reset-password?email=${encodeURIComponent(email)}`}>
                 <Button className="w-full">
-                  Enter Reset Code
+                  {t('enterCode')}
                 </Button>
               </Link>
 
@@ -109,7 +111,7 @@ export default function ForgotPasswordPage() {
                 className="flex items-center justify-center gap-2 text-sm text-muted-foreground hover:text-foreground"
               >
                 <ArrowLeft className="h-4 w-4" />
-                Back to sign in
+                {t('backToLogin')}
               </Link>
             </div>
           </CardContent>
