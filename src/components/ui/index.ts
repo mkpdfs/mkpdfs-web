@@ -20,3 +20,4 @@ export {
   ToastViewport,
 } from './Toast'
 export { Toaster } from './Toaster'
+export { DropZone } from './DropZone'
