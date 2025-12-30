@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useTemplates, useGeneratePdf } from '@/hooks/useApi'
 import { Card, CardHeader, CardTitle, CardContent, Button, Label, Spinner } from '@/components/ui'
+import { CodeSnippets } from '@/components/CodeSnippets'
 import { toast } from '@/hooks/useToast'
 import { Sparkles, FileText, Download } from 'lucide-react'
 
@@ -151,6 +152,9 @@ export default function GeneratePage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Code Snippets */}
+      <CodeSnippets templateId={selectedTemplate} jsonData={jsonData} />
     </div>
   )
 }
