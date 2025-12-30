@@ -2,14 +2,18 @@
 
 import { Button } from '@/components/ui/Button'
 import { Briefcase, Award, Megaphone, User, LayoutGrid } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 
-const categories = [
-  { id: 'all', label: 'All', icon: LayoutGrid },
-  { id: 'business', label: 'Business', icon: Briefcase },
-  { id: 'certificates', label: 'Certificates', icon: Award },
-  { id: 'marketing', label: 'Marketing', icon: Megaphone },
-  { id: 'personal', label: 'Personal', icon: User },
-]
+const categoryIds = ['all', 'business', 'certificates', 'marketing', 'personal'] as const
+type CategoryId = (typeof categoryIds)[number]
+
+const categoryIcons: Record<CategoryId, typeof LayoutGrid> = {
+  all: LayoutGrid,
+  business: Briefcase,
+  certificates: Award,
+  marketing: Megaphone,
+  personal: User,
+}
 
 interface CategoryTabsProps {
   activeCategory: string
@@ -17,21 +21,23 @@ interface CategoryTabsProps {
 }
 
 export function CategoryTabs({ activeCategory, onChange }: CategoryTabsProps) {
+  const t = useTranslations('marketplace.categories')
+
   return (
     <div className="flex flex-wrap gap-2">
-      {categories.map((cat) => {
-        const Icon = cat.icon
-        const isActive = activeCategory === cat.id
+      {categoryIds.map((catId) => {
+        const Icon = categoryIcons[catId]
+        const isActive = activeCategory === catId
         return (
           <Button
-            key={cat.id}
+            key={catId}
             variant={isActive ? 'default' : 'outline'}
             size="sm"
-            onClick={() => onChange(cat.id)}
+            onClick={() => onChange(catId)}
             className={isActive ? '' : 'hover:bg-gray-100'}
           >
             <Icon className="mr-1.5 h-4 w-4" />
-            {cat.label}
+            {t(catId)}
           </Button>
         )
       })}
@@ -39,7 +45,9 @@ export function CategoryTabs({ activeCategory, onChange }: CategoryTabsProps) {
   )
 }
 
-export function getCategoryLabel(category: string): string {
-  const cat = categories.find((c) => c.id === category)
-  return cat?.label || category
+export function getCategoryLabel(category: string, t: (key: string) => string): string {
+  if (categoryIds.includes(category as CategoryId)) {
+    return t(category)
+  }
+  return category
 }

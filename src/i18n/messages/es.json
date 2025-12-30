@@ -23,7 +23,7 @@
     "download": "Descargar",
     "upload": "Subir",
     "perMonth": "/mes",
-    "upgradeRequired": "Mejora a {plan} o superior para acceder a esta función.",
+    "upgradeRequired": "Mejora al plan {plan} o superior para acceder a esta función.",
     "upgradeNow": "Mejorar Ahora"
   },
   "metadata": {
@@ -37,7 +37,9 @@
     "signIn": "Iniciar sesión",
     "getStarted": "Comenzar",
     "dashboard": "Panel",
-    "templates": "Plantillas",
+    "marketplace": "Marketplace",
+    "myTemplates": "Mis Plantillas",
+    "create": "Crear",
     "generate": "Generar",
     "apiKeys": "Claves API",
     "usage": "Uso",
@@ -87,7 +89,7 @@
       "mostPopular": "Más Popular",
       "contactSales": "Contactar Ventas",
       "free": {
-        "name": "Gratis",
+        "name": "Free",
         "description": "Perfecto para aficionados y pruebas",
         "features": {
           "pages": "100 páginas por mes",
@@ -98,7 +100,7 @@
         }
       },
       "starter": {
-        "name": "Inicial",
+        "name": "Starter",
         "description": "Para pequeños proyectos y startups",
         "features": {
           "pages": "1,000 páginas por mes",
@@ -109,7 +111,7 @@
         }
       },
       "professional": {
-        "name": "Profesional",
+        "name": "Professional",
         "description": "Para negocios en crecimiento",
         "features": {
           "pages": "10,000 páginas por mes",
@@ -121,7 +123,7 @@
         }
       },
       "enterprise": {
-        "name": "Empresarial",
+        "name": "Enterprise",
         "description": "Para grandes organizaciones",
         "features": {
           "pages": "Páginas ilimitadas",
@@ -262,17 +264,13 @@
     }
   },
   "templates": {
-    "title": "Plantillas",
-    "subtitle": "Administra tus plantillas Handlebars para generación de PDFs.",
-    "upload": "Subir Plantilla",
-    "tabs": {
-      "upload": "Subir",
-      "aiGenerate": "Generar con IA"
-    },
+    "title": "Mis Plantillas",
+    "subtitle": "Tu biblioteca de plantillas para generación de PDFs.",
+    "createNew": "Crear Plantilla",
     "empty": {
       "title": "Sin plantillas aún",
-      "description": "Sube tu primera plantilla Handlebars para empezar a generar PDFs.",
-      "action": "Subir Plantilla",
+      "description": "Crea tu primera plantilla para empezar a generar PDFs.",
+      "action": "Crear Plantilla",
       "noResults": "No se encontraron plantillas",
       "tryAgain": "Intenta con otro término de búsqueda."
     },
@@ -295,6 +293,14 @@
       "submit": "Subir",
       "success": "Plantilla subida exitosamente",
       "error": "Error al subir plantilla"
+    }
+  },
+  "create": {
+    "title": "Crear Plantilla",
+    "subtitle": "Crea una nueva plantilla subiendo un archivo o generando con IA.",
+    "tabs": {
+      "upload": "Subir",
+      "aiGenerate": "Generar con IA"
     }
   },
   "generate": {
@@ -427,10 +433,10 @@
     "subtitle": "Administra tu suscripción y métodos de pago.",
     "currentPlan": {
       "title": "Plan Actual",
-      "free": "Gratis",
-      "starter": "Inicial",
-      "professional": "Profesional",
-      "enterprise": "Empresarial",
+      "free": "Free",
+      "starter": "Starter",
+      "professional": "Professional",
+      "enterprise": "Enterprise",
       "renewsOn": "Se renueva el {date}",
       "upgrade": "Mejorar Plan",
       "manage": "Administrar Suscripción"
@@ -495,5 +501,37 @@
     "saveTemplate": "Guardar Plantilla",
     "saveSuccess": "Plantilla guardada exitosamente",
     "saveError": "Error al guardar plantilla"
+  },
+  "marketplace": {
+    "title": "Marketplace de Plantillas",
+    "subtitle": "Explora y usa plantillas diseñadas profesionalmente para tus PDFs.",
+    "searchPlaceholder": "Buscar plantillas...",
+    "empty": "No se encontraron plantillas que coincidan con tu criterio.",
+    "emptySearch": "Intenta con otro término de búsqueda o categoría.",
+    "emptyDefault": "Vuelve más tarde para nuevas plantillas.",
+    "categories": {
+      "all": "Todas",
+      "business": "Negocios",
+      "certificates": "Certificados",
+      "marketing": "Marketing",
+      "personal": "Personal"
+    },
+    "card": {
+      "preview": "Vista Previa",
+      "use": "Usar",
+      "used": "¡Agregada!"
+    },
+    "preview": {
+      "title": "Vista Previa de Plantilla",
+      "template": "Plantilla",
+      "sampleData": "Datos de Ejemplo",
+      "loadingTemplate": "Cargando plantilla...",
+      "useTemplate": "Agregar a Mis Plantillas",
+      "added": "Agregada",
+      "close": "Cerrar"
+    },
+    "useSuccess": "Plantilla Agregada",
+    "useError": "Error al agregar plantilla",
+    "limitReached": "Límite de plantillas alcanzado. Mejora tu plan para agregar más plantillas."
   }
 }

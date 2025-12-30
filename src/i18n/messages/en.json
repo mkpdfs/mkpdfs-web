@@ -38,7 +38,8 @@
     "getStarted": "Get Started",
     "dashboard": "Dashboard",
     "marketplace": "Marketplace",
-    "templates": "Templates",
+    "myTemplates": "My Templates",
+    "create": "Create",
     "generate": "Generate",
     "apiKeys": "API Keys",
     "usage": "Usage",
@@ -263,17 +264,13 @@
     }
   },
   "templates": {
-    "title": "Templates",
-    "subtitle": "Manage your Handlebars templates for PDF generation.",
-    "upload": "Upload Template",
-    "tabs": {
-      "upload": "Upload",
-      "aiGenerate": "AI Generate"
-    },
+    "title": "My Templates",
+    "subtitle": "Your template library for PDF generation.",
+    "createNew": "Create Template",
     "empty": {
       "title": "No templates yet",
-      "description": "Upload your first Handlebars template to start generating PDFs.",
-      "action": "Upload Template",
+      "description": "Create your first template to start generating PDFs.",
+      "action": "Create Template",
       "noResults": "No templates found",
       "tryAgain": "Try a different search term."
     },
@@ -296,6 +293,14 @@
       "submit": "Upload",
       "success": "Template uploaded successfully",
       "error": "Failed to upload template"
+    }
+  },
+  "create": {
+    "title": "Create Template",
+    "subtitle": "Create a new template by uploading a file or generating with AI.",
+    "tabs": {
+      "upload": "Upload",
+      "aiGenerate": "AI Generate"
     }
   },
   "generate": {
@@ -502,8 +507,10 @@
     "subtitle": "Browse and use professionally designed templates for your PDFs.",
     "searchPlaceholder": "Search templates...",
     "empty": "No templates found matching your criteria.",
+    "emptySearch": "Try a different search term or category.",
+    "emptyDefault": "Check back later for new templates.",
     "categories": {
-      "all": "All Templates",
+      "all": "All",
       "business": "Business",
       "certificates": "Certificates",
       "marketing": "Marketing",
@@ -511,13 +518,16 @@
     },
     "card": {
       "preview": "Preview",
-      "use": "Use Template",
+      "use": "Use",
       "used": "Added!"
     },
     "preview": {
       "title": "Template Preview",
+      "template": "Template",
       "sampleData": "Sample Data",
+      "loadingTemplate": "Loading template...",
       "useTemplate": "Add to My Templates",
+      "added": "Added",
       "close": "Close"
     },
     "useSuccess": "Template Added",
