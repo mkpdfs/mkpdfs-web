@@ -24,11 +24,12 @@ export default function DashboardPage() {
 
   const isLoading = usageLoading || templatesLoading || tokensLoading
 
+  const usageData = usage?.usage
   const stats = [
     {
       name: t('stats.pdfsGenerated'),
-      value: usage?.pdfsGenerated ?? 0,
-      limit: usage?.pdfsLimit ?? 100,
+      value: usageData?.pdfGenerations ?? 0,
+      limit: 100, // TODO: Get from subscription
       icon: FileText,
       href: '/usage',
       color: 'text-primary',
@@ -37,7 +38,7 @@ export default function DashboardPage() {
     {
       name: t('stats.templates'),
       value: templates?.length ?? 0,
-      limit: usage?.templatesLimit ?? 5,
+      limit: 5, // TODO: Get from subscription
       icon: FileText,
       href: '/templates',
       color: 'text-secondary',
@@ -46,7 +47,7 @@ export default function DashboardPage() {
     {
       name: t('stats.apiKeys'),
       value: tokens?.length ?? 0,
-      limit: usage?.tokensLimit ?? 1,
+      limit: 3, // TODO: Get from subscription
       icon: Key,
       href: '/api-keys',
       color: 'text-info',

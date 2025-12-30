@@ -160,3 +160,28 @@ export async function generatePdf(
     body: JSON.stringify(request),
   })
 }
+
+// ============================================
+// Stripe / Billing
+// ============================================
+
+export async function createCheckoutSession(plan: string): Promise<{ url: string; sessionId: string }> {
+  const response = await authFetch<{ success: boolean; url: string; sessionId: string }>(
+    '/stripe/create-checkout-session',
+    {
+      method: 'POST',
+      body: JSON.stringify({ plan }),
+    }
+  )
+  return { url: response.url, sessionId: response.sessionId }
+}
+
+export async function createPortalSession(): Promise<{ url: string }> {
+  const response = await authFetch<{ success: boolean; url: string }>(
+    '/stripe/create-portal-session',
+    {
+      method: 'POST',
+    }
+  )
+  return { url: response.url }
+}

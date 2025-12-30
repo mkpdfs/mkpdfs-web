@@ -1,21 +1,60 @@
 'use client'
 
 import { useState } from 'react'
-import { useTemplates, useDeleteTemplate } from '@/hooks/useApi'
-import { Card, CardHeader, CardTitle, CardContent, Button, Spinner, Input, Label } from '@/components/ui'
+import { useTemplates, useDeleteTemplate, useUploadTemplate } from '@/hooks/useApi'
+import { Card, CardContent, Button, Spinner, Input, Label, DropZone } from '@/components/ui'
 import { formatDate } from '@/lib/utils'
 import { toast } from '@/hooks/useToast'
-import { FileText, Plus, Trash2, Upload, Search } from 'lucide-react'
+import { FileText, Trash2, Search, X } from 'lucide-react'
 
 export default function TemplatesPage() {
   const { data: templates, isLoading, error } = useTemplates()
   const deleteTemplate = useDeleteTemplate()
+  const uploadTemplate = useUploadTemplate()
 
   const [searchQuery, setSearchQuery] = useState('')
+  const [selectedFile, setSelectedFile] = useState<File | null>(null)
+  const [templateName, setTemplateName] = useState('')
+  const [description, setDescription] = useState('')
 
   const filteredTemplates = templates?.filter((template) =>
     template.name.toLowerCase().includes(searchQuery.toLowerCase())
   )
+
+  const handleFileSelect = (file: File) => {
+    setSelectedFile(file)
+    const nameWithoutExt = file.name.replace(/\.(hbs|handlebars|html)$/i, '')
+    setTemplateName(nameWithoutExt)
+  }
+
+  const handleClearFile = () => {
+    setSelectedFile(null)
+    setTemplateName('')
+    setDescription('')
+  }
+
+  const handleUpload = async () => {
+    if (!selectedFile || !templateName.trim()) return
+
+    try {
+      await uploadTemplate.mutateAsync({
+        file: selectedFile,
+        name: templateName.trim(),
+        description: description.trim() || undefined,
+      })
+      toast({
+        title: 'Template uploaded',
+        description: `"${templateName}" has been uploaded successfully.`,
+      })
+      handleClearFile()
+    } catch (err) {
+      toast({
+        title: 'Upload failed',
+        description: err instanceof Error ? err.message : 'Failed to upload template.',
+        variant: 'destructive',
+      })
+    }
+  }
 
   const handleDelete = async (templateId: string, templateName: string) => {
     if (!confirm(`Are you sure you want to delete "${templateName}"?`)) {
@@ -40,18 +79,75 @@ export default function TemplatesPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-foreground-dark">Templates</h1>
-          <p className="mt-1 text-sm text-foreground-light">
-            Manage your Handlebars templates for PDF generation.
-          </p>
-        </div>
-        <Button>
-          <Plus className="mr-2 h-4 w-4" />
-          Upload Template
-        </Button>
+      <div>
+        <h1 className="text-2xl font-bold text-foreground-dark">Templates</h1>
+        <p className="mt-1 text-sm text-foreground-light">
+          Manage your Handlebars templates for PDF generation.
+        </p>
       </div>
+
+      {/* Upload Section */}
+      <Card>
+        <CardContent className="p-6">
+          {!selectedFile ? (
+            <DropZone onFileSelect={handleFileSelect} disabled={uploadTemplate.isPending} />
+          ) : (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between rounded-lg bg-muted/50 p-3">
+                <div className="flex items-center gap-3">
+                  <FileText className="h-5 w-5 text-primary" />
+                  <span className="text-sm font-medium">{selectedFile.name}</span>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={handleClearFile}
+                  disabled={uploadTemplate.isPending}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="templateName">Template Name *</Label>
+                  <Input
+                    id="templateName"
+                    value={templateName}
+                    onChange={(e) => setTemplateName(e.target.value)}
+                    placeholder="Enter template name"
+                    disabled={uploadTemplate.isPending}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="description">Description (optional)</Label>
+                  <Input
+                    id="description"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    placeholder="Enter description"
+                    disabled={uploadTemplate.isPending}
+                  />
+                </div>
+              </div>
+              <div className="flex justify-end">
+                <Button
+                  onClick={handleUpload}
+                  disabled={!templateName.trim() || uploadTemplate.isPending}
+                >
+                  {uploadTemplate.isPending ? (
+                    <>
+                      <Spinner size="sm" className="mr-2" />
+                      Uploading...
+                    </>
+                  ) : (
+                    'Upload Template'
+                  )}
+                </Button>
+              </div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
       {/* Search */}
       <div className="relative max-w-sm">
@@ -78,23 +174,14 @@ export default function TemplatesPage() {
       ) : filteredTemplates?.length === 0 ? (
         <Card className="border-dashed">
           <CardContent className="py-12 text-center">
-            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary-50">
-              <Upload className="h-6 w-6 text-primary" />
-            </div>
-            <h3 className="mt-4 text-lg font-medium text-foreground-dark">
+            <h3 className="text-lg font-medium text-foreground-dark">
               {searchQuery ? 'No templates found' : 'No templates yet'}
             </h3>
             <p className="mt-2 text-sm text-foreground-light">
               {searchQuery
                 ? 'Try a different search term.'
-                : 'Upload your first Handlebars template to get started.'}
+                : 'Upload your first Handlebars template using the drop zone above.'}
             </p>
-            {!searchQuery && (
-              <Button className="mt-4">
-                <Plus className="mr-2 h-4 w-4" />
-                Upload Template
-              </Button>
-            )}
           </CardContent>
         </Card>
       ) : (

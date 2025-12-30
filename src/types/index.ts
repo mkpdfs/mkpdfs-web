@@ -5,6 +5,23 @@ export interface MkpdfsUser {
   name?: string
   emailVerified?: boolean
   createdAt?: string
+  subscription?: Subscription
+  subscriptionLimits?: SubscriptionLimits
+  currentUsage?: CurrentUsage
+}
+
+export interface SubscriptionLimits {
+  pdfGenerationsPerMonth: number
+  templatesAllowed: number
+  apiTokensAllowed: number
+  maxPdfSizeMB: number
+}
+
+export interface CurrentUsage {
+  userId: string
+  yearMonth: string
+  pdfCount: number
+  totalSizeMB: number
 }
 
 // Template types
@@ -36,23 +53,34 @@ export interface CreateTokenResponse {
 
 // Usage types
 export interface UsageStats {
-  pdfsGenerated: number
-  pdfsLimit: number
-  templatesCount: number
-  templatesLimit: number
-  tokensCount: number
-  tokensLimit: number
-  currentPeriodStart: string
-  currentPeriodEnd: string
+  usage: {
+    userId: string
+    yearMonth: string
+    pdfGenerations: number
+    templatesUploaded: number
+    tokensCreated: number
+    bytesGenerated: number
+  }
+  currentPeriod: string
+  // Frontend computed fields (with defaults)
+  pdfsGenerated?: number
+  pdfsLimit?: number
+  templatesCount?: number
+  templatesLimit?: number
+  tokensCount?: number
+  tokensLimit?: number
 }
 
 // Subscription types
-export type SubscriptionPlan = 'free' | 'starter' | 'professional' | 'enterprise'
+export type SubscriptionPlan = 'free' | 'starter' | 'basic' | 'professional' | 'enterprise'
 
 export interface Subscription {
   plan: SubscriptionPlan
-  status: 'active' | 'canceled' | 'past_due'
-  currentPeriodEnd: string
+  status: 'active' | 'cancelled' | 'past_due'
+  currentPeriodEnd?: string
+  stripeCustomerId?: string
+  stripeSubscriptionId?: string
+  stripePriceId?: string
 }
 
 // PDF Generation types

@@ -2,31 +2,39 @@
 
 import { useUsage } from '@/hooks/useApi'
 import { Card, CardHeader, CardTitle, CardContent, Spinner } from '@/components/ui'
-import { formatNumber, formatDate } from '@/lib/utils'
+import { formatNumber } from '@/lib/utils'
 import { BarChart3, FileText, Key, TrendingUp } from 'lucide-react'
+
+function formatPeriod(yearMonth: string): string {
+  if (!yearMonth) return 'Current Period'
+  const [year, month] = yearMonth.split('-')
+  const date = new Date(parseInt(year), parseInt(month) - 1, 1)
+  return date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
+}
 
 export default function UsagePage() {
   const { data: usage, isLoading } = useUsage()
 
+  const usageData = usage?.usage
   const usageStats = [
     {
       name: 'PDFs Generated',
-      value: usage?.pdfsGenerated ?? 0,
-      limit: usage?.pdfsLimit ?? 100,
+      value: usageData?.pdfGenerations ?? 0,
+      limit: 100, // TODO: Get from subscription
       icon: FileText,
       color: 'bg-primary',
     },
     {
-      name: 'Templates',
-      value: usage?.templatesCount ?? 0,
-      limit: usage?.templatesLimit ?? 5,
+      name: 'Templates Uploaded',
+      value: usageData?.templatesUploaded ?? 0,
+      limit: 5, // TODO: Get from subscription
       icon: FileText,
       color: 'bg-secondary',
     },
     {
-      name: 'API Keys',
-      value: usage?.tokensCount ?? 0,
-      limit: usage?.tokensLimit ?? 1,
+      name: 'API Keys Created',
+      value: usageData?.tokensCreated ?? 0,
+      limit: 3, // TODO: Get from subscription
       icon: Key,
       color: 'bg-info',
     },
@@ -58,7 +66,7 @@ export default function UsagePage() {
                   <div>
                     <p className="text-sm text-foreground-light">Current Billing Period</p>
                     <p className="font-medium text-foreground-dark">
-                      {formatDate(usage.currentPeriodStart)} - {formatDate(usage.currentPeriodEnd)}
+                      {formatPeriod(usage.currentPeriod)}
                     </p>
                   </div>
                 </div>
