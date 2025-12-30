@@ -21,3 +21,4 @@ export {
 } from './Toast'
 export { Toaster } from './Toaster'
 export { DropZone } from './DropZone'
+export { LanguageSelector } from './LanguageSelector'

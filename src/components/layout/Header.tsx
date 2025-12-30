@@ -1,11 +1,11 @@
 'use client'
 
 import { useState } from 'react'
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { Link, usePathname } from '@/i18n/routing'
+import { useTranslations } from 'next-intl'
 import { useAuth } from '@/providers'
 import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui'
+import { Button, LanguageSelector } from '@/components/ui'
 import {
   Menu,
   X,
@@ -21,20 +21,21 @@ import {
   FileText as Logo,
 } from 'lucide-react'
 
-const navigation = [
-  { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-  { name: 'Templates', href: '/templates', icon: FileText },
-  { name: 'Generate', href: '/generate', icon: Sparkles },
-  { name: 'API Keys', href: '/api-keys', icon: Key },
-  { name: 'Usage', href: '/usage', icon: BarChart3 },
-  { name: 'Settings', href: '/settings', icon: Settings },
-  { name: 'Billing', href: '/billing', icon: CreditCard },
+const navigationItems = [
+  { key: 'dashboard', href: '/dashboard', icon: LayoutDashboard },
+  { key: 'templates', href: '/templates', icon: FileText },
+  { key: 'generate', href: '/generate', icon: Sparkles },
+  { key: 'apiKeys', href: '/api-keys', icon: Key },
+  { key: 'usage', href: '/usage', icon: BarChart3 },
+  { key: 'settings', href: '/settings', icon: Settings },
+  { key: 'billing', href: '/billing', icon: CreditCard },
 ]
 
 export function Header() {
   const pathname = usePathname()
   const { user, signOut } = useAuth()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const t = useTranslations('nav')
 
   return (
     <header className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-border bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
@@ -56,6 +57,8 @@ export function Header() {
 
         {/* User menu */}
         <div className="flex items-center gap-x-4 lg:gap-x-6">
+          <LanguageSelector variant="default" className="hidden sm:block" />
+
           <div className="hidden lg:block lg:h-6 lg:w-px lg:bg-border" />
 
           <div className="flex items-center gap-3">
@@ -71,7 +74,7 @@ export function Header() {
               className="text-foreground-light hover:text-foreground"
             >
               <LogOut className="h-4 w-4" />
-              <span className="ml-2 hidden sm:inline">Sign out</span>
+              <span className="ml-2 hidden sm:inline">{t('signOut')}</span>
             </Button>
           </div>
         </div>
@@ -107,10 +110,10 @@ export function Header() {
 
             <nav className="mt-6">
               <ul role="list" className="-mx-2 space-y-1">
-                {navigation.map((item) => {
+                {navigationItems.map((item) => {
                   const isActive = pathname === item.href || pathname.startsWith(item.href + '/')
                   return (
-                    <li key={item.name}>
+                    <li key={item.key}>
                       <Link
                         href={item.href}
                         onClick={() => setMobileMenuOpen(false)}
@@ -127,7 +130,7 @@ export function Header() {
                             isActive ? 'text-primary' : 'text-foreground-light group-hover:text-foreground'
                           )}
                         />
-                        {item.name}
+                        {t(item.key)}
                       </Link>
                     </li>
                   )
@@ -146,6 +149,10 @@ export function Header() {
                 </div>
               </div>
 
+              <div className="mt-4">
+                <LanguageSelector variant="default" className="w-full justify-center" />
+              </div>
+
               <Button
                 variant="outline"
                 className="mt-4 w-full"
@@ -155,7 +162,7 @@ export function Header() {
                 }}
               >
                 <LogOut className="mr-2 h-4 w-4" />
-                Sign out
+                {t('signOut')}
               </Button>
             </div>
           </div>

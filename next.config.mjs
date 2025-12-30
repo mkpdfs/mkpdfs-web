@@ -6,6 +6,7 @@ const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts')
 const nextConfig = {
   reactStrictMode: true,
   output: 'standalone',
+  transpilePackages: ['next-intl'],
 
   // Security headers
   async headers() {

@@ -414,6 +414,10 @@
       "features": "Features"
     }
   },
+  "languageSelector": {
+    "label": "Change language",
+    "selectLanguage": "Select language"
+  },
   "errors": {
     "generic": "Something went wrong. Please try again.",
     "notFound": "Page not found",

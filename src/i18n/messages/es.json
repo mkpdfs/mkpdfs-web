@@ -414,6 +414,10 @@
       "features": "Características"
     }
   },
+  "languageSelector": {
+    "label": "Cambiar idioma",
+    "selectLanguage": "Seleccionar idioma"
+  },
   "errors": {
     "generic": "Algo salió mal. Por favor intenta de nuevo.",
     "notFound": "Página no encontrada",
