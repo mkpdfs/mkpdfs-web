@@ -9,7 +9,7 @@ import { Eye, EyeOff, FileText, Check, X } from 'lucide-react'
 
 export default function RegisterPage() {
   const router = useRouter()
-  const { signUp, isAuthenticated, isLoading, isInitializing, error, clearError } = useAuth()
+  const { signUp, signIn, isAuthenticated, isLoading, isInitializing, error, clearError } = useAuth()
 
   const [step, setStep] = useState<'register' | 'verify'>('register')
   const [name, setName] = useState('')
