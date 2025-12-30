@@ -136,7 +136,7 @@ export default async function LandingPage({ params }: Props) {
               {nav('docs')}
             </a>
           </div>
-          <div className="flex flex-1 justify-end gap-4">
+          <div className="flex flex-1 items-center justify-end gap-4">
             <Link
               href="/login"
               className="text-sm font-medium text-foreground-light hover:text-foreground"
