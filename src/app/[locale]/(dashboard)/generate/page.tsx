@@ -50,9 +50,11 @@ export default function GeneratePage() {
         })
       }
     } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to generate PDF. Please try again.'
+      const isLimitError = message.toLowerCase().includes('limit')
       toast({
-        title: 'Generation Failed',
-        description: 'Failed to generate PDF. Please try again.',
+        title: isLimitError ? 'Limit Reached' : 'Generation Failed',
+        description: message,
         variant: 'destructive',
       })
     }

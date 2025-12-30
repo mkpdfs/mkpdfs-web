@@ -35,9 +35,11 @@ export default function ApiKeysPage() {
         description: 'Make sure to copy your key - it won\'t be shown again.',
       })
     } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to create API key.'
+      const isLimitError = message.toLowerCase().includes('limit')
       toast({
-        title: 'Error',
-        description: 'Failed to create API key.',
+        title: isLimitError ? 'Limit Reached' : 'Error',
+        description: message,
         variant: 'destructive',
       })
     }
