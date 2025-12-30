@@ -120,30 +120,29 @@ export default function GeneratePage() {
           </CardContent>
         </Card>
 
-        {/* Result */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Result</CardTitle>
+        {/* Preview */}
+        <Card className="flex flex-col">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-lg">Preview</CardTitle>
+            {generatedUrl && (
+              <a href={generatedUrl} target="_blank" rel="noopener noreferrer">
+                <Button variant="outline" size="sm">
+                  <Download className="mr-2 h-4 w-4" />
+                  Download
+                </Button>
+              </a>
+            )}
           </CardHeader>
-          <CardContent>
+          <CardContent className="flex-1">
             {generatedUrl ? (
-              <div className="space-y-4">
-                <div className="rounded-lg bg-success/10 p-4 text-center">
-                  <FileText className="mx-auto h-12 w-12 text-success" />
-                  <p className="mt-2 font-medium text-success">PDF Generated Successfully!</p>
-                </div>
-                <a href={generatedUrl} target="_blank" rel="noopener noreferrer">
-                  <Button className="w-full">
-                    <Download className="mr-2 h-4 w-4" />
-                    Download PDF
-                  </Button>
-                </a>
-              </div>
+              <iframe
+                src={generatedUrl}
+                className="h-[500px] w-full rounded-md border"
+                title="PDF Preview"
+              />
             ) : (
-              <div className="flex flex-col items-center justify-center py-12 text-center">
-                <div className="rounded-lg bg-muted p-4">
-                  <FileText className="h-12 w-12 text-muted-foreground" />
-                </div>
+              <div className="flex h-[500px] flex-col items-center justify-center rounded-md border border-dashed text-center">
+                <FileText className="h-12 w-12 text-muted-foreground" />
                 <p className="mt-4 text-sm text-foreground-light">
                   Your generated PDF will appear here.
                 </p>
