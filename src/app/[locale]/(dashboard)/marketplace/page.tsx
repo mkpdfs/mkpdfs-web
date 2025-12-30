@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from 'react'
-import { useMarketplaceTemplates, useCopyMarketplaceTemplate } from '@/hooks/useApi'
+import { useState, useMemo } from 'react'
+import { useMarketplaceTemplates, useCopyMarketplaceTemplate, useTemplates } from '@/hooks/useApi'
 import { Card, CardContent, Spinner, Input } from '@/components/ui'
 import { CategoryTabs, TemplateCard, TemplatePreviewModal } from '@/components/marketplace'
 import { toast } from '@/hooks/useToast'
@@ -19,7 +19,18 @@ export default function MarketplacePage() {
   const [previewTemplate, setPreviewTemplate] = useState<MarketplaceTemplate | null>(null)
 
   const { data: templates, isLoading, error } = useMarketplaceTemplates(category)
+  const { data: userTemplates } = useTemplates()
   const copyTemplate = useCopyMarketplaceTemplate()
+
+  // Build a set of marketplace template IDs that the user has already added
+  const addedMarketplaceIds = useMemo(() => {
+    if (!userTemplates) return new Set<string>()
+    return new Set(
+      userTemplates
+        .filter((t) => t.sourceMarketplaceId)
+        .map((t) => t.sourceMarketplaceId!)
+    )
+  }, [userTemplates])
 
   const filteredTemplates = templates?.filter(
     (template) =>
@@ -95,9 +106,7 @@ export default function MarketplacePage() {
           <CardContent className="py-12 text-center">
             <h3 className="text-lg font-medium text-foreground-dark">{t('empty')}</h3>
             <p className="mt-2 text-sm text-foreground-light">
-              {searchQuery
-                ? 'Try a different search term or category.'
-                : 'Check back later for new templates.'}
+              {searchQuery ? t('emptySearch') : t('emptyDefault')}
             </p>
           </CardContent>
         </Card>
@@ -110,6 +119,7 @@ export default function MarketplacePage() {
               onPreview={setPreviewTemplate}
               onUse={handleUseTemplate}
               isLoading={copyTemplate.isPending}
+              isAdded={addedMarketplaceIds.has(template.templateId)}
             />
           ))}
         </div>
@@ -121,6 +131,7 @@ export default function MarketplacePage() {
         onClose={() => setPreviewTemplate(null)}
         onUse={handleUseTemplate}
         isUseLoading={copyTemplate.isPending}
+        isAdded={previewTemplate ? addedMarketplaceIds.has(previewTemplate.templateId) : false}
       />
     </div>
   )
