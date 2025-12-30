@@ -27,8 +27,8 @@
     "upgradeNow": "Mejorar Ahora"
   },
   "metadata": {
-    "title": "mkpdfs - Generación de PDFs a Escala",
-    "description": "Genera PDFs profesionales a escala. Sube plantillas Handlebars, llama a nuestra API y obtén PDFs al instante."
+    "title": "mkpdfs - API de Generación de PDFs para Developers",
+    "description": "Generación de PDFs sin el dolor de cabeza de la infraestructura. Sube plantillas HTML, llama a nuestra API, obtén PDFs. Sin configurar Puppeteer, sin mantener Chromium."
   },
   "nav": {
     "features": "Características",
@@ -50,70 +50,70 @@
   },
   "landing": {
     "hero": {
-      "title": "Genera PDFs",
-      "titleHighlight": "a Escala",
-      "subtitle": "Sube plantillas Handlebars, llama a nuestra API y obtén PDFs hermosos al instante. Perfecto para facturas, informes, certificados y más.",
+      "title": "Generación de PDFs",
+      "titleHighlight": "Sin Complicaciones",
+      "subtitle": "Deja de pelear con Puppeteer, crashes de Chromium y escalar headless browsers. Sube tus plantillas HTML, llama a nuestra API, obtén PDFs. Nosotros manejamos la infraestructura.",
       "cta": "Comenzar Gratis",
       "viewDocs": "Ver Documentación"
     },
     "features": {
-      "title": "Todo lo que necesitas para generar PDFs",
-      "subtitle": "Características potentes para generar PDFs profesionales a cualquier escala.",
+      "title": "Sáltate la infraestructura. Entrega más rápido.",
+      "subtitle": "Todo lo que construirías tú mismo—ya corriendo, probado y listo para escalar.",
       "handlebars": {
         "name": "Plantillas Handlebars",
-        "description": "Sube tus plantillas Handlebars y genera PDFs con datos dinámicos. Soporte completo para parciales, helpers y condicionales."
+        "description": "Escribe HTML + Handlebars, súbelo una vez, genera para siempre. Parciales, helpers, condicionales—todo soportado."
       },
       "fast": {
-        "name": "Ultra Rápido",
-        "description": "Genera PDFs en milisegundos con nuestro motor de renderizado optimizado. Soporte para generación síncrona y asíncrona."
+        "name": "Rápido y Confiable",
+        "description": "Browsers pre-calentados, sin cold starts. Síncrono para trabajos rápidos, asíncrono con webhooks para lotes pesados."
       },
       "api": {
-        "name": "API Simple",
-        "description": "API RESTful con documentación completa. Genera PDFs con una sola petición HTTP."
+        "name": "Una Sola Llamada API",
+        "description": "POST tus datos, recibe una URL de PDF. Eso es todo. Funciona desde cualquier lenguaje, cualquier framework."
       },
       "secure": {
-        "name": "Seguro por Defecto",
-        "description": "Seguridad de nivel empresarial con autenticación AWS Cognito, claves API encriptadas y aislamiento de usuarios."
+        "name": "Seguro y Aislado",
+        "description": "Tus plantillas y datos están aislados por cuenta. Claves API encriptadas. Sin estado compartido."
       },
       "analytics": {
-        "name": "Análisis de Uso",
-        "description": "Rastrea tu generación de PDFs con estadísticas detalladas y paneles en tiempo real."
+        "name": "Seguimiento de Uso",
+        "description": "Ve exactamente lo que estás usando. Rastrea conteos de generación, monitorea tendencias, exporta para conciliación de facturación."
       },
       "team": {
-        "name": "Colaboración en Equipo",
-        "description": "Comparte plantillas y claves API con tu equipo con control de acceso basado en roles."
+        "name": "Listo para Equipos",
+        "description": "Múltiples claves API, plantillas compartidas. Dale acceso a tu equipo sin compartir credenciales."
       }
     },
     "pricing": {
-      "title": "Precios simples y transparentes",
-      "subtitle": "Comienza gratis, escala según crezcas. Sin costos ocultos.",
+      "title": "Más barato que construirlo tú mismo",
+      "subtitle": "Sin servidores que mantener. Sin actualizaciones de Chromium. Paga solo por lo que usas.",
       "mostPopular": "Más Popular",
       "contactSales": "Contactar Ventas",
       "free": {
         "name": "Free",
-        "description": "Perfecto para aficionados y pruebas",
+        "description": "Prueba tu integración",
         "features": {
           "pages": "100 páginas por mes",
           "templates": "5 plantillas",
           "keys": "1 clave API",
           "fileSize": "Tamaño máx. 10MB",
-          "support": "Soporte por email"
+          "support": "Soporte de comunidad"
         }
       },
       "starter": {
         "name": "Starter",
-        "description": "Para pequeños proyectos y startups",
+        "description": "Lleva a producción",
         "features": {
           "pages": "1,000 páginas por mes",
           "templates": "50 plantillas",
           "keys": "3 claves API",
           "fileSize": "Tamaño máx. 25MB",
-          "support": "Soporte prioritario por email"
+          "support": "Soporte por email"
         }
       },
       "professional": {
         "name": "Professional",
-        "description": "Para negocios en crecimiento",
+        "description": "Escala con confianza",
         "features": {
           "pages": "10,000 páginas por mes",
           "templates": "500 plantillas",
@@ -125,7 +125,7 @@
       },
       "enterprise": {
         "name": "Enterprise",
-        "description": "Para grandes organizaciones",
+        "description": "Todo ilimitado",
         "features": {
           "pages": "Páginas ilimitadas",
           "templates": "Plantillas ilimitadas",
@@ -138,10 +138,10 @@
       }
     },
     "cta": {
-      "title": "¿Listo para generar PDFs?",
-      "subtitle": "Únete a miles de desarrolladores que usan mkpdfs para generar documentos profesionales.",
-      "button": "Comenzar Gratis",
-      "learnMore": "Saber más"
+      "title": "Entrega generación de PDFs esta semana",
+      "subtitle": "Plan gratuito. Sin tarjeta de crédito. Se integra en 5 minutos.",
+      "button": "Empezar a Construir",
+      "learnMore": "Lee la documentación"
     },
     "footer": {
       "copyright": "© {year} mkpdfs. Todos los derechos reservados.",

@@ -27,8 +27,8 @@
     "upgradeNow": "Upgrade Now"
   },
   "metadata": {
-    "title": "mkpdfs - PDF Generation at Scale",
-    "description": "Generate beautiful PDFs at scale. Upload Handlebars templates, call our API, and get professional PDFs instantly."
+    "title": "mkpdfs - PDF Generation API for Developers",
+    "description": "PDF generation without the infrastructure headache. Upload HTML templates, call our API, get PDFs. No Puppeteer setup, no Chromium maintenance."
   },
   "nav": {
     "features": "Features",
@@ -50,70 +50,70 @@
   },
   "landing": {
     "hero": {
-      "title": "Generate PDFs",
-      "titleHighlight": "at Scale",
-      "subtitle": "Upload Handlebars templates, call our API, and get beautiful PDFs instantly. Perfect for invoices, reports, certificates, and more.",
+      "title": "PDF Generation",
+      "titleHighlight": "Without the Headache",
+      "subtitle": "Stop wrestling with Puppeteer, Chromium crashes, and scaling headless browsers. Upload your HTML templates, call our API, get PDFs. We handle the infrastructure.",
       "cta": "Start for Free",
       "viewDocs": "View Documentation"
     },
     "features": {
-      "title": "Everything you need for PDF generation",
-      "subtitle": "Powerful features to help you generate professional PDFs at any scale.",
+      "title": "Skip the infrastructure. Ship faster.",
+      "subtitle": "Everything you'd build yourself—already running, tested, and ready to scale.",
       "handlebars": {
         "name": "Handlebars Templates",
-        "description": "Upload your Handlebars templates and generate PDFs with dynamic data. Full support for partials, helpers, and conditionals."
+        "description": "Write HTML + Handlebars, upload once, generate forever. Partials, helpers, conditionals—all supported."
       },
       "fast": {
-        "name": "Lightning Fast",
-        "description": "Generate PDFs in milliseconds with our optimized rendering engine. Support for sync and async generation."
+        "name": "Fast & Reliable",
+        "description": "Pre-warmed browsers, no cold starts. Sync for quick jobs, async with webhooks for heavy batches."
       },
       "api": {
-        "name": "Simple API",
-        "description": "RESTful API with comprehensive documentation. Generate PDFs with a single HTTP request."
+        "name": "One API Call",
+        "description": "POST your data, get a PDF URL back. That's it. Works from any language, any framework."
       },
       "secure": {
-        "name": "Secure by Default",
-        "description": "Enterprise-grade security with AWS Cognito authentication, encrypted API keys, and user isolation."
+        "name": "Secure & Isolated",
+        "description": "Your templates and data are isolated per account. Encrypted API keys. No shared state."
       },
       "analytics": {
-        "name": "Usage Analytics",
-        "description": "Track your PDF generation with detailed usage statistics and real-time dashboards."
+        "name": "Usage Tracking",
+        "description": "See exactly what you're using. Track generation counts, monitor trends, export for billing reconciliation."
       },
       "team": {
-        "name": "Team Collaboration",
-        "description": "Share templates and API keys across your team with role-based access control."
+        "name": "Team Ready",
+        "description": "Multiple API keys, shared templates. Give your team access without sharing credentials."
       }
     },
     "pricing": {
-      "title": "Simple, transparent pricing",
-      "subtitle": "Start free, scale as you grow. No hidden fees.",
+      "title": "Cheaper than building it yourself",
+      "subtitle": "No servers to maintain. No Chromium updates. Pay only for what you use.",
       "mostPopular": "Most Popular",
       "contactSales": "Contact Sales",
       "free": {
         "name": "Free",
-        "description": "Perfect for hobbyists and testing",
+        "description": "Test your integration",
         "features": {
           "pages": "100 pages per month",
           "templates": "5 templates",
           "keys": "1 API key",
           "fileSize": "10MB max file size",
-          "support": "Email support"
+          "support": "Community support"
         }
       },
       "starter": {
         "name": "Starter",
-        "description": "For small projects and startups",
+        "description": "Ship to production",
         "features": {
           "pages": "1,000 pages per month",
           "templates": "50 templates",
           "keys": "3 API keys",
           "fileSize": "25MB max file size",
-          "support": "Priority email support"
+          "support": "Email support"
         }
       },
       "professional": {
         "name": "Professional",
-        "description": "For growing businesses",
+        "description": "Scale with confidence",
         "features": {
           "pages": "10,000 pages per month",
           "templates": "500 templates",
@@ -125,7 +125,7 @@
       },
       "enterprise": {
         "name": "Enterprise",
-        "description": "For large organizations",
+        "description": "Unlimited everything",
         "features": {
           "pages": "Unlimited pages",
           "templates": "Unlimited templates",
@@ -138,10 +138,10 @@
       }
     },
     "cta": {
-      "title": "Ready to generate PDFs?",
-      "subtitle": "Join thousands of developers using mkpdfs to generate professional documents.",
-      "button": "Start for Free",
-      "learnMore": "Learn more"
+      "title": "Ship PDF generation this week",
+      "subtitle": "Free tier. No credit card. Takes 5 minutes to integrate.",
+      "button": "Start Building",
+      "learnMore": "Read the docs"
     },
     "footer": {
       "copyright": "© {year} mkpdfs. All rights reserved.",
