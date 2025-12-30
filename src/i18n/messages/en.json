@@ -88,7 +88,7 @@
         "name": "Free",
         "description": "Perfect for hobbyists and testing",
         "features": {
-          "pdfs": "100 PDFs per month",
+          "pages": "100 pages per month",
           "templates": "5 templates",
           "keys": "1 API key",
           "fileSize": "10MB max file size",
@@ -99,7 +99,7 @@
         "name": "Starter",
         "description": "For small projects and startups",
         "features": {
-          "pdfs": "1,000 PDFs per month",
+          "pages": "1,000 pages per month",
           "templates": "50 templates",
           "keys": "3 API keys",
           "fileSize": "25MB max file size",
@@ -110,7 +110,7 @@
         "name": "Professional",
         "description": "For growing businesses",
         "features": {
-          "pdfs": "10,000 PDFs per month",
+          "pages": "10,000 pages per month",
           "templates": "500 templates",
           "keys": "10 API keys",
           "fileSize": "50MB max file size",
@@ -122,7 +122,7 @@
         "name": "Enterprise",
         "description": "For large organizations",
         "features": {
-          "pdfs": "Unlimited PDFs",
+          "pages": "Unlimited pages",
           "templates": "Unlimited templates",
           "keys": "Unlimited API keys",
           "fileSize": "100MB max file size",
@@ -228,8 +228,9 @@
     "welcome": "Welcome back, {name}!",
     "welcomeDefault": "Welcome back!",
     "subtitle": "Here's what's happening with your PDF generation today.",
+    "unlimited": "Unlimited",
     "stats": {
-      "pdfsGenerated": "PDFs Generated",
+      "pagesGenerated": "Pages Generated",
       "templates": "Templates",
       "apiKeys": "API Keys"
     },
@@ -342,21 +343,26 @@
   },
   "usage": {
     "title": "Usage",
-    "subtitle": "Track your PDF generation and resource usage.",
+    "subtitle": "Track your page generation and resource usage. Each data object counts as 1 page.",
     "currentPeriod": "Current Billing Period",
     "periodRange": "{start} - {end}",
-    "pdfsGenerated": {
-      "title": "PDFs Generated",
+    "pagesGenerated": {
+      "title": "Pages Generated",
       "used": "{used} of {limit}",
-      "unlimited": "Unlimited"
+      "unlimited": "Unlimited",
+      "unlimitedUsed": "{used} pages generated"
     },
     "templates": {
       "title": "Templates",
-      "used": "{used} of {limit}"
+      "used": "{used} of {limit}",
+      "unlimited": "Unlimited",
+      "unlimitedUsed": "{used} templates"
     },
     "apiKeys": {
       "title": "API Keys",
-      "used": "{used} of {limit}"
+      "used": "{used} of {limit}",
+      "unlimited": "Unlimited",
+      "unlimitedUsed": "{used} API keys"
     },
     "storage": {
       "title": "Storage Used",

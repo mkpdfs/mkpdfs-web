@@ -23,7 +23,7 @@ export default function BillingPage() {
       price: '$0',
       description: pricing('free.description'),
       features: [
-        pricing('free.features.pdfs'),
+        pricing('free.features.pages'),
         pricing('free.features.templates'),
         pricing('free.features.keys'),
         pricing('free.features.fileSize'),
@@ -36,7 +36,7 @@ export default function BillingPage() {
       price: '$29.99',
       description: pricing('starter.description'),
       features: [
-        pricing('starter.features.pdfs'),
+        pricing('starter.features.pages'),
         pricing('starter.features.templates'),
         pricing('starter.features.keys'),
         pricing('starter.features.fileSize'),
@@ -50,7 +50,7 @@ export default function BillingPage() {
       price: '$99.99',
       description: pricing('professional.description'),
       features: [
-        pricing('professional.features.pdfs'),
+        pricing('professional.features.pages'),
         pricing('professional.features.templates'),
         pricing('professional.features.keys'),
         pricing('professional.features.fileSize'),
@@ -64,7 +64,7 @@ export default function BillingPage() {
       price: pricing('contactSales'),
       description: pricing('enterprise.description'),
       features: [
-        pricing('enterprise.features.pdfs'),
+        pricing('enterprise.features.pages'),
         pricing('enterprise.features.templates'),
         pricing('enterprise.features.keys'),
         pricing('enterprise.features.fileSize'),

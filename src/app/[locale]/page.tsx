@@ -63,7 +63,7 @@ export default async function LandingPage({ params }: Props) {
       price: '$0',
       description: t('pricing.free.description'),
       features: [
-        t('pricing.free.features.pdfs'),
+        t('pricing.free.features.pages'),
         t('pricing.free.features.templates'),
         t('pricing.free.features.keys'),
         t('pricing.free.features.fileSize'),
@@ -75,7 +75,7 @@ export default async function LandingPage({ params }: Props) {
       price: '$29',
       description: t('pricing.starter.description'),
       features: [
-        t('pricing.starter.features.pdfs'),
+        t('pricing.starter.features.pages'),
         t('pricing.starter.features.templates'),
         t('pricing.starter.features.keys'),
         t('pricing.starter.features.fileSize'),
@@ -88,7 +88,7 @@ export default async function LandingPage({ params }: Props) {
       price: '$99',
       description: t('pricing.professional.description'),
       features: [
-        t('pricing.professional.features.pdfs'),
+        t('pricing.professional.features.pages'),
         t('pricing.professional.features.templates'),
         t('pricing.professional.features.keys'),
         t('pricing.professional.features.fileSize'),
@@ -101,7 +101,7 @@ export default async function LandingPage({ params }: Props) {
       price: t.raw('pricing.enterprise.name') === 'Enterprise' ? 'Custom' : 'Personalizado',
       description: t('pricing.enterprise.description'),
       features: [
-        t('pricing.enterprise.features.pdfs'),
+        t('pricing.enterprise.features.pages'),
         t('pricing.enterprise.features.templates'),
         t('pricing.enterprise.features.keys'),
         t('pricing.enterprise.features.fileSize'),

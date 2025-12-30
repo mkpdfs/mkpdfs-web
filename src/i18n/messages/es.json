@@ -88,7 +88,7 @@
         "name": "Gratis",
         "description": "Perfecto para aficionados y pruebas",
         "features": {
-          "pdfs": "100 PDFs por mes",
+          "pages": "100 páginas por mes",
           "templates": "5 plantillas",
           "keys": "1 clave API",
           "fileSize": "Tamaño máx. 10MB",
@@ -99,7 +99,7 @@
         "name": "Inicial",
         "description": "Para pequeños proyectos y startups",
         "features": {
-          "pdfs": "1,000 PDFs por mes",
+          "pages": "1,000 páginas por mes",
           "templates": "50 plantillas",
           "keys": "3 claves API",
           "fileSize": "Tamaño máx. 25MB",
@@ -110,7 +110,7 @@
         "name": "Profesional",
         "description": "Para negocios en crecimiento",
         "features": {
-          "pdfs": "10,000 PDFs por mes",
+          "pages": "10,000 páginas por mes",
           "templates": "500 plantillas",
           "keys": "10 claves API",
           "fileSize": "Tamaño máx. 50MB",
@@ -122,7 +122,7 @@
         "name": "Empresarial",
         "description": "Para grandes organizaciones",
         "features": {
-          "pdfs": "PDFs ilimitados",
+          "pages": "Páginas ilimitadas",
           "templates": "Plantillas ilimitadas",
           "keys": "Claves API ilimitadas",
           "fileSize": "Tamaño máx. 100MB",
@@ -228,8 +228,9 @@
     "welcome": "¡Bienvenido de nuevo, {name}!",
     "welcomeDefault": "¡Bienvenido de nuevo!",
     "subtitle": "Esto es lo que está pasando con tu generación de PDFs hoy.",
+    "unlimited": "Ilimitado",
     "stats": {
-      "pdfsGenerated": "PDFs Generados",
+      "pagesGenerated": "Páginas Generadas",
       "templates": "Plantillas",
       "apiKeys": "Claves API"
     },
@@ -342,21 +343,26 @@
   },
   "usage": {
     "title": "Uso",
-    "subtitle": "Rastrea tu generación de PDFs y uso de recursos.",
+    "subtitle": "Rastrea tu generación de páginas y uso de recursos. Cada objeto de datos cuenta como 1 página.",
     "currentPeriod": "Período de Facturación Actual",
     "periodRange": "{start} - {end}",
-    "pdfsGenerated": {
-      "title": "PDFs Generados",
+    "pagesGenerated": {
+      "title": "Páginas Generadas",
       "used": "{used} de {limit}",
-      "unlimited": "Ilimitado"
+      "unlimited": "Ilimitado",
+      "unlimitedUsed": "{used} páginas generadas"
     },
     "templates": {
       "title": "Plantillas",
-      "used": "{used} de {limit}"
+      "used": "{used} de {limit}",
+      "unlimited": "Ilimitado",
+      "unlimitedUsed": "{used} plantillas"
     },
     "apiKeys": {
       "title": "Claves API",
-      "used": "{used} de {limit}"
+      "used": "{used} de {limit}",
+      "unlimited": "Ilimitado",
+      "unlimitedUsed": "{used} claves API"
     },
     "storage": {
       "title": "Almacenamiento Usado",

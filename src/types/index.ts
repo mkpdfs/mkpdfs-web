@@ -11,7 +11,7 @@ export interface MkpdfsUser {
 }
 
 export interface SubscriptionLimits {
-  pdfGenerationsPerMonth: number
+  pagesPerMonth: number  // Each data object = 1 page
   templatesAllowed: number
   apiTokensAllowed: number
   maxPdfSizeMB: number
@@ -56,15 +56,15 @@ export interface UsageStats {
   usage: {
     userId: string
     yearMonth: string
-    pdfGenerations: number
+    pagesGenerated: number  // Each data object = 1 page
     templatesUploaded: number
     tokensCreated: number
     bytesGenerated: number
   }
   currentPeriod: string
   // Frontend computed fields (with defaults)
-  pdfsGenerated?: number
-  pdfsLimit?: number
+  pagesGenerated?: number
+  pagesLimit?: number
   templatesCount?: number
   templatesLimit?: number
   tokensCount?: number

@@ -3,7 +3,7 @@
 import { useTranslations } from 'next-intl'
 import { Link } from '@/i18n/routing'
 import { useAuth } from '@/providers'
-import { useUsage, useTemplates, useTokens } from '@/hooks/useApi'
+import { useUsage, useProfile } from '@/hooks/useApi'
 import { Card, CardHeader, CardTitle, CardContent, Button, Spinner } from '@/components/ui'
 import { formatNumber } from '@/lib/utils'
 import {
@@ -18,18 +18,18 @@ import {
 export default function DashboardPage() {
   const { user } = useAuth()
   const { data: usage, isLoading: usageLoading } = useUsage()
-  const { data: templates, isLoading: templatesLoading } = useTemplates()
-  const { data: tokens, isLoading: tokensLoading } = useTokens()
+  const { data: profile, isLoading: profileLoading } = useProfile()
   const t = useTranslations('dashboard')
 
-  const isLoading = usageLoading || templatesLoading || tokensLoading
+  const isLoading = usageLoading || profileLoading
 
   const usageData = usage?.usage
+  const limits = profile?.subscriptionLimits
   const stats = [
     {
-      name: t('stats.pdfsGenerated'),
-      value: usageData?.pdfGenerations ?? 0,
-      limit: 100, // TODO: Get from subscription
+      name: t('stats.pagesGenerated'),
+      value: usageData?.pagesGenerated ?? 0,
+      limit: limits?.pagesPerMonth ?? 100,
       icon: FileText,
       href: '/usage',
       color: 'text-primary',
@@ -37,8 +37,8 @@ export default function DashboardPage() {
     },
     {
       name: t('stats.templates'),
-      value: templates?.length ?? 0,
-      limit: 5, // TODO: Get from subscription
+      value: usageData?.templatesUploaded ?? 0,
+      limit: limits?.templatesAllowed ?? 5,
       icon: FileText,
       href: '/templates',
       color: 'text-secondary',
@@ -46,8 +46,8 @@ export default function DashboardPage() {
     },
     {
       name: t('stats.apiKeys'),
-      value: tokens?.length ?? 0,
-      limit: 3, // TODO: Get from subscription
+      value: usageData?.tokensCreated ?? 0,
+      limit: limits?.apiTokensAllowed ?? 3,
       icon: Key,
       href: '/api-keys',
       color: 'text-info',
@@ -95,33 +95,35 @@ export default function DashboardPage() {
 
       {/* Stats Grid */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {stats.map((stat) => (
-          <Link key={stat.href} href={stat.href}>
-            <Card className="transition-shadow hover:shadow-md">
-              <CardContent className="p-6">
-                <div className="flex items-center gap-4">
-                  <div className={`rounded-lg p-3 ${stat.bgColor}`}>
-                    <stat.icon className={`h-6 w-6 ${stat.color}`} />
+        {stats.map((stat) => {
+          const isUnlimited = stat.limit === -1
+          return (
+            <Link key={stat.href} href={stat.href}>
+              <Card className="transition-shadow hover:shadow-md">
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-4">
+                    <div className={`rounded-lg p-3 ${stat.bgColor}`}>
+                      <stat.icon className={`h-6 w-6 ${stat.color}`} />
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-foreground-light">{stat.name}</p>
+                      {isLoading ? (
+                        <Spinner size="sm" className="mt-1" />
+                      ) : (
+                        <p className="text-2xl font-semibold text-foreground-dark">
+                          {formatNumber(stat.value)}
+                          <span className="text-sm font-normal text-foreground-light">
+                            {isUnlimited ? ` / ${t('unlimited')}` : ` / ${formatNumber(stat.limit)}`}
+                          </span>
+                        </p>
+                      )}
+                    </div>
                   </div>
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-foreground-light">{stat.name}</p>
-                    {isLoading ? (
-                      <Spinner size="sm" className="mt-1" />
-                    ) : (
-                      <p className="text-2xl font-semibold text-foreground-dark">
-                        {formatNumber(stat.value)}
-                        <span className="text-sm font-normal text-foreground-light">
-                          {' '}
-                          / {formatNumber(stat.limit)}
-                        </span>
-                      </p>
-                    )}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </Link>
-        ))}
+                </CardContent>
+              </Card>
+            </Link>
+          )
+        })}
       </div>
 
       {/* Quick Actions */}
@@ -153,7 +155,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Getting Started */}
-      {templates?.length === 0 && (
+      {(usageData?.templatesUploaded ?? 0) === 0 && (
         <Card className="border-dashed">
           <CardHeader>
             <CardTitle className="text-lg">{t('gettingStarted.title')}</CardTitle>

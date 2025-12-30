@@ -1,6 +1,6 @@
 'use client'
 
-import { useUsage } from '@/hooks/useApi'
+import { useUsage, useProfile } from '@/hooks/useApi'
 import { Card, CardHeader, CardTitle, CardContent, Spinner } from '@/components/ui'
 import { formatNumber } from '@/lib/utils'
 import { FileText, Key, TrendingUp } from 'lucide-react'
@@ -14,30 +14,34 @@ function formatPeriod(yearMonth: string, locale: string): string {
 }
 
 export default function UsagePage() {
-  const { data: usage, isLoading } = useUsage()
+  const { data: usage, isLoading: usageLoading } = useUsage()
+  const { data: profile, isLoading: profileLoading } = useProfile()
   const t = useTranslations('usage')
   const locale = useLocale()
 
+  const isLoading = usageLoading || profileLoading
   const usageData = usage?.usage
+  const limits = profile?.subscriptionLimits
+
   const usageStats = [
     {
-      key: 'pdfsGenerated',
-      value: usageData?.pdfGenerations ?? 0,
-      limit: 100,
+      key: 'pagesGenerated',
+      value: usageData?.pagesGenerated ?? 0,
+      limit: limits?.pagesPerMonth ?? 100,
       icon: FileText,
       color: 'bg-primary',
     },
     {
       key: 'templates',
       value: usageData?.templatesUploaded ?? 0,
-      limit: 5,
+      limit: limits?.templatesAllowed ?? 5,
       icon: FileText,
       color: 'bg-secondary',
     },
     {
       key: 'apiKeys',
       value: usageData?.tokensCreated ?? 0,
-      limit: 3,
+      limit: limits?.apiTokensAllowed ?? 3,
       icon: Key,
       color: 'bg-info',
     },
@@ -80,7 +84,8 @@ export default function UsagePage() {
           {/* Usage Stats */}
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {usageStats.map((stat) => {
-              const percentage = (stat.value / stat.limit) * 100
+              const isUnlimited = stat.limit === -1
+              const percentage = isUnlimited ? 0 : (stat.value / stat.limit) * 100
               return (
                 <Card key={stat.key}>
                   <CardHeader className="pb-2">
@@ -95,7 +100,7 @@ export default function UsagePage() {
                     <div className="text-3xl font-bold text-foreground-dark">
                       {formatNumber(stat.value)}
                       <span className="text-sm font-normal text-foreground-light">
-                        {' '}/ {formatNumber(stat.limit)}
+                        {isUnlimited ? ` / ${t(`${stat.key}.unlimited`)}` : ` / ${formatNumber(stat.limit)}`}
                       </span>
                     </div>
                     <div className="mt-4">
@@ -106,7 +111,9 @@ export default function UsagePage() {
                         />
                       </div>
                       <p className="mt-1 text-sm text-foreground-light">
-                        {t(`${stat.key}.used`, { used: stat.value, limit: stat.limit })}
+                        {isUnlimited
+                          ? t(`${stat.key}.unlimitedUsed`, { used: stat.value })
+                          : t(`${stat.key}.used`, { used: stat.value, limit: stat.limit })}
                       </p>
                     </div>
                   </CardContent>
