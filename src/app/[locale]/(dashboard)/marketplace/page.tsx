@@ -17,6 +17,7 @@ export default function MarketplacePage() {
   const [category, setCategory] = useState('all')
   const [searchQuery, setSearchQuery] = useState('')
   const [previewTemplate, setPreviewTemplate] = useState<MarketplaceTemplate | null>(null)
+  const [loadingTemplateId, setLoadingTemplateId] = useState<string | null>(null)
 
   const { data: templates, isLoading, error } = useMarketplaceTemplates(category)
   const { data: userTemplates } = useTemplates()
@@ -40,6 +41,7 @@ export default function MarketplacePage() {
   )
 
   const handleUseTemplate = async (template: MarketplaceTemplate) => {
+    setLoadingTemplateId(template.templateId)
     try {
       await copyTemplate.mutateAsync(template.templateId)
       toast({
@@ -62,6 +64,8 @@ export default function MarketplacePage() {
           variant: 'destructive',
         })
       }
+    } finally {
+      setLoadingTemplateId(null)
     }
   }
 
@@ -118,7 +122,7 @@ export default function MarketplacePage() {
               template={template}
               onPreview={setPreviewTemplate}
               onUse={handleUseTemplate}
-              isLoading={copyTemplate.isPending}
+              isLoading={loadingTemplateId === template.templateId}
               isAdded={addedMarketplaceIds.has(template.templateId)}
             />
           ))}
@@ -130,7 +134,7 @@ export default function MarketplacePage() {
         template={previewTemplate}
         onClose={() => setPreviewTemplate(null)}
         onUse={handleUseTemplate}
-        isUseLoading={copyTemplate.isPending}
+        isUseLoading={previewTemplate ? loadingTemplateId === previewTemplate.templateId : false}
         isAdded={previewTemplate ? addedMarketplaceIds.has(previewTemplate.templateId) : false}
       />
     </div>
