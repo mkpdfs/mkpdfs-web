@@ -8,9 +8,9 @@ import {
   BarChart3,
   Users,
   Check,
-  ArrowRight,
   Github,
 } from 'lucide-react'
+import { HeroSection, ScrollReveal } from '@/components/landing'
 
 type Props = {
   params: Promise<{ locale: string }>
@@ -154,45 +154,13 @@ export default async function LandingPage({ params }: Props) {
       </header>
 
       {/* Hero */}
-      <section className="relative overflow-hidden pt-32 pb-20 sm:pt-40 sm:pb-24">
-        <div className="absolute inset-0 -z-10 bg-gradient-to-br from-primary-50 via-white to-secondary-50" />
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="mx-auto max-w-3xl text-center">
-            <h1 className="text-4xl font-bold tracking-tight text-foreground-dark sm:text-6xl">
-              {t('hero.title')}{' '}
-              <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                {t('hero.titleHighlight')}
-              </span>
-            </h1>
-            <p className="mt-6 text-lg leading-8 text-foreground-light">
-              {t('hero.subtitle')}
-            </p>
-            <div className="mt-10 flex items-center justify-center gap-x-6">
-              <Link
-                href="/register"
-                className="flex items-center gap-2 rounded-md bg-primary px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-primary-600"
-              >
-                {t('hero.cta')}
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-              <a
-                href="https://docs.mkpdfs.com"
-                className="text-sm font-semibold leading-6 text-foreground"
-              >
-                {t('hero.viewDocs')} <span aria-hidden="true">→</span>
-              </a>
-            </div>
-          </div>
-
-          {/* Code Example */}
-          <div className="mx-auto mt-16 max-w-2xl rounded-xl bg-foreground-dark p-6 shadow-2xl">
-            <div className="flex items-center gap-2 border-b border-white/10 pb-4">
-              <div className="h-3 w-3 rounded-full bg-red-500" />
-              <div className="h-3 w-3 rounded-full bg-yellow-500" />
-              <div className="h-3 w-3 rounded-full bg-green-500" />
-            </div>
-            <pre className="mt-4 overflow-x-auto text-sm text-gray-300">
-              <code>{`curl -X POST https://api.mkpdfs.com/pdf/generate \\
+      <HeroSection
+        title={t('hero.title')}
+        titleHighlight={t('hero.titleHighlight')}
+        subtitle={t('hero.subtitle')}
+        ctaText={t('hero.cta')}
+        docsText={t('hero.viewDocs')}
+        curlCode={`curl -X POST https://api.mkpdfs.com/pdf/generate \\
   -H "X-Api-Key: tlfy_your_api_key" \\
   -H "Content-Type: application/json" \\
   -d '{
@@ -202,36 +170,34 @@ export default async function LandingPage({ params }: Props) {
       "items": [{"name": "Widget", "price": 29.99}],
       "total": 29.99
     }
-  }'`}</code>
-            </pre>
-          </div>
-        </div>
-      </section>
+  }'`}
+      />
 
       {/* Features */}
       <section id="features" className="py-20 sm:py-24">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="mx-auto max-w-2xl text-center">
-            <h2 className="text-3xl font-bold tracking-tight text-foreground-dark sm:text-4xl">
-              {t('features.title')}
-            </h2>
-            <p className="mt-4 text-lg text-foreground-light">
-              {t('features.subtitle')}
-            </p>
-          </div>
+          <ScrollReveal>
+            <div className="mx-auto max-w-2xl text-center">
+              <h2 className="text-3xl font-bold tracking-tight text-foreground-dark sm:text-4xl">
+                {t('features.title')}
+              </h2>
+              <p className="mt-4 text-lg text-foreground-light">
+                {t('features.subtitle')}
+              </p>
+            </div>
+          </ScrollReveal>
 
           <div className="mx-auto mt-16 grid max-w-5xl gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            {features.map((feature) => (
-              <div
-                key={feature.name}
-                className="rounded-xl border border-border bg-white p-6 transition-shadow hover:shadow-lg"
-              >
-                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-secondary">
-                  <feature.icon className="h-6 w-6 text-white" />
+            {features.map((feature, index) => (
+              <ScrollReveal key={feature.name} delay={index * 150}>
+                <div className="rounded-xl border border-border bg-white p-6 transition-shadow hover:shadow-lg h-full">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-secondary">
+                    <feature.icon className="h-6 w-6 text-white" />
+                  </div>
+                  <h3 className="mt-4 text-lg font-semibold text-foreground-dark">{feature.name}</h3>
+                  <p className="mt-2 text-sm text-foreground-light">{feature.description}</p>
                 </div>
-                <h3 className="mt-4 text-lg font-semibold text-foreground-dark">{feature.name}</h3>
-                <p className="mt-2 text-sm text-foreground-light">{feature.description}</p>
-              </div>
+              </ScrollReveal>
             ))}
           </div>
         </div>
@@ -240,59 +206,62 @@ export default async function LandingPage({ params }: Props) {
       {/* Pricing */}
       <section id="pricing" className="py-20 sm:py-24 bg-muted">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="mx-auto max-w-2xl text-center">
-            <h2 className="text-3xl font-bold tracking-tight text-foreground-dark sm:text-4xl">
-              {t('pricing.title')}
-            </h2>
-            <p className="mt-4 text-lg text-foreground-light">
-              {t('pricing.subtitle')}
-            </p>
-          </div>
+          <ScrollReveal>
+            <div className="mx-auto max-w-2xl text-center">
+              <h2 className="text-3xl font-bold tracking-tight text-foreground-dark sm:text-4xl">
+                {t('pricing.title')}
+              </h2>
+              <p className="mt-4 text-lg text-foreground-light">
+                {t('pricing.subtitle')}
+              </p>
+            </div>
+          </ScrollReveal>
 
           <div className="mx-auto mt-16 grid max-w-6xl gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {plans.map((plan) => (
-              <div
-                key={plan.name}
-                className={`relative rounded-2xl bg-white p-8 shadow-sm ${
-                  plan.popular ? 'ring-2 ring-primary' : 'border border-border'
-                }`}
-              >
-                {plan.popular && (
-                  <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                    <span className="rounded-full bg-primary px-4 py-1 text-sm font-medium text-white">
-                      {t('pricing.mostPopular')}
-                    </span>
-                  </div>
-                )}
-                <h3 className="text-lg font-semibold text-foreground-dark">{plan.name}</h3>
-                <p className="mt-1 text-sm text-foreground-light">{plan.description}</p>
-                <p className="mt-4 text-4xl font-bold text-foreground-dark">
-                  {plan.price}
-                  {plan.price !== 'Custom' && plan.price !== 'Personalizado' && (
-                    <span className="text-base font-normal text-foreground-light">{common('perMonth')}</span>
-                  )}
-                </p>
-
-                <ul className="mt-6 space-y-3">
-                  {plan.features.map((feature) => (
-                    <li key={feature} className="flex items-center gap-3 text-sm text-foreground-light">
-                      <Check className="h-4 w-4 flex-shrink-0 text-success" />
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
-
-                <Link
-                  href="/register"
-                  className={`mt-8 block w-full rounded-md px-4 py-2.5 text-center text-sm font-semibold ${
-                    plan.popular
-                      ? 'bg-primary text-white hover:bg-primary-600'
-                      : 'border border-border text-foreground hover:bg-muted'
+            {plans.map((plan, index) => (
+              <ScrollReveal key={plan.name} delay={index * 100}>
+                <div
+                  className={`relative rounded-2xl bg-white p-8 shadow-sm h-full ${
+                    plan.popular ? 'ring-2 ring-primary' : 'border border-border'
                   }`}
                 >
-                  {plan.price === 'Custom' || plan.price === 'Personalizado' ? t('pricing.contactSales') : nav('getStarted')}
-                </Link>
-              </div>
+                  {plan.popular && (
+                    <div className="absolute -top-4 left-1/2 -translate-x-1/2">
+                      <span className="rounded-full bg-primary px-4 py-1 text-sm font-medium text-white">
+                        {t('pricing.mostPopular')}
+                      </span>
+                    </div>
+                  )}
+                  <h3 className="text-lg font-semibold text-foreground-dark">{plan.name}</h3>
+                  <p className="mt-1 text-sm text-foreground-light">{plan.description}</p>
+                  <p className="mt-4 text-4xl font-bold text-foreground-dark">
+                    {plan.price}
+                    {plan.price !== 'Custom' && plan.price !== 'Personalizado' && (
+                      <span className="text-base font-normal text-foreground-light">{common('perMonth')}</span>
+                    )}
+                  </p>
+
+                  <ul className="mt-6 space-y-3">
+                    {plan.features.map((feature) => (
+                      <li key={feature} className="flex items-center gap-3 text-sm text-foreground-light">
+                        <Check className="h-4 w-4 flex-shrink-0 text-success" />
+                        {feature}
+                      </li>
+                    ))}
+                  </ul>
+
+                  <Link
+                    href="/register"
+                    className={`mt-8 block w-full rounded-md px-4 py-2.5 text-center text-sm font-semibold ${
+                      plan.popular
+                        ? 'bg-primary text-white hover:bg-primary-600'
+                        : 'border border-border text-foreground hover:bg-muted'
+                    }`}
+                  >
+                    {plan.price === 'Custom' || plan.price === 'Personalizado' ? t('pricing.contactSales') : nav('getStarted')}
+                  </Link>
+                </div>
+              </ScrollReveal>
             ))}
           </div>
         </div>
@@ -301,28 +270,30 @@ export default async function LandingPage({ params }: Props) {
       {/* CTA */}
       <section className="py-20 sm:py-24">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary to-secondary px-6 py-20 text-center sm:px-16">
-            <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
-              {t('cta.title')}
-            </h2>
-            <p className="mx-auto mt-4 max-w-xl text-lg text-white/80">
-              {t('cta.subtitle')}
-            </p>
-            <div className="mt-10 flex items-center justify-center gap-x-6">
-              <Link
-                href="/register"
-                className="rounded-md bg-white px-6 py-3 text-sm font-semibold text-primary shadow-sm hover:bg-gray-100"
-              >
-                {t('cta.button')}
-              </Link>
-              <a
-                href="https://docs.mkpdfs.com"
-                className="text-sm font-semibold text-white"
-              >
-                {t('cta.learnMore')} <span aria-hidden="true">→</span>
-              </a>
+          <ScrollReveal>
+            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary to-secondary px-6 py-20 text-center sm:px-16">
+              <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
+                {t('cta.title')}
+              </h2>
+              <p className="mx-auto mt-4 max-w-xl text-lg text-white/80">
+                {t('cta.subtitle')}
+              </p>
+              <div className="mt-10 flex items-center justify-center gap-x-6">
+                <Link
+                  href="/register"
+                  className="rounded-md bg-white px-6 py-3 text-sm font-semibold text-primary shadow-sm hover:bg-gray-100"
+                >
+                  {t('cta.button')}
+                </Link>
+                <a
+                  href="https://docs.mkpdfs.com"
+                  className="text-sm font-semibold text-white"
+                >
+                  {t('cta.learnMore')} <span aria-hidden="true">→</span>
+                </a>
+              </div>
             </div>
-          </div>
+          </ScrollReveal>
         </div>
       </section>
 
