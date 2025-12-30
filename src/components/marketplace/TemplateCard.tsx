@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { Card, CardContent } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { FileText, Eye, Plus, Download, Check } from 'lucide-react'
@@ -23,16 +24,20 @@ export function TemplateCard({ template, onPreview, onUse, isLoading, isAdded }:
     <Card className="group transition-all hover:shadow-md">
       <CardContent className="p-4">
         {/* Thumbnail or placeholder */}
-        <div className="mb-3 flex aspect-video items-center justify-center overflow-hidden rounded-lg bg-gray-100">
+        <div className="relative mb-3 aspect-video overflow-hidden rounded-lg bg-gray-100">
           {template.thumbnailUrl ? (
-            <img
+            <Image
               src={template.thumbnailUrl}
               alt={template.name}
-              className="h-full w-full object-cover"
+              fill
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+              className="object-cover"
               loading="lazy"
             />
           ) : (
-            <FileText className="h-12 w-12 text-gray-400" />
+            <div className="flex h-full w-full items-center justify-center">
+              <FileText className="h-12 w-12 text-gray-400" />
+            </div>
           )}
         </div>
 

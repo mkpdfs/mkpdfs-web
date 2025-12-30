@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Image from 'next/image'
 import { Button } from '@/components/ui/Button'
 import { Spinner } from '@/components/ui/Spinner'
 import { X, Plus, Code, FileText, Check } from 'lucide-react'
@@ -71,11 +72,16 @@ export function TemplatePreviewModal({
         {/* Thumbnail Preview */}
         {template.thumbnailUrl && (
           <div className="border-b bg-gray-50 px-6 py-4">
-            <img
-              src={template.thumbnailUrl}
-              alt={template.name}
-              className="mx-auto max-h-64 rounded-lg object-contain shadow-sm"
-            />
+            <div className="relative mx-auto h-64 w-full max-w-xl">
+              <Image
+                src={template.thumbnailUrl}
+                alt={template.name}
+                fill
+                sizes="(max-width: 768px) 100vw, 600px"
+                className="rounded-lg object-contain shadow-sm"
+                priority
+              />
+            </div>
           </div>
         )}
 

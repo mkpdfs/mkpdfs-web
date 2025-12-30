@@ -1,0 +1,13 @@
+# https://www.robotstxt.org/robotstxt.html
+User-agent: *
+Allow: /
+
+# Disallow private/auth-only paths
+Disallow: /api/
+Disallow: /callback
+Disallow: /*/billing/success
+Disallow: /*/billing/cancel
+Disallow: /*/settings
+
+# Sitemap
+Sitemap: https://mkpdfs.com/sitemap.xml
