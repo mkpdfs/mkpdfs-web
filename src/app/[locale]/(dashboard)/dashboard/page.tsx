@@ -11,7 +11,8 @@ import {
   Sparkles,
   Key,
   ArrowRight,
-  Plus,
+  Upload,
+  Wand2,
 } from 'lucide-react'
 
 export default function DashboardPage() {
@@ -71,9 +72,16 @@ export default function DashboardPage() {
     {
       name: t('quickActions.uploadTemplate.name'),
       description: t('quickActions.uploadTemplate.description'),
-      icon: Plus,
+      icon: Upload,
       href: '/templates',
       color: 'from-secondary to-primary',
+    },
+    {
+      name: t('quickActions.aiGenerate.name'),
+      description: t('quickActions.aiGenerate.description'),
+      icon: Wand2,
+      href: '/ai-generate',
+      color: 'from-purple-500 to-pink-500',
     },
   ]
 
@@ -200,7 +208,7 @@ export default function DashboardPage() {
               <div className="pt-2">
                 <Link href="/templates">
                   <Button>
-                    <Plus className="mr-2 h-4 w-4" />
+                    <Upload className="mr-2 h-4 w-4" />
                     {t('gettingStarted.uploadFirstTemplate')}
                   </Button>
                 </Link>

@@ -3,10 +3,9 @@
 import { useState } from 'react'
 import { useTemplates, useDeleteTemplate, useUploadTemplate } from '@/hooks/useApi'
 import { Card, CardContent, Button, Spinner, Input, Label, DropZone } from '@/components/ui'
-import { AIGenerateSection } from '@/components/templates/AIGenerateSection'
 import { formatDate } from '@/lib/utils'
 import { toast } from '@/hooks/useToast'
-import { FileText, Trash2, Search, X, Upload, Sparkles } from 'lucide-react'
+import { FileText, Trash2, Search, Upload, X } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 
 export default function TemplatesPage() {
@@ -16,17 +15,12 @@ export default function TemplatesPage() {
   const t = useTranslations('templates')
   const common = useTranslations('common')
   const errors = useTranslations('errors')
-  const ai = useTranslations('ai')
 
-  const [activeTab, setActiveTab] = useState<'upload' | 'ai-generate'>('upload')
   const [searchQuery, setSearchQuery] = useState('')
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false)
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [templateName, setTemplateName] = useState('')
   const [description, setDescription] = useState('')
-
-  const filteredTemplates = templates?.filter((template) =>
-    template.name.toLowerCase().includes(searchQuery.toLowerCase())
-  )
 
   const handleFileSelect = (file: File) => {
     setSelectedFile(file)
@@ -38,6 +32,11 @@ export default function TemplatesPage() {
     setSelectedFile(null)
     setTemplateName('')
     setDescription('')
+  }
+
+  const handleCloseModal = () => {
+    setIsUploadModalOpen(false)
+    handleClearFile()
   }
 
   const handleUpload = async () => {
@@ -53,7 +52,7 @@ export default function TemplatesPage() {
         title: t('uploadDialog.success'),
         description: `"${templateName}"`,
       })
-      handleClearFile()
+      handleCloseModal()
     } catch (err) {
       toast({
         title: t('uploadDialog.error'),
@@ -62,6 +61,10 @@ export default function TemplatesPage() {
       })
     }
   }
+
+  const filteredTemplates = templates?.filter((template) =>
+    template.name.toLowerCase().includes(searchQuery.toLowerCase())
+  )
 
   const handleDelete = async (templateId: string, templateName: string) => {
     if (!confirm(t('card.deleteConfirm'))) {
@@ -86,106 +89,18 @@ export default function TemplatesPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-foreground-dark">{t('title')}</h1>
-        <p className="mt-1 text-sm text-foreground-light">
-          {t('subtitle')}
-        </p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground-dark">{t('title')}</h1>
+          <p className="mt-1 text-sm text-foreground-light">
+            {t('subtitle')}
+          </p>
+        </div>
+        <Button onClick={() => setIsUploadModalOpen(true)}>
+          <Upload className="mr-2 h-4 w-4" />
+          {t('uploadTemplate')}
+        </Button>
       </div>
-
-      {/* Tab Navigation */}
-      <div className="flex gap-1 rounded-lg bg-muted p-1 max-w-md">
-        <button
-          onClick={() => setActiveTab('upload')}
-          className={`flex-1 flex items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors ${
-            activeTab === 'upload'
-              ? 'bg-background shadow-sm text-foreground'
-              : 'text-muted-foreground hover:text-foreground'
-          }`}
-        >
-          <Upload className="h-4 w-4" />
-          {t('tabs.upload')}
-        </button>
-        <button
-          onClick={() => setActiveTab('ai-generate')}
-          className={`flex-1 flex items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors ${
-            activeTab === 'ai-generate'
-              ? 'bg-background shadow-sm text-foreground'
-              : 'text-muted-foreground hover:text-foreground'
-          }`}
-        >
-          <Sparkles className="h-4 w-4" />
-          {t('tabs.aiGenerate')}
-        </button>
-      </div>
-
-      {/* Upload Section */}
-      {activeTab === 'upload' && (
-        <Card>
-          <CardContent className="p-6">
-            {!selectedFile ? (
-              <DropZone onFileSelect={handleFileSelect} disabled={uploadTemplate.isPending} />
-            ) : (
-              <div className="space-y-4">
-                <div className="flex items-center justify-between rounded-lg bg-muted/50 p-3">
-                  <div className="flex items-center gap-3">
-                    <FileText className="h-5 w-5 text-primary" />
-                    <span className="text-sm font-medium">{selectedFile.name}</span>
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={handleClearFile}
-                    disabled={uploadTemplate.isPending}
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
-                </div>
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <div className="space-y-2">
-                    <Label htmlFor="templateName">{t('uploadDialog.name')} *</Label>
-                    <Input
-                      id="templateName"
-                      value={templateName}
-                      onChange={(e) => setTemplateName(e.target.value)}
-                      placeholder={t('uploadDialog.namePlaceholder')}
-                      disabled={uploadTemplate.isPending}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="description">{t('uploadDialog.description')}</Label>
-                    <Input
-                      id="description"
-                      value={description}
-                      onChange={(e) => setDescription(e.target.value)}
-                      placeholder={t('uploadDialog.descriptionPlaceholder')}
-                      disabled={uploadTemplate.isPending}
-                    />
-                  </div>
-                </div>
-                <div className="flex justify-end">
-                  <Button
-                    onClick={handleUpload}
-                    disabled={!templateName.trim() || uploadTemplate.isPending}
-                  >
-                    {uploadTemplate.isPending ? (
-                      <>
-                        <Spinner size="sm" className="mr-2" />
-                        {common('loading')}
-                      </>
-                    ) : (
-                      t('uploadDialog.submit')
-                    )}
-                  </Button>
-                </div>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      )}
-
-      {/* AI Generate Section */}
-      {activeTab === 'ai-generate' && <AIGenerateSection />}
 
       {/* Search */}
       <div className="relative max-w-sm">
@@ -218,6 +133,12 @@ export default function TemplatesPage() {
             <p className="mt-2 text-sm text-foreground-light">
               {searchQuery ? t('empty.tryAgain') : t('empty.description')}
             </p>
+            {!searchQuery && (
+              <Button onClick={() => setIsUploadModalOpen(true)} className="mt-4">
+                <Upload className="mr-2 h-4 w-4" />
+                {t('uploadTemplate')}
+              </Button>
+            )}
           </CardContent>
         </Card>
       ) : (
@@ -255,6 +176,104 @@ export default function TemplatesPage() {
               </CardContent>
             </Card>
           ))}
+        </div>
+      )}
+
+      {/* Upload Modal */}
+      {isUploadModalOpen && (
+        <div className="fixed inset-0 z-50">
+          {/* Background overlay */}
+          <div
+            className="fixed inset-0 bg-foreground-dark/50 backdrop-blur-sm"
+            onClick={handleCloseModal}
+          />
+
+          {/* Modal panel */}
+          <div className="fixed inset-0 flex items-center justify-center p-4">
+            <div className="relative w-full max-w-lg rounded-lg bg-white p-6 shadow-xl">
+              {/* Header */}
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-semibold text-foreground-dark">
+                  {t('uploadDialog.title')}
+                </h2>
+                <button
+                  onClick={handleCloseModal}
+                  className="rounded-md p-1 text-foreground-light hover:bg-muted hover:text-foreground"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+
+              {/* Content */}
+              <div className="space-y-4">
+                {!selectedFile ? (
+                  <DropZone onFileSelect={handleFileSelect} disabled={uploadTemplate.isPending} />
+                ) : (
+                  <>
+                    <div className="flex items-center justify-between rounded-lg bg-muted/50 p-3">
+                      <div className="flex items-center gap-3">
+                        <FileText className="h-5 w-5 text-primary" />
+                        <span className="text-sm font-medium">{selectedFile.name}</span>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={handleClearFile}
+                        disabled={uploadTemplate.isPending}
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="templateName">{t('uploadDialog.name')} *</Label>
+                      <Input
+                        id="templateName"
+                        value={templateName}
+                        onChange={(e) => setTemplateName(e.target.value)}
+                        placeholder={t('uploadDialog.namePlaceholder')}
+                        disabled={uploadTemplate.isPending}
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="description">{t('uploadDialog.description')}</Label>
+                      <Input
+                        id="description"
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
+                        placeholder={t('uploadDialog.descriptionPlaceholder')}
+                        disabled={uploadTemplate.isPending}
+                      />
+                    </div>
+                  </>
+                )}
+              </div>
+
+              {/* Footer */}
+              <div className="mt-6 flex justify-end gap-3">
+                <Button variant="outline" onClick={handleCloseModal} disabled={uploadTemplate.isPending}>
+                  {common('cancel')}
+                </Button>
+                <Button
+                  onClick={handleUpload}
+                  disabled={!selectedFile || !templateName.trim() || uploadTemplate.isPending}
+                >
+                  {uploadTemplate.isPending ? (
+                    <>
+                      <Spinner size="sm" className="mr-2" />
+                      {common('loading')}
+                    </>
+                  ) : (
+                    <>
+                      <Upload className="mr-2 h-4 w-4" />
+                      {t('uploadDialog.submit')}
+                    </>
+                  )}
+                </Button>
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </div>

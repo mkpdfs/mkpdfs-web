@@ -12,6 +12,8 @@ import {
   CreditCard,
   FileText as Logo,
   Store,
+  Wand2,
+  Code,
 } from 'lucide-react'
 
 export function Sidebar() {
@@ -22,8 +24,10 @@ export function Sidebar() {
   const navigation = [
     { name: t('dashboard'), href: '/dashboard', icon: LayoutDashboard },
     { name: t('marketplace'), href: '/marketplace', icon: Store },
-    { name: t('templates'), href: '/templates', icon: FileText },
+    { name: t('myTemplates'), href: '/templates', icon: FileText },
+    { name: t('aiGenerate'), href: '/ai-generate', icon: Wand2 },
     { name: t('generate'), href: '/generate', icon: Sparkles },
+    { name: t('integration'), href: '/integration', icon: Code },
     { name: t('apiKeys'), href: '/api-keys', icon: Key },
   ]
 

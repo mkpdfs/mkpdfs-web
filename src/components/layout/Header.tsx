@@ -19,12 +19,18 @@ import {
   LogOut,
   User,
   FileText as Logo,
+  Store,
+  Wand2,
+  Code,
 } from 'lucide-react'
 
 const navigationItems = [
   { key: 'dashboard', href: '/dashboard', icon: LayoutDashboard },
-  { key: 'templates', href: '/templates', icon: FileText },
+  { key: 'marketplace', href: '/marketplace', icon: Store },
+  { key: 'myTemplates', href: '/templates', icon: FileText },
+  { key: 'aiGenerate', href: '/ai-generate', icon: Wand2 },
   { key: 'generate', href: '/generate', icon: Sparkles },
+  { key: 'integration', href: '/integration', icon: Code },
   { key: 'apiKeys', href: '/api-keys', icon: Key },
   { key: 'usage', href: '/usage', icon: BarChart3 },
   { key: 'settings', href: '/settings', icon: Settings },
@@ -62,11 +68,6 @@ export function Header() {
           <div className="hidden lg:block lg:h-6 lg:w-px lg:bg-border" />
 
           <div className="flex items-center gap-3">
-            <div className="hidden sm:flex sm:flex-col sm:items-end sm:text-sm">
-              <span className="font-medium text-foreground">{user?.name || 'User'}</span>
-              <span className="text-foreground-light">{user?.email}</span>
-            </div>
-
             <Button
               variant="ghost"
               size="sm"
@@ -142,10 +143,6 @@ export function Header() {
               <div className="flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-50">
                   <User className="h-5 w-5 text-primary" />
-                </div>
-                <div className="flex flex-col text-sm">
-                  <span className="font-medium text-foreground">{user?.name || 'User'}</span>
-                  <span className="text-foreground-light">{user?.email}</span>
                 </div>
               </div>
 
