@@ -6,10 +6,14 @@ import { Card, CardHeader, CardTitle, CardContent, Button, Label, Spinner } from
 import { CodeSnippets } from '@/components/CodeSnippets'
 import { toast } from '@/hooks/useToast'
 import { Sparkles, FileText, Download } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 
 export default function GeneratePage() {
   const { data: templates, isLoading: templatesLoading } = useTemplates()
   const generatePdf = useGeneratePdf()
+  const t = useTranslations('generate')
+  const common = useTranslations('common')
+  const errors = useTranslations('errors')
 
   const [selectedTemplate, setSelectedTemplate] = useState('')
   const [jsonData, setJsonData] = useState('{\n  "name": "John Doe",\n  "date": "2025-01-01"\n}')
@@ -18,8 +22,8 @@ export default function GeneratePage() {
   const handleGenerate = async () => {
     if (!selectedTemplate) {
       toast({
-        title: 'Error',
-        description: 'Please select a template.',
+        title: common('error'),
+        description: t('noTemplates'),
         variant: 'destructive',
       })
       return
@@ -30,8 +34,8 @@ export default function GeneratePage() {
       parsedData = JSON.parse(jsonData)
     } catch (e) {
       toast({
-        title: 'Invalid JSON',
-        description: 'Please enter valid JSON data.',
+        title: t('invalidJson'),
+        description: errors('validationError'),
         variant: 'destructive',
       })
       return
@@ -46,14 +50,16 @@ export default function GeneratePage() {
       if (result.pdfUrl) {
         setGeneratedUrl(result.pdfUrl)
         toast({
-          title: 'PDF Generated',
-          description: 'Your PDF is ready to download.',
+          title: t('success'),
+          description: t('successDescription'),
         })
       }
     } catch (err) {
+      const message = err instanceof Error ? err.message : errors('generic')
+      const isLimitError = message.toLowerCase().includes('limit')
       toast({
-        title: 'Generation Failed',
-        description: 'Failed to generate PDF. Please try again.',
+        title: isLimitError ? errors('limitReached') : t('error'),
+        description: message,
         variant: 'destructive',
       })
     }
@@ -63,9 +69,9 @@ export default function GeneratePage() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-foreground-dark">Generate PDF</h1>
+        <h1 className="text-2xl font-bold text-foreground-dark">{t('title')}</h1>
         <p className="mt-1 text-sm text-foreground-light">
-          Create a PDF from your templates with custom data.
+          {t('subtitle')}
         </p>
       </div>
 
@@ -73,11 +79,11 @@ export default function GeneratePage() {
         {/* Form */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg">Configuration</CardTitle>
+            <CardTitle className="text-lg">{t('configuration')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="template">Template</Label>
+              <Label htmlFor="template">{t('selectTemplate')}</Label>
               {templatesLoading ? (
                 <Spinner size="sm" />
               ) : (
@@ -87,7 +93,7 @@ export default function GeneratePage() {
                   onChange={(e) => setSelectedTemplate(e.target.value)}
                   className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                 >
-                  <option value="">Select a template...</option>
+                  <option value="">{t('selectTemplatePlaceholder')}</option>
                   {templates?.map((template) => (
                     <option key={template.id} value={template.id}>
                       {template.name}
@@ -98,14 +104,14 @@ export default function GeneratePage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="data">JSON Data</Label>
+              <Label htmlFor="data">{t('jsonData')}</Label>
               <textarea
                 id="data"
                 value={jsonData}
                 onChange={(e) => setJsonData(e.target.value)}
                 rows={10}
                 className="flex w-full rounded-md border border-input bg-background px-3 py-2 font-mono text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                placeholder='{"key": "value"}'
+                placeholder={t('jsonDataPlaceholder')}
               />
             </div>
 
@@ -116,7 +122,7 @@ export default function GeneratePage() {
               className="w-full"
             >
               <Sparkles className="mr-2 h-4 w-4" />
-              Generate PDF
+              {t('submit')}
             </Button>
           </CardContent>
         </Card>
@@ -124,12 +130,12 @@ export default function GeneratePage() {
         {/* Preview */}
         <Card className="flex flex-col">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-lg">Preview</CardTitle>
+            <CardTitle className="text-lg">{t('preview')}</CardTitle>
             {generatedUrl && (
               <a href={generatedUrl} target="_blank" rel="noopener noreferrer">
                 <Button variant="outline" size="sm">
                   <Download className="mr-2 h-4 w-4" />
-                  Download
+                  {common('download')}
                 </Button>
               </a>
             )}
@@ -139,13 +145,13 @@ export default function GeneratePage() {
               <iframe
                 src={generatedUrl}
                 className="h-[500px] w-full rounded-md border"
-                title="PDF Preview"
+                title={t('preview')}
               />
             ) : (
               <div className="flex h-[500px] flex-col items-center justify-center rounded-md border border-dashed text-center">
                 <FileText className="h-12 w-12 text-muted-foreground" />
                 <p className="mt-4 text-sm text-foreground-light">
-                  Your generated PDF will appear here.
+                  {t('previewPlaceholder')}
                 </p>
               </div>
             )}

@@ -6,11 +6,15 @@ import { Card, CardContent, Button, Spinner, Input, Label, DropZone } from '@/co
 import { formatDate } from '@/lib/utils'
 import { toast } from '@/hooks/useToast'
 import { FileText, Trash2, Search, X } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 
 export default function TemplatesPage() {
   const { data: templates, isLoading, error } = useTemplates()
   const deleteTemplate = useDeleteTemplate()
   const uploadTemplate = useUploadTemplate()
+  const t = useTranslations('templates')
+  const common = useTranslations('common')
+  const errors = useTranslations('errors')
 
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
@@ -43,34 +47,34 @@ export default function TemplatesPage() {
         description: description.trim() || undefined,
       })
       toast({
-        title: 'Template uploaded',
-        description: `"${templateName}" has been uploaded successfully.`,
+        title: t('uploadDialog.success'),
+        description: `"${templateName}"`,
       })
       handleClearFile()
     } catch (err) {
       toast({
-        title: 'Upload failed',
-        description: err instanceof Error ? err.message : 'Failed to upload template.',
+        title: t('uploadDialog.error'),
+        description: err instanceof Error ? err.message : errors('generic'),
         variant: 'destructive',
       })
     }
   }
 
   const handleDelete = async (templateId: string, templateName: string) => {
-    if (!confirm(`Are you sure you want to delete "${templateName}"?`)) {
+    if (!confirm(t('card.deleteConfirm'))) {
       return
     }
 
     try {
       await deleteTemplate.mutateAsync(templateId)
       toast({
-        title: 'Template deleted',
-        description: `"${templateName}" has been deleted.`,
+        title: t('card.delete'),
+        description: `"${templateName}"`,
       })
     } catch (err) {
       toast({
-        title: 'Error',
-        description: 'Failed to delete template.',
+        title: common('error'),
+        description: errors('generic'),
         variant: 'destructive',
       })
     }
@@ -80,9 +84,9 @@ export default function TemplatesPage() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-foreground-dark">Templates</h1>
+        <h1 className="text-2xl font-bold text-foreground-dark">{t('title')}</h1>
         <p className="mt-1 text-sm text-foreground-light">
-          Manage your Handlebars templates for PDF generation.
+          {t('subtitle')}
         </p>
       </div>
 
@@ -109,22 +113,22 @@ export default function TemplatesPage() {
               </div>
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="templateName">Template Name *</Label>
+                  <Label htmlFor="templateName">{t('uploadDialog.name')} *</Label>
                   <Input
                     id="templateName"
                     value={templateName}
                     onChange={(e) => setTemplateName(e.target.value)}
-                    placeholder="Enter template name"
+                    placeholder={t('uploadDialog.namePlaceholder')}
                     disabled={uploadTemplate.isPending}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="description">Description (optional)</Label>
+                  <Label htmlFor="description">{t('uploadDialog.description')}</Label>
                   <Input
                     id="description"
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
-                    placeholder="Enter description"
+                    placeholder={t('uploadDialog.descriptionPlaceholder')}
                     disabled={uploadTemplate.isPending}
                   />
                 </div>
@@ -137,10 +141,10 @@ export default function TemplatesPage() {
                   {uploadTemplate.isPending ? (
                     <>
                       <Spinner size="sm" className="mr-2" />
-                      Uploading...
+                      {common('loading')}
                     </>
                   ) : (
-                    'Upload Template'
+                    t('uploadDialog.submit')
                   )}
                 </Button>
               </div>
@@ -153,7 +157,7 @@ export default function TemplatesPage() {
       <div className="relative max-w-sm">
         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <Input
-          placeholder="Search templates..."
+          placeholder={common('search')}
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="pl-10"
@@ -168,19 +172,17 @@ export default function TemplatesPage() {
       ) : error ? (
         <Card>
           <CardContent className="py-12 text-center">
-            <p className="text-destructive">Failed to load templates. Please try again.</p>
+            <p className="text-destructive">{errors('generic')}</p>
           </CardContent>
         </Card>
       ) : filteredTemplates?.length === 0 ? (
         <Card className="border-dashed">
           <CardContent className="py-12 text-center">
             <h3 className="text-lg font-medium text-foreground-dark">
-              {searchQuery ? 'No templates found' : 'No templates yet'}
+              {searchQuery ? t('empty.noResults') : t('empty.title')}
             </h3>
             <p className="mt-2 text-sm text-foreground-light">
-              {searchQuery
-                ? 'Try a different search term.'
-                : 'Upload your first Handlebars template using the drop zone above.'}
+              {searchQuery ? t('empty.tryAgain') : t('empty.description')}
             </p>
           </CardContent>
         </Card>

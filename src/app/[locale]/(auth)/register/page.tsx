@@ -6,10 +6,13 @@ import { useAuth } from '@/providers'
 import { confirmSignUp } from '@/lib/auth'
 import { Button, Input, Label, Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter, PageLoader } from '@/components/ui'
 import { Eye, EyeOff, FileText, Check, X } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 
 export default function RegisterPage() {
   const router = useRouter()
   const { signUp, signIn, isAuthenticated, isLoading, isInitializing, error, clearError } = useAuth()
+  const t = useTranslations('auth.register')
+  const login = useTranslations('auth.login')
 
   const [step, setStep] = useState<'register' | 'verify'>('register')
   const [name, setName] = useState('')
@@ -23,11 +26,11 @@ export default function RegisterPage() {
 
   // Password requirements
   const passwordRequirements = [
-    { label: 'At least 8 characters', met: password.length >= 8 },
-    { label: 'Contains uppercase letter', met: /[A-Z]/.test(password) },
-    { label: 'Contains lowercase letter', met: /[a-z]/.test(password) },
-    { label: 'Contains number', met: /[0-9]/.test(password) },
-    { label: 'Contains special character', met: /[^A-Za-z0-9]/.test(password) },
+    { label: t('requirements.minLength'), met: password.length >= 8 },
+    { label: t('requirements.uppercase'), met: /[A-Z]/.test(password) },
+    { label: t('requirements.lowercase'), met: /[a-z]/.test(password) },
+    { label: t('requirements.number'), met: /[0-9]/.test(password) },
+    { label: t('requirements.specialChar'), met: /[^A-Za-z0-9]/.test(password) },
   ]
 
   const allRequirementsMet = passwordRequirements.every((req) => req.met)
@@ -52,12 +55,12 @@ export default function RegisterPage() {
     e.preventDefault()
 
     if (!allRequirementsMet) {
-      setLocalError('Password does not meet requirements')
+      setLocalError(t('passwordNotMet'))
       return
     }
 
     if (!passwordsMatch) {
-      setLocalError('Passwords do not match')
+      setLocalError(t('passwordMismatch'))
       return
     }
 
@@ -89,14 +92,14 @@ export default function RegisterPage() {
         router.push('/login')
       }
     } else {
-      setLocalError(result.error || 'Invalid verification code')
+      setLocalError(result.error || t('verify.invalidCode'))
     }
 
     setIsSubmitting(false)
   }
 
   if (isInitializing || isAuthenticated) {
-    return <PageLoader message="Checking session..." />
+    return <PageLoader message={login('checkingSession')} />
   }
 
   return (
@@ -107,12 +110,12 @@ export default function RegisterPage() {
             <FileText className="h-6 w-6 text-white" />
           </div>
           <CardTitle className="text-2xl">
-            {step === 'register' ? 'Create an account' : 'Verify your email'}
+            {step === 'register' ? t('title') : t('verify.title')}
           </CardTitle>
           <CardDescription>
             {step === 'register'
-              ? 'Start generating PDFs in minutes'
-              : `We sent a verification code to ${email}`}
+              ? t('subtitle')
+              : t('verify.subtitle', { email })}
           </CardDescription>
         </CardHeader>
 
@@ -126,11 +129,11 @@ export default function RegisterPage() {
               )}
 
               <div className="space-y-2">
-                <Label htmlFor="name">Full Name</Label>
+                <Label htmlFor="name">{t('name')}</Label>
                 <Input
                   id="name"
                   type="text"
-                  placeholder="John Doe"
+                  placeholder={t('namePlaceholder')}
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   required
@@ -139,11 +142,11 @@ export default function RegisterPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email">{t('email')}</Label>
                 <Input
                   id="email"
                   type="email"
-                  placeholder="you@example.com"
+                  placeholder={t('emailPlaceholder')}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -152,12 +155,12 @@ export default function RegisterPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password">{t('password')}</Label>
                 <div className="relative">
                   <Input
                     id="password"
                     type={showPassword ? 'text' : 'password'}
-                    placeholder="Create a password"
+                    placeholder={t('passwordPlaceholder')}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
@@ -198,11 +201,11 @@ export default function RegisterPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="confirmPassword">Confirm Password</Label>
+                <Label htmlFor="confirmPassword">{t('confirmPassword')}</Label>
                 <Input
                   id="confirmPassword"
                   type="password"
-                  placeholder="Confirm your password"
+                  placeholder={t('confirmPasswordPlaceholder')}
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
@@ -210,7 +213,7 @@ export default function RegisterPage() {
                   error={confirmPassword.length > 0 && !passwordsMatch}
                 />
                 {confirmPassword.length > 0 && !passwordsMatch && (
-                  <p className="text-xs text-destructive">Passwords do not match</p>
+                  <p className="text-xs text-destructive">{t('passwordMismatch')}</p>
                 )}
               </div>
             </CardContent>
@@ -222,13 +225,13 @@ export default function RegisterPage() {
                 isLoading={isSubmitting || isLoading}
                 disabled={!name || !email || !allRequirementsMet || !passwordsMatch}
               >
-                Create Account
+                {t('submit')}
               </Button>
 
               <p className="text-center text-sm text-muted-foreground">
-                Already have an account?{' '}
+                {t('hasAccount')}{' '}
                 <Link href="/login" className="text-primary hover:underline">
-                  Sign in
+                  {t('signIn')}
                 </Link>
               </p>
             </CardFooter>
@@ -243,11 +246,11 @@ export default function RegisterPage() {
               )}
 
               <div className="space-y-2">
-                <Label htmlFor="code">Verification Code</Label>
+                <Label htmlFor="code">{t('verify.code')}</Label>
                 <Input
                   id="code"
                   type="text"
-                  placeholder="Enter 6-digit code"
+                  placeholder={t('verify.codePlaceholder')}
                   value={verificationCode}
                   onChange={(e) => setVerificationCode(e.target.value)}
                   required
@@ -265,7 +268,7 @@ export default function RegisterPage() {
                 isLoading={isSubmitting}
                 disabled={verificationCode.length !== 6}
               >
-                Verify Email
+                {t('verify.submit')}
               </Button>
 
               <button
@@ -273,7 +276,7 @@ export default function RegisterPage() {
                 onClick={() => setStep('register')}
                 className="text-sm text-muted-foreground hover:text-foreground"
               >
-                Back to registration
+                {t('verify.backToRegister')}
               </button>
             </CardFooter>
           </form>

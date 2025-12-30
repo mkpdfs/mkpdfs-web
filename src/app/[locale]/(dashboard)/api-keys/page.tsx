@@ -2,15 +2,19 @@
 
 import { useState } from 'react'
 import { useTokens, useCreateToken, useDeleteToken } from '@/hooks/useApi'
-import { Card, CardHeader, CardTitle, CardContent, Button, Input, Label, Spinner } from '@/components/ui'
+import { Card, CardHeader, CardTitle, CardContent, Button, Input, Spinner } from '@/components/ui'
 import { formatDate } from '@/lib/utils'
 import { toast } from '@/hooks/useToast'
 import { Key, Plus, Trash2, Copy, Eye, EyeOff } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 
 export default function ApiKeysPage() {
   const { data: tokens, isLoading } = useTokens()
   const createToken = useCreateToken()
   const deleteToken = useDeleteToken()
+  const t = useTranslations('apiKeys')
+  const common = useTranslations('common')
+  const errors = useTranslations('errors')
 
   const [newTokenName, setNewTokenName] = useState('')
   const [newToken, setNewToken] = useState<string | null>(null)
@@ -19,8 +23,8 @@ export default function ApiKeysPage() {
   const handleCreate = async () => {
     if (!newTokenName.trim()) {
       toast({
-        title: 'Error',
-        description: 'Please enter a name for your API key.',
+        title: common('error'),
+        description: t('createDialog.nameHint'),
         variant: 'destructive',
       })
       return
@@ -31,31 +35,33 @@ export default function ApiKeysPage() {
       setNewToken(result.token)
       setNewTokenName('')
       toast({
-        title: 'API Key Created',
-        description: 'Make sure to copy your key - it won\'t be shown again.',
+        title: t('createDialog.success'),
+        description: t('warning'),
       })
     } catch (err) {
+      const message = err instanceof Error ? err.message : t('createDialog.error')
+      const isLimitError = message.toLowerCase().includes('limit')
       toast({
-        title: 'Error',
-        description: 'Failed to create API key.',
+        title: isLimitError ? errors('limitReached') : common('error'),
+        description: message,
         variant: 'destructive',
       })
     }
   }
 
   const handleDelete = async (tokenId: string, tokenName: string) => {
-    if (!confirm(`Are you sure you want to delete "${tokenName}"?`)) return
+    if (!confirm(t('card.revokeConfirm'))) return
 
     try {
       await deleteToken.mutateAsync(tokenId)
       toast({
-        title: 'API Key Deleted',
-        description: `"${tokenName}" has been deleted.`,
+        title: t('card.revoke'),
+        description: `"${tokenName}"`,
       })
     } catch (err) {
       toast({
-        title: 'Error',
-        description: 'Failed to delete API key.',
+        title: common('error'),
+        description: errors('generic'),
         variant: 'destructive',
       })
     }
@@ -63,42 +69,42 @@ export default function ApiKeysPage() {
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text)
-    toast({ title: 'Copied to clipboard' })
+    toast({ title: common('copied') })
   }
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-foreground-dark">API Keys</h1>
+        <h1 className="text-2xl font-bold text-foreground-dark">{t('title')}</h1>
         <p className="mt-1 text-sm text-foreground-light">
-          Manage API keys for programmatic access to mkpdfs.
+          {t('subtitle')}
         </p>
       </div>
 
       {/* Create New Key */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Create New API Key</CardTitle>
+          <CardTitle className="text-lg">{t('create')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex gap-4">
             <div className="flex-1">
               <Input
-                placeholder="API Key Name (e.g., Production, Development)"
+                placeholder={t('createDialog.namePlaceholder')}
                 value={newTokenName}
                 onChange={(e) => setNewTokenName(e.target.value)}
               />
             </div>
             <Button onClick={handleCreate} isLoading={createToken.isPending}>
               <Plus className="mr-2 h-4 w-4" />
-              Create Key
+              {t('createDialog.submit')}
             </Button>
           </div>
 
           {newToken && (
             <div className="mt-4 rounded-lg bg-warning/10 p-4">
               <p className="mb-2 text-sm font-medium text-warning-foreground">
-                Save this key now - it won&apos;t be shown again!
+                {t('warning')}
               </p>
               <div className="flex items-center gap-2">
                 <code className="flex-1 rounded bg-background p-2 font-mono text-sm">
@@ -119,7 +125,7 @@ export default function ApiKeysPage() {
       {/* Existing Keys */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Your API Keys</CardTitle>
+          <CardTitle className="text-lg">{t('yourKeys')}</CardTitle>
         </CardHeader>
         <CardContent>
           {isLoading ? (
@@ -129,7 +135,7 @@ export default function ApiKeysPage() {
           ) : tokens?.length === 0 ? (
             <div className="py-8 text-center text-foreground-light">
               <Key className="mx-auto h-12 w-12 text-muted-foreground" />
-              <p className="mt-4">No API keys yet. Create one above.</p>
+              <p className="mt-4">{t('empty.description')}</p>
             </div>
           ) : (
             <div className="space-y-3">
@@ -145,8 +151,8 @@ export default function ApiKeysPage() {
                     <div>
                       <p className="font-medium text-foreground-dark">{token.name}</p>
                       <p className="text-sm text-foreground-light">
-                        Created {formatDate(token.createdAt)}
-                        {token.lastUsed && ` • Last used ${formatDate(token.lastUsed)}`}
+                        {t('card.created', { date: formatDate(token.createdAt) })}
+                        {token.lastUsed && ` • ${t('card.lastUsed', { date: formatDate(token.lastUsed) })}`}
                       </p>
                     </div>
                   </div>
