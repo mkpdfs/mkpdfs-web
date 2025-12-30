@@ -98,6 +98,21 @@ export interface GeneratePdfResponse {
   pdfUrl?: string
   jobId?: string
   message?: string
+  size?: number
+  pagesGenerated?: number
+  expiresIn?: string
+}
+
+// Async Job Status types
+export interface JobStatus {
+  jobId: string
+  status: 'pending' | 'processing' | 'completed' | 'failed'
+  pdfUrl?: string
+  size?: number
+  pagesGenerated?: number
+  error?: string
+  createdAt: string
+  completedAt?: string
 }
 
 // API Response types

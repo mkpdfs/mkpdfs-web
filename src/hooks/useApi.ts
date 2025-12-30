@@ -17,6 +17,8 @@ import {
   deleteToken,
   getUsage,
   generatePdf,
+  generatePdfAsync,
+  getJobStatus,
   generateAITemplate,
   getMarketplaceTemplates,
   getMarketplaceTemplate,
@@ -177,6 +179,27 @@ export function useGeneratePdf() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.usage })
     },
+  })
+}
+
+export function useGeneratePdfAsync() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (request: GeneratePdfRequest & { webhookUrl?: string }) => generatePdfAsync(request),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.usage })
+    },
+  })
+}
+
+export function useJobStatus(jobId: string | null) {
+  return useQuery({
+    queryKey: ['job', jobId] as const,
+    queryFn: () => getJobStatus(jobId!),
+    enabled: !!jobId,
+    // Manual refetch only - no auto-polling
+    refetchOnWindowFocus: false,
   })
 }
 

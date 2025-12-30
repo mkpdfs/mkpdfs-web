@@ -516,22 +516,67 @@
     "noTemplates": "No templates yet.",
     "noTokens": "No API keys yet.",
     "createOne": "Create one",
-    "quickStart": {
-      "title": "Quick Start",
-      "step1": "Select a template above",
-      "step2": "Choose an API key",
-      "step3": "Copy the code snippet for your language"
+    "createApiKey": "Create new API Key",
+    "next": "Next",
+    "back": "Back",
+    "optional": "optional",
+    "steps": {
+      "configuration": "Configuration",
+      "requestBody": "Request Body",
+      "method": "Generation Method",
+      "code": "Code",
+      "test": "Test"
+    },
+    "body": {
+      "title": "Request Body",
+      "description": "The data that will be merged with your Handlebars template.",
+      "keyValue": "Key-Value",
+      "jsonPlaceholder": "'{'\"key\": \"value\"'}'",
+      "keyPlaceholder": "Key",
+      "valuePlaceholder": "Value",
+      "addField": "Add Field",
+      "invalidJson": "Invalid JSON"
+    },
+    "method": {
+      "description": "Choose how you want to generate your PDF."
     },
     "sync": {
-      "title": "Synchronous Generation",
-      "description": "Best for small templates and when you need an immediate response. Returns the PDF URL directly.",
-      "timeout": "Timeout: 30 seconds. For larger documents, use async generation."
+      "title": "Synchronous",
+      "description": "Best for small templates. Returns the PDF URL directly in the response.",
+      "timeout": "30 second timeout"
     },
     "async": {
-      "title": "Asynchronous Generation",
-      "description": "Best for large documents, batch processing, or when you don't need immediate results. Use webhooks or polling to get the result.",
-      "webhookTitle": "Webhook Handler Example",
-      "webhookDescription": "If you provide a webhookUrl, we'll POST the result to your server when the job completes."
+      "title": "Asynchronous",
+      "description": "Best for large documents or batch processing. Returns a job ID to check status.",
+      "webhookSupport": "Webhook notifications supported",
+      "webhookUrl": "Webhook URL",
+      "webhookDescription": "We'll POST the result to this URL when the job completes."
+    },
+    "test": {
+      "tryIt": "Try It",
+      "note": "This will use your API quota.",
+      "description": "Test your PDF generation with the configured settings.",
+      "success": "PDF Generated Successfully!",
+      "asyncStarted": "Async Job Started",
+      "jobStarted": "Job has been queued for processing.",
+      "jobQueued": "Your job is being processed. Click 'Check Status' to see if it's completed.",
+      "error": "Generation Failed",
+      "downloadPdf": "Download PDF",
+      "openInNewTab": "Open in new tab",
+      "jobStatus": "Job Status",
+      "status": "Status",
+      "checkStatus": "Check Status",
+      "rawResponse": "API Response",
+      "checkStatusHint": "Click to check if your async job has completed",
+      "checkIfCompleted": "Check if Completed"
+    },
+    "codeSnippets": {
+      "title": "Code Snippets",
+      "syncGeneration": "Generate PDF (Synchronous)",
+      "asyncGeneration": "Start Async Job",
+      "checkStatus": "Check Job Status",
+      "webhookPayload": "Webhook Payload",
+      "webhookDescription": "This is the JSON payload we'll POST to your webhook URL when the job completes."
     },
     "apiRef": {
       "title": "API Reference",

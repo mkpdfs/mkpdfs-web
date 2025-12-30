@@ -516,22 +516,67 @@
     "noTemplates": "Sin plantillas aún.",
     "noTokens": "Sin claves API aún.",
     "createOne": "Crear una",
-    "quickStart": {
-      "title": "Inicio Rápido",
-      "step1": "Selecciona una plantilla arriba",
-      "step2": "Elige una clave API",
-      "step3": "Copia el código para tu lenguaje"
+    "createApiKey": "Crear nueva Clave API",
+    "next": "Siguiente",
+    "back": "Atrás",
+    "optional": "opcional",
+    "steps": {
+      "configuration": "Configuración",
+      "requestBody": "Cuerpo de Petición",
+      "method": "Método de Generación",
+      "code": "Código",
+      "test": "Prueba"
+    },
+    "body": {
+      "title": "Cuerpo de Petición",
+      "description": "Los datos que se fusionarán con tu plantilla Handlebars.",
+      "keyValue": "Clave-Valor",
+      "jsonPlaceholder": "'{'\"clave\": \"valor\"'}'",
+      "keyPlaceholder": "Clave",
+      "valuePlaceholder": "Valor",
+      "addField": "Agregar Campo",
+      "invalidJson": "JSON Inválido"
+    },
+    "method": {
+      "description": "Elige cómo quieres generar tu PDF."
     },
     "sync": {
-      "title": "Generación Síncrona",
-      "description": "Ideal para plantillas pequeñas y cuando necesitas una respuesta inmediata. Devuelve la URL del PDF directamente.",
-      "timeout": "Timeout: 30 segundos. Para documentos más grandes, usa generación asíncrona."
+      "title": "Síncrono",
+      "description": "Ideal para plantillas pequeñas. Devuelve la URL del PDF directamente en la respuesta.",
+      "timeout": "Timeout de 30 segundos"
     },
     "async": {
-      "title": "Generación Asíncrona",
-      "description": "Ideal para documentos grandes, procesamiento por lotes, o cuando no necesitas resultados inmediatos. Usa webhooks o polling para obtener el resultado.",
-      "webhookTitle": "Ejemplo de Handler de Webhook",
-      "webhookDescription": "Si proporcionas un webhookUrl, enviaremos el resultado a tu servidor cuando el trabajo termine."
+      "title": "Asíncrono",
+      "description": "Ideal para documentos grandes o procesamiento por lotes. Devuelve un ID de trabajo para verificar estado.",
+      "webhookSupport": "Notificaciones webhook soportadas",
+      "webhookUrl": "URL del Webhook",
+      "webhookDescription": "Enviaremos el resultado a esta URL cuando el trabajo termine."
+    },
+    "test": {
+      "tryIt": "Probar",
+      "note": "Esto usará tu cuota de API.",
+      "description": "Prueba tu generación de PDF con la configuración actual.",
+      "success": "¡PDF Generado Exitosamente!",
+      "asyncStarted": "Trabajo Asíncrono Iniciado",
+      "jobStarted": "El trabajo ha sido encolado para procesamiento.",
+      "jobQueued": "Tu trabajo está siendo procesado. Haz clic en 'Verificar Estado' para ver si está listo.",
+      "error": "Error de Generación",
+      "downloadPdf": "Descargar PDF",
+      "openInNewTab": "Abrir en nueva pestaña",
+      "jobStatus": "Estado del Trabajo",
+      "status": "Estado",
+      "checkStatus": "Verificar Estado",
+      "rawResponse": "Respuesta de la API",
+      "checkStatusHint": "Haz clic para verificar si tu trabajo asíncrono ha terminado",
+      "checkIfCompleted": "Verificar si Completó"
+    },
+    "codeSnippets": {
+      "title": "Fragmentos de Código",
+      "syncGeneration": "Generar PDF (Síncrono)",
+      "asyncGeneration": "Iniciar Trabajo Asíncrono",
+      "checkStatus": "Verificar Estado del Trabajo",
+      "webhookPayload": "Payload del Webhook",
+      "webhookDescription": "Este es el JSON que enviaremos a tu URL de webhook cuando el trabajo termine."
     },
     "apiRef": {
       "title": "Referencia de API",

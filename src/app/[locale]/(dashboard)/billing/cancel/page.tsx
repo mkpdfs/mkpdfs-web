@@ -1,6 +1,6 @@
 'use client'
 
-import Link from 'next/link'
+import { Link } from '@/i18n/routing'
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, Button } from '@/components/ui'
 import { XCircle, ArrowLeft } from 'lucide-react'
 

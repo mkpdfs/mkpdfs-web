@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
-import Link from 'next/link'
+import { Link } from '@/i18n/routing'
 import { useQueryClient } from '@tanstack/react-query'
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, Button } from '@/components/ui'
 import { CheckCircle, ArrowRight } from 'lucide-react'

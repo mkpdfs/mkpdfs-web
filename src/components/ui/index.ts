@@ -22,3 +22,15 @@ export {
 export { Toaster } from './Toaster'
 export { DropZone } from './DropZone'
 export { LanguageSelector } from './LanguageSelector'
+export {
+  Dialog,
+  DialogPortal,
+  DialogOverlay,
+  DialogClose,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogFooter,
+  DialogTitle,
+  DialogDescription,
+} from './Dialog'

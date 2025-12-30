@@ -1,6 +1,6 @@
 'use client'
 
-import Link from 'next/link'
+import { Link } from '@/i18n/routing'
 import { Lock } from 'lucide-react'
 import { Card, CardContent, Button } from '@/components/ui'
 import { useTranslations } from 'next-intl'
@@ -15,9 +15,9 @@ export function UpgradePrompt({ feature, requiredPlan = 'starter' }: UpgradeProm
   const common = useTranslations('common')
 
   const planNames: Record<string, string> = {
-    starter: t('plans.starter.name'),
-    professional: t('plans.professional.name'),
-    enterprise: t('plans.enterprise.name'),
+    starter: t('currentPlan.starter'),
+    professional: t('currentPlan.professional'),
+    enterprise: t('currentPlan.enterprise'),
   }
 
   return (

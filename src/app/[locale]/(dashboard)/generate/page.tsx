@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from 'react'
-import { useTemplates, useGeneratePdf } from '@/hooks/useApi'
+import { useState, useEffect } from 'react'
+import { useTemplates, useGeneratePdf, useMarketplaceTemplate } from '@/hooks/useApi'
 import { Card, CardHeader, CardTitle, CardContent, Button, Label, Spinner } from '@/components/ui'
 import { CodeSnippets } from '@/components/CodeSnippets'
 import { toast } from '@/hooks/useToast'
@@ -18,6 +18,25 @@ export default function GeneratePage() {
   const [selectedTemplate, setSelectedTemplate] = useState('')
   const [jsonData, setJsonData] = useState('{\n  "name": "John Doe",\n  "date": "2025-01-01"\n}')
   const [generatedUrl, setGeneratedUrl] = useState<string | null>(null)
+
+  // Find selected template to check if it's from marketplace
+  const selectedTemplateData = templates?.find(t => t.id === selectedTemplate)
+  const sourceMarketplaceId = selectedTemplateData?.sourceMarketplaceId
+
+  // Fetch marketplace template data when template is from marketplace
+  const { data: marketplaceTemplate } = useMarketplaceTemplate(sourceMarketplaceId || '')
+
+  // Update jsonData with marketplace template's sample data
+  useEffect(() => {
+    if (marketplaceTemplate?.sampleDataJson) {
+      try {
+        const parsed = JSON.parse(marketplaceTemplate.sampleDataJson)
+        setJsonData(JSON.stringify(parsed, null, 2))
+      } catch {
+        // Keep current jsonData if parsing fails
+      }
+    }
+  }, [marketplaceTemplate])
 
   const handleGenerate = async () => {
     if (!selectedTemplate) {

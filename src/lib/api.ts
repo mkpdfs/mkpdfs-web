@@ -165,6 +165,21 @@ export async function generatePdf(
   })
 }
 
+export async function generatePdfAsync(
+  request: GeneratePdfRequest & { webhookUrl?: string; webhookSecret?: string }
+): Promise<GeneratePdfResponse> {
+  return authFetch<GeneratePdfResponse>('/jobs/submit', {
+    method: 'POST',
+    body: JSON.stringify(request),
+  })
+}
+
+export async function getJobStatus(jobId: string): Promise<import('@/types').JobStatus> {
+  return authFetch<import('@/types').JobStatus>(`/jobs/${jobId}`, {
+    method: 'GET',
+  })
+}
+
 // ============================================
 // Stripe / Billing
 // ============================================
