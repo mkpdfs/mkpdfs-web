@@ -99,7 +99,7 @@ export function initializeAuth(): boolean {
   }
 
   try {
-    Amplify.configure(config)
+    Amplify.configure(config, { ssr: true })
     isConfigured = true
     console.info('[Auth] Amplify configured successfully')
 
