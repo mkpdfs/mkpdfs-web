@@ -64,7 +64,8 @@ async function authFetch<T>(
 // ============================================
 
 export async function getProfile(): Promise<MkpdfsUser> {
-  return authFetch<MkpdfsUser>('/user/profile')
+  const response = await authFetch<{ success: boolean; data: MkpdfsUser }>('/user/profile')
+  return response.data
 }
 
 export async function updateProfile(data: Partial<MkpdfsUser>): Promise<MkpdfsUser> {
