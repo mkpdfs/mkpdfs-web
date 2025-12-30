@@ -472,7 +472,19 @@
       "title": "Planes Disponibles",
       "current": "Actual",
       "select": "Seleccionar Plan",
-      "features": "Características"
+      "features": "Características",
+      "free": {
+        "name": "Free"
+      },
+      "starter": {
+        "name": "Starter"
+      },
+      "professional": {
+        "name": "Professional"
+      },
+      "enterprise": {
+        "name": "Enterprise"
+      }
     }
   },
   "languageSelector": {

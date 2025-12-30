@@ -472,7 +472,19 @@
       "title": "Available Plans",
       "current": "Current",
       "select": "Select Plan",
-      "features": "Features"
+      "features": "Features",
+      "free": {
+        "name": "Free"
+      },
+      "starter": {
+        "name": "Starter"
+      },
+      "professional": {
+        "name": "Professional"
+      },
+      "enterprise": {
+        "name": "Enterprise"
+      }
     }
   },
   "languageSelector": {
