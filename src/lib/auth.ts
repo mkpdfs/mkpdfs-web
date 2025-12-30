@@ -19,6 +19,7 @@ import {
   resetPassword as amplifyResetPassword,
   confirmResetPassword as amplifyConfirmResetPassword,
   updatePassword as amplifyUpdatePassword,
+  signInWithRedirect,
   getCurrentUser,
   fetchAuthSession,
   fetchUserAttributes,
@@ -51,6 +52,8 @@ function getAmplifyConfig(): ResourcesConfig {
   const userPoolId = process.env.NEXT_PUBLIC_COGNITO_USER_POOL_ID || ''
   const userPoolClientId = process.env.NEXT_PUBLIC_COGNITO_CLIENT_ID || ''
   const identityPoolId = process.env.NEXT_PUBLIC_COGNITO_IDENTITY_POOL_ID
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+  const cognitoDomain = process.env.NEXT_PUBLIC_COGNITO_DOMAIN || ''
 
   const cognitoConfig: ResourcesConfig['Auth'] = {
     Cognito: {
@@ -61,6 +64,14 @@ function getAmplifyConfig(): ResourcesConfig {
         email: true,
         username: false,
         phone: false,
+        oauth: cognitoDomain ? {
+          domain: cognitoDomain,
+          scopes: ['openid', 'email', 'profile', 'aws.cognito.signin.user.admin'],
+          redirectSignIn: [`${siteUrl}/callback`],
+          redirectSignOut: [`${siteUrl}/logout`],
+          responseType: 'code',
+          providers: ['Google'],
+        } : undefined,
       },
     } as any,
   }
@@ -431,4 +442,23 @@ export async function updatePassword(
       code: errorCode,
     }
   }
+}
+
+/**
+ * Sign in with Google OAuth
+ */
+export async function signInWithGoogle(): Promise<void> {
+  try {
+    await signInWithRedirect({ provider: 'Google' })
+  } catch (error) {
+    console.error('[Auth] Google sign in error:', error)
+    throw error
+  }
+}
+
+/**
+ * Check if OAuth (Google sign-in) is configured
+ */
+export function isOAuthConfigured(): boolean {
+  return !!process.env.NEXT_PUBLIC_COGNITO_DOMAIN
 }

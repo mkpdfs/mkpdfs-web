@@ -39,8 +39,9 @@
     "dashboard": "Panel",
     "marketplace": "Marketplace",
     "myTemplates": "Mis Plantillas",
-    "create": "Crear",
+    "aiGenerate": "Generar con IA",
     "generate": "Generar",
+    "integration": "Integración",
     "apiKeys": "Claves API",
     "usage": "Uso",
     "settings": "Configuración",
@@ -160,7 +161,9 @@
       "submit": "Iniciar Sesión",
       "noAccount": "¿No tienes cuenta?",
       "signUp": "Regístrate",
-      "checkingSession": "Verificando sesión..."
+      "checkingSession": "Verificando sesión...",
+      "orContinueWith": "o continuar con",
+      "continueWithGoogle": "Continuar con Google"
     },
     "register": {
       "title": "Crear una cuenta",
@@ -251,6 +254,10 @@
       "viewUsage": {
         "name": "Ver Uso",
         "description": "Revisa tus estadísticas mensuales"
+      },
+      "aiGenerate": {
+        "name": "Generar con IA",
+        "description": "Crea plantillas con IA"
       }
     },
     "gettingStarted": {
@@ -267,6 +274,7 @@
     "title": "Mis Plantillas",
     "subtitle": "Tu biblioteca de plantillas para generación de PDFs.",
     "createNew": "Crear Plantilla",
+    "uploadTemplate": "Subir Plantilla",
     "empty": {
       "title": "Sin plantillas aún",
       "description": "Crea tu primera plantilla para empezar a generar PDFs.",
@@ -481,6 +489,64 @@
     "networkError": "Error de red. Por favor verifica tu conexión.",
     "serverError": "Error del servidor. Por favor intenta más tarde.",
     "validationError": "Por favor verifica tu entrada e intenta de nuevo."
+  },
+  "aiGenerate": {
+    "title": "Generar con IA",
+    "subtitle": "Crea plantillas PDF profesionales usando IA. Describe lo que necesitas y deja que la IA genere la plantilla por ti."
+  },
+  "integration": {
+    "title": "Integración de Código",
+    "subtitle": "Integra la generación de PDFs en tus aplicaciones con nuestra API.",
+    "selectTemplate": "Plantilla",
+    "selectTemplatePlaceholder": "Selecciona una plantilla...",
+    "selectToken": "Clave API",
+    "selectTokenPlaceholder": "Selecciona una clave API...",
+    "noTemplates": "Sin plantillas aún.",
+    "noTokens": "Sin claves API aún.",
+    "createOne": "Crear una",
+    "quickStart": {
+      "title": "Inicio Rápido",
+      "step1": "Selecciona una plantilla arriba",
+      "step2": "Elige una clave API",
+      "step3": "Copia el código para tu lenguaje"
+    },
+    "sync": {
+      "title": "Generación Síncrona",
+      "description": "Ideal para plantillas pequeñas y cuando necesitas una respuesta inmediata. Devuelve la URL del PDF directamente.",
+      "timeout": "Timeout: 30 segundos. Para documentos más grandes, usa generación asíncrona."
+    },
+    "async": {
+      "title": "Generación Asíncrona",
+      "description": "Ideal para documentos grandes, procesamiento por lotes, o cuando no necesitas resultados inmediatos. Usa webhooks o polling para obtener el resultado.",
+      "webhookTitle": "Ejemplo de Handler de Webhook",
+      "webhookDescription": "Si proporcionas un webhookUrl, enviaremos el resultado a tu servidor cuando el trabajo termine."
+    },
+    "apiRef": {
+      "title": "Referencia de API",
+      "auth": {
+        "title": "Autenticación",
+        "description": "Todas las peticiones deben incluir tu clave API en el header X-Api-Key."
+      },
+      "sync": {
+        "title": "Generación Síncrona de PDF"
+      },
+      "async": {
+        "title": "Generación Asíncrona de PDF"
+      },
+      "jobStatus": {
+        "title": "Verificar Estado del Trabajo"
+      },
+      "webhook": {
+        "title": "Payload del Webhook",
+        "description": "Cuando un trabajo termina (éxito o fallo), enviamos este payload a tu webhookUrl."
+      },
+      "batch": {
+        "title": "Generación por Lotes",
+        "description": "Pasa un array de objetos en el campo data. Cada objeto se convierte en una página del PDF (máx 50 por petición)."
+      },
+      "request": "Cuerpo de Petición",
+      "response": "Respuesta"
+    }
   },
   "ai": {
     "featureName": "Generación de Plantillas con IA",
