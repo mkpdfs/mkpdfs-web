@@ -9,7 +9,11 @@ import { toast } from '@/hooks/useToast'
 import { useTranslations } from 'next-intl'
 import type { GenerateAITemplateResponse } from '@/types'
 
-export function AIGenerateSection() {
+interface AIGenerateSectionProps {
+  onSaveComplete?: () => void
+}
+
+export function AIGenerateSection({ onSaveComplete }: AIGenerateSectionProps) {
   const t = useTranslations('templates')
   const common = useTranslations('common')
   const errors = useTranslations('errors')
@@ -113,6 +117,9 @@ export function AIGenerateSection() {
       setGeneratedResult(null)
       setPreviewUrl(null)
       setPrompt('')
+
+      // Call the callback if provided
+      onSaveComplete?.()
     } catch (err) {
       toast({
         title: ai('saveError'),
