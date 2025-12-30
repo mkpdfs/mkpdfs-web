@@ -15,6 +15,7 @@ export interface SubscriptionLimits {
   templatesAllowed: number
   apiTokensAllowed: number
   maxPdfSizeMB: number
+  aiGenerationsPerMonth: number  // AI template generations per month
 }
 
 export interface CurrentUsage {
@@ -104,4 +105,23 @@ export interface ApiResponse<T> {
   data?: T
   error?: string
   message?: string
+}
+
+// AI Template Generation types
+export interface GenerateAITemplateRequest {
+  prompt: string
+  templateType?: string
+}
+
+export interface GeneratedTemplate {
+  content: string
+  name: string
+  description: string
+}
+
+export interface GenerateAITemplateResponse {
+  success: boolean
+  template: GeneratedTemplate
+  sampleData: Record<string, unknown>
+  remainingGenerations: number
 }

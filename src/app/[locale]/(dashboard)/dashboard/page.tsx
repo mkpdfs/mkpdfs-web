@@ -10,7 +10,6 @@ import {
   FileText,
   Sparkles,
   Key,
-  BarChart3,
   ArrowRight,
   Plus,
 } from 'lucide-react'
@@ -27,15 +26,18 @@ export default function DashboardPage() {
   const limits = profile?.subscriptionLimits
   const stats = [
     {
+      key: 'pagesGenerated',
       name: t('stats.pagesGenerated'),
       value: usageData?.pagesGenerated ?? 0,
       limit: limits?.pagesPerMonth ?? 100,
       icon: FileText,
-      href: '/usage',
+      href: null,
       color: 'text-primary',
       bgColor: 'bg-primary-50',
+      barColor: 'bg-primary',
     },
     {
+      key: 'templates',
       name: t('stats.templates'),
       value: usageData?.templatesUploaded ?? 0,
       limit: limits?.templatesAllowed ?? 5,
@@ -43,8 +45,10 @@ export default function DashboardPage() {
       href: '/templates',
       color: 'text-secondary',
       bgColor: 'bg-secondary-50',
+      barColor: 'bg-secondary',
     },
     {
+      key: 'apiKeys',
       name: t('stats.apiKeys'),
       value: usageData?.tokensCreated ?? 0,
       limit: limits?.apiTokensAllowed ?? 3,
@@ -52,6 +56,7 @@ export default function DashboardPage() {
       href: '/api-keys',
       color: 'text-info',
       bgColor: 'bg-blue-50',
+      barColor: 'bg-info',
     },
   ]
 
@@ -69,13 +74,6 @@ export default function DashboardPage() {
       icon: Plus,
       href: '/templates',
       color: 'from-secondary to-primary',
-    },
-    {
-      name: t('quickActions.viewUsage.name'),
-      description: t('quickActions.viewUsage.description'),
-      icon: BarChart3,
-      href: '/usage',
-      color: 'from-primary-700 to-secondary-700',
     },
   ]
 
@@ -97,31 +95,47 @@ export default function DashboardPage() {
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {stats.map((stat) => {
           const isUnlimited = stat.limit === -1
-          return (
-            <Link key={stat.href} href={stat.href}>
-              <Card className="transition-shadow hover:shadow-md">
-                <CardContent className="p-6">
-                  <div className="flex items-center gap-4">
-                    <div className={`rounded-lg p-3 ${stat.bgColor}`}>
-                      <stat.icon className={`h-6 w-6 ${stat.color}`} />
-                    </div>
-                    <div className="flex-1">
-                      <p className="text-sm font-medium text-foreground-light">{stat.name}</p>
-                      {isLoading ? (
-                        <Spinner size="sm" className="mt-1" />
-                      ) : (
-                        <p className="text-2xl font-semibold text-foreground-dark">
-                          {formatNumber(stat.value)}
-                          <span className="text-sm font-normal text-foreground-light">
-                            {isUnlimited ? ` / ${t('unlimited')}` : ` / ${formatNumber(stat.limit)}`}
-                          </span>
-                        </p>
-                      )}
+          const percentage = isUnlimited ? 0 : (stat.value / stat.limit) * 100
+          const cardContent = (
+            <Card className={stat.href ? 'transition-shadow hover:shadow-md' : ''}>
+              <CardContent className="p-6">
+                <div className="flex items-center gap-4">
+                  <div className={`rounded-lg p-3 ${stat.bgColor}`}>
+                    <stat.icon className={`h-6 w-6 ${stat.color}`} />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-foreground-light">{stat.name}</p>
+                    {isLoading ? (
+                      <Spinner size="sm" className="mt-1" />
+                    ) : (
+                      <p className="text-2xl font-semibold text-foreground-dark">
+                        {formatNumber(stat.value)}
+                        <span className="text-sm font-normal text-foreground-light">
+                          {isUnlimited ? ` / ${t('unlimited')}` : ` / ${formatNumber(stat.limit)}`}
+                        </span>
+                      </p>
+                    )}
+                  </div>
+                </div>
+                {!isLoading && (
+                  <div className="mt-4">
+                    <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
+                      <div
+                        className={`h-full rounded-full ${stat.barColor} transition-all`}
+                        style={{ width: `${Math.min(percentage, 100)}%` }}
+                      />
                     </div>
                   </div>
-                </CardContent>
-              </Card>
+                )}
+              </CardContent>
+            </Card>
+          )
+          return stat.href ? (
+            <Link key={stat.key} href={stat.href}>
+              {cardContent}
             </Link>
+          ) : (
+            <div key={stat.key}>{cardContent}</div>
           )
         })}
       </div>

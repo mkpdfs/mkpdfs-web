@@ -8,7 +8,6 @@ import {
   FileText,
   Sparkles,
   Key,
-  BarChart3,
   Settings,
   CreditCard,
   FileText as Logo,
@@ -24,7 +23,6 @@ export function Sidebar() {
     { name: t('templates'), href: '/templates', icon: FileText },
     { name: t('generate'), href: '/generate', icon: Sparkles },
     { name: t('apiKeys'), href: '/api-keys', icon: Key },
-    { name: t('usage'), href: '/usage', icon: BarChart3 },
   ]
 
   const secondaryNavigation = [

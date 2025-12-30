@@ -15,6 +15,8 @@ import type {
   GeneratePdfResponse,
   MkpdfsUser,
   ApiResponse,
+  GenerateAITemplateRequest,
+  GenerateAITemplateResponse,
 } from '@/types'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'
@@ -184,4 +186,17 @@ export async function createPortalSession(): Promise<{ url: string }> {
     }
   )
   return { url: response.url }
+}
+
+// ============================================
+// AI Template Generation
+// ============================================
+
+export async function generateAITemplate(
+  request: GenerateAITemplateRequest
+): Promise<GenerateAITemplateResponse> {
+  return authFetch<GenerateAITemplateResponse>('/ai/generate-template', {
+    method: 'POST',
+    body: JSON.stringify(request),
+  })
 }

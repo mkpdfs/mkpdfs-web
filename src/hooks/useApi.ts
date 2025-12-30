@@ -17,6 +17,7 @@ import {
   deleteToken,
   getUsage,
   generatePdf,
+  generateAITemplate,
 } from '@/lib/api'
 import type {
   MkpdfsUser,
