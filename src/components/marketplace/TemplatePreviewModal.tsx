@@ -65,7 +65,7 @@ export function TemplatePreviewModal({
           <div>
             <h2 className="text-xl font-semibold text-foreground">{templateName}</h2>
             <p className="mt-1 text-sm text-muted-foreground">
-              <span className="rounded-full bg-primary-50 px-2 py-0.5 text-xs font-medium text-primary">
+              <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
                 {getCategoryLabel(template.category, categoryT)}
               </span>
             </p>

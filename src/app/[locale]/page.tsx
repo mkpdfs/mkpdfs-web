@@ -250,7 +250,7 @@ export default async function LandingPage({ params }: Props) {
               <div className="mt-10 flex items-center justify-center">
                 <Link
                   href="/register"
-                  className="rounded-md bg-white px-6 py-3 text-sm font-semibold text-primary shadow-sm hover:bg-gray-100"
+                  className="rounded-md bg-card px-6 py-3 text-sm font-semibold text-primary shadow-sm hover:bg-muted"
                 >
                   {t('cta.button')}
                 </Link>

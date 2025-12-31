@@ -212,29 +212,29 @@ export default function DashboardPage() {
               </p>
               <ol className="space-y-3 text-sm text-foreground-light">
                 <li className="flex items-center gap-3">
-                  <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full ${(usageData?.templatesUploaded ?? 0) > 0 ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-500'}`}>
+                  <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full ${(usageData?.templatesUploaded ?? 0) > 0 ? 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400' : 'bg-muted text-muted-foreground'}`}>
                     {(usageData?.templatesUploaded ?? 0) > 0 ? <Check className="h-4 w-4" /> : '1'}
                   </span>
-                  <Link href="/templates" className={`hover:underline ${(usageData?.templatesUploaded ?? 0) > 0 ? 'text-green-600' : 'text-primary'}`}>
+                  <Link href="/templates" className={`hover:underline ${(usageData?.templatesUploaded ?? 0) > 0 ? 'text-green-600 dark:text-green-400' : 'text-primary'}`}>
                     {t('gettingStarted.step1')}
                   </Link>
                 </li>
                 <li className="flex items-center gap-3">
-                  <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full ${(usageData?.tokensCreated ?? 0) > 0 ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-500'}`}>
+                  <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full ${(usageData?.tokensCreated ?? 0) > 0 ? 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400' : 'bg-muted text-muted-foreground'}`}>
                     {(usageData?.tokensCreated ?? 0) > 0 ? <Check className="h-4 w-4" /> : '2'}
                   </span>
                   <span>
-                    <Link href="/api-keys" className={`hover:underline ${(usageData?.tokensCreated ?? 0) > 0 ? 'text-green-600' : 'text-primary'}`}>
+                    <Link href="/api-keys" className={`hover:underline ${(usageData?.tokensCreated ?? 0) > 0 ? 'text-green-600 dark:text-green-400' : 'text-primary'}`}>
                       {t('gettingStarted.step2')}
                     </Link>{' '}
                     {t('gettingStarted.step2Suffix')}
                   </span>
                 </li>
                 <li className="flex items-center gap-3">
-                  <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full ${(usageData?.pagesGenerated ?? 0) > 0 ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-500'}`}>
+                  <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full ${(usageData?.pagesGenerated ?? 0) > 0 ? 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400' : 'bg-muted text-muted-foreground'}`}>
                     {(usageData?.pagesGenerated ?? 0) > 0 ? <Check className="h-4 w-4" /> : '3'}
                   </span>
-                  <Link href="/integration" className={`hover:underline ${(usageData?.pagesGenerated ?? 0) > 0 ? 'text-green-600' : 'text-primary'}`}>
+                  <Link href="/integration" className={`hover:underline ${(usageData?.pagesGenerated ?? 0) > 0 ? 'text-green-600 dark:text-green-400' : 'text-primary'}`}>
                     {t('gettingStarted.step3')}
                   </Link>
                 </li>

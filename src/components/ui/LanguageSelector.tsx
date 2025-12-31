@@ -63,7 +63,7 @@ export function LanguageSelector({ variant = 'default', className }: LanguageSel
         <div
           role="listbox"
           aria-label="Select language"
-          className="absolute right-0 top-full z-50 mt-1 min-w-[140px] rounded-md border border-border bg-white py-1 shadow-lg"
+          className="absolute right-0 top-full z-50 mt-1 min-w-[140px] rounded-md border border-border bg-card py-1 shadow-lg"
         >
           {locales.map((loc) => (
             <button

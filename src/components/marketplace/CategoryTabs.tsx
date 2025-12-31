@@ -34,7 +34,7 @@ export function CategoryTabs({ activeCategory, onChange }: CategoryTabsProps) {
             variant={isActive ? 'default' : 'outline'}
             size="sm"
             onClick={() => onChange(catId)}
-            className={isActive ? '' : 'hover:bg-gray-100'}
+            className={isActive ? '' : 'hover:bg-muted'}
           >
             <Icon className="mr-1.5 h-4 w-4" />
             {t(catId)}

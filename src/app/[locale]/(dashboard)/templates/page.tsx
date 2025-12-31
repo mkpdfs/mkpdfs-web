@@ -190,7 +190,7 @@ export default function TemplatesPage() {
 
           {/* Modal panel */}
           <div className="fixed inset-0 flex items-center justify-center p-4">
-            <div className="relative w-full max-w-lg rounded-lg bg-white p-6 shadow-xl">
+            <div className="relative w-full max-w-lg rounded-lg bg-card p-6 shadow-xl">
               {/* Header */}
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-semibold text-foreground-dark">
