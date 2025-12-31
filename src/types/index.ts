@@ -127,6 +127,10 @@ export interface ApiResponse<T> {
 export interface GenerateAITemplateRequest {
   prompt: string
   templateType?: string
+  imageBase64?: string
+  imageMediaType?: 'image/png' | 'image/jpeg' | 'image/webp'
+  previousTemplate?: string
+  feedback?: string
 }
 
 export interface GeneratedTemplate {

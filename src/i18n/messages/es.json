@@ -633,7 +633,43 @@
     "regenerate": "Regenerar",
     "saveTemplate": "Guardar Plantilla",
     "saveSuccess": "Plantilla guardada exitosamente",
-    "saveError": "Error al guardar plantilla"
+    "saveError": "Error al guardar plantilla",
+    "imageUpload": {
+      "title": "Imagen de Referencia (Opcional)",
+      "dropzone": "Arrastra una imagen o haz clic para subir",
+      "formats": "PNG, JPG, WEBP hasta 5MB",
+      "referenceImage": "Imagen de referencia subida",
+      "invalidType": "Tipo de archivo inválido. Sube PNG, JPEG o WebP.",
+      "tooLarge": "Imagen muy grande. Máximo 5MB.",
+      "readError": "Error al leer el archivo de imagen."
+    },
+    "codeEditor": {
+      "templateTab": "Plantilla (HBS)",
+      "dataTab": "Datos de Ejemplo (JSON)"
+    },
+    "preview": {
+      "htmlMode": "HTML",
+      "pdfMode": "PDF",
+      "noContent": "Ingresa un prompt y genera una plantilla para ver la vista previa",
+      "renderError": "Error al renderizar plantilla",
+      "generatingPdf": "Generando vista previa PDF...",
+      "clickToGenerate": "Haz clic para generar vista previa PDF",
+      "generatePdf": "Generar PDF"
+    },
+    "comparison": {
+      "title": "Comparar Versiones",
+      "previous": "Anterior",
+      "current": "Actual",
+      "expand": "Expandir",
+      "collapse": "Contraer",
+      "accept": "Aceptar Actual",
+      "revert": "Volver a Anterior"
+    },
+    "feedback": {
+      "label": "¿Qué te gustaría cambiar?",
+      "placeholder": "ej., Hacer el encabezado más grande, agregar pie de página con números de página, cambiar el esquema de colores a azul...",
+      "regenerateWith": "Regenerar con Retroalimentación"
+    }
   },
   "marketplace": {
     "title": "Marketplace de Plantillas",

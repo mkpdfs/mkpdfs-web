@@ -633,7 +633,43 @@
     "regenerate": "Regenerate",
     "saveTemplate": "Save Template",
     "saveSuccess": "Template saved successfully",
-    "saveError": "Failed to save template"
+    "saveError": "Failed to save template",
+    "imageUpload": {
+      "title": "Reference Image (Optional)",
+      "dropzone": "Drop image or click to upload",
+      "formats": "PNG, JPG, WEBP up to 5MB",
+      "referenceImage": "Reference image uploaded",
+      "invalidType": "Invalid file type. Please upload PNG, JPEG, or WebP.",
+      "tooLarge": "Image too large. Maximum size is 5MB.",
+      "readError": "Failed to read image file."
+    },
+    "codeEditor": {
+      "templateTab": "Template (HBS)",
+      "dataTab": "Sample Data (JSON)"
+    },
+    "preview": {
+      "htmlMode": "HTML",
+      "pdfMode": "PDF",
+      "noContent": "Enter a prompt and generate a template to see preview",
+      "renderError": "Template render error",
+      "generatingPdf": "Generating PDF preview...",
+      "clickToGenerate": "Click to generate PDF preview",
+      "generatePdf": "Generate PDF"
+    },
+    "comparison": {
+      "title": "Compare Versions",
+      "previous": "Previous",
+      "current": "Current",
+      "expand": "Expand",
+      "collapse": "Collapse",
+      "accept": "Accept Current",
+      "revert": "Revert to Previous"
+    },
+    "feedback": {
+      "label": "What would you like to change?",
+      "placeholder": "e.g., Make the header larger, add a footer with page numbers, change the color scheme to blue...",
+      "regenerateWith": "Regenerate with Feedback"
+    }
   },
   "marketplace": {
     "title": "Template Marketplace",
