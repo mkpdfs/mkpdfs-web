@@ -536,7 +536,16 @@
       "keyPlaceholder": "Key",
       "valuePlaceholder": "Value",
       "addField": "Add Field",
-      "invalidJson": "Invalid JSON"
+      "invalidJson": "Invalid JSON",
+      "csvUploadFile": "Upload File",
+      "csvPasteType": "Paste/Type",
+      "csvDropzone": "Drop CSV file here or click to upload",
+      "csvPlaceholder": "name,date,amount\nJohn Doe,2025-01-01,100",
+      "csvRowCount": "{count} rows → {count} pages",
+      "csvInvalid": "Invalid CSV format",
+      "csvPreview": "Preview",
+      "csvTooManyRows": "Too many rows",
+      "csvMaxRows": "Maximum {count} rows allowed per request. Your CSV has {current} rows."
     },
     "method": {
       "description": "Choose how you want to generate your PDF."

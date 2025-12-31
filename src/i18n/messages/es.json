@@ -536,7 +536,16 @@
       "keyPlaceholder": "Clave",
       "valuePlaceholder": "Valor",
       "addField": "Agregar Campo",
-      "invalidJson": "JSON Inválido"
+      "invalidJson": "JSON Inválido",
+      "csvUploadFile": "Subir Archivo",
+      "csvPasteType": "Pegar/Escribir",
+      "csvDropzone": "Arrastra un archivo CSV aquí o haz clic para subir",
+      "csvPlaceholder": "nombre,fecha,monto\nJuan Pérez,2025-01-01,100",
+      "csvRowCount": "{count} filas → {count} páginas",
+      "csvInvalid": "Formato CSV inválido",
+      "csvPreview": "Vista Previa",
+      "csvTooManyRows": "Demasiadas filas",
+      "csvMaxRows": "Máximo {count} filas permitidas por solicitud. Tu CSV tiene {current} filas."
     },
     "method": {
       "description": "Elige cómo quieres generar tu PDF."

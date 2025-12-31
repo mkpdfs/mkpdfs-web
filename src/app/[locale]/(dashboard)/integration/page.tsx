@@ -54,14 +54,19 @@ import {
   Loader2,
   Eye,
   EyeOff,
+  Upload,
+  Table,
 } from 'lucide-react'
+import { parseCSV, type ParseCsvResult } from '@/lib/csv'
 
 type Language = 'curl' | 'javascript' | 'python' | 'go'
-type BodyMode = 'json' | 'keyvalue'
+type BodyMode = 'json' | 'keyvalue' | 'csv'
+type CsvInputMode = 'inline' | 'upload'
 type GenerationMode = 'sync' | 'async'
 type KeyValuePair = { key: string; value: string }
 
 const API_URL = 'https://apis.mkpdfs.com'
+const MAX_CSV_ROWS = 50
 
 const languages: { id: Language; label: string }[] = [
   { id: 'curl', label: 'cURL' },
@@ -587,6 +592,11 @@ export default function IntegrationPage() {
     { key: 'name', value: 'John Doe' },
     { key: 'date', value: '2025-01-01' },
   ])
+  // CSV mode state
+  const [csvInputMode, setCsvInputMode] = useState<CsvInputMode>('inline')
+  const [csvText, setCsvText] = useState('name,date,amount\nJohn Doe,2025-01-01,100\nJane Smith,2025-01-02,200')
+  const [csvFile, setCsvFile] = useState<File | null>(null)
+  const [parsedCsvData, setParsedCsvData] = useState<ParseCsvResult | null>(null)
 
   // Step 3: Generation Method
   const [generationMode, setGenerationMode] = useState<GenerationMode>('sync')
@@ -636,7 +646,11 @@ export default function IntegrationPage() {
 
   // Step validation
   const isStep1Valid = selectedTemplate && selectedToken
-  const isStep2Valid = jsonData.trim().length > 0
+  const csvRowCount = parsedCsvData?.data.length ?? 0
+  const isCsvOverLimit = csvRowCount > MAX_CSV_ROWS
+  const isStep2Valid = bodyMode === 'csv'
+    ? (parsedCsvData && csvRowCount > 0 && !isCsvOverLimit)
+    : jsonData.trim().length > 0
   const isStep3Valid = true // Always valid (sync is default)
 
   const canProceed = (step: number) => {
@@ -659,7 +673,37 @@ export default function IntegrationPage() {
     } else if (newMode === 'json' && bodyMode === 'keyvalue') {
       setJsonData(keyValuePairsToJson(keyValuePairs))
     }
+    // When switching to CSV mode, parse the initial CSV text
+    if (newMode === 'csv' && bodyMode !== 'csv') {
+      const result = parseCSV(csvText)
+      setParsedCsvData(result)
+    }
     setBodyMode(newMode)
+  }
+
+  // CSV handlers
+  const handleCsvTextChange = (text: string) => {
+    setCsvText(text)
+    const result = parseCSV(text)
+    setParsedCsvData(result)
+  }
+
+  const handleCsvFileUpload = (file: File) => {
+    setCsvFile(file)
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      const content = e.target?.result as string
+      setCsvText(content)
+      const result = parseCSV(content)
+      setParsedCsvData(result)
+    }
+    reader.readAsText(file)
+  }
+
+  const handleCsvFileRemove = () => {
+    setCsvFile(null)
+    setCsvText('')
+    setParsedCsvData(null)
   }
 
   const handleKeyValueChange = (index: number, field: 'key' | 'value', newValue: string) => {
@@ -700,17 +744,33 @@ export default function IntegrationPage() {
     setRawResponse(null)
     setIsTestLoading(true)
 
-    let parsedData: Record<string, unknown>
-    try {
-      parsedData = JSON.parse(jsonData)
-    } catch {
-      setIsTestLoading(false)
-      toast({
-        title: t('body.invalidJson'),
-        description: errors('validationError'),
-        variant: 'destructive',
-      })
-      return
+    let parsedData: Record<string, unknown> | Record<string, unknown>[]
+
+    if (bodyMode === 'csv') {
+      // Use parsed CSV data (array of objects)
+      if (!parsedCsvData || parsedCsvData.data.length === 0) {
+        setIsTestLoading(false)
+        toast({
+          title: t('body.csvInvalid'),
+          description: errors('validationError'),
+          variant: 'destructive',
+        })
+        return
+      }
+      parsedData = parsedCsvData.data
+    } else {
+      // Use JSON data
+      try {
+        parsedData = JSON.parse(jsonData)
+      } catch {
+        setIsTestLoading(false)
+        toast({
+          title: t('body.invalidJson'),
+          description: errors('validationError'),
+          variant: 'destructive',
+        })
+        return
+      }
     }
 
     try {
@@ -917,12 +977,23 @@ export default function IntegrationPage() {
                       <List className="h-3.5 w-3.5" />
                       {t('body.keyValue')}
                     </button>
+                    <button
+                      onClick={() => handleModeChange('csv')}
+                      className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
+                        bodyMode === 'csv'
+                          ? 'bg-background text-foreground shadow-sm'
+                          : 'text-muted-foreground hover:text-foreground'
+                      }`}
+                    >
+                      <Table className="h-3.5 w-3.5" />
+                      CSV
+                    </button>
                   </div>
                 </div>
                 <p className="text-sm text-foreground-light">{t('body.description')}</p>
               </CardHeader>
               <CardContent className="space-y-6">
-                {bodyMode === 'json' ? (
+                {bodyMode === 'json' && (
                   <textarea
                     value={jsonData}
                     onChange={(e) => handleJsonChange(e.target.value)}
@@ -930,7 +1001,9 @@ export default function IntegrationPage() {
                     className="w-full rounded-md border border-input bg-background px-3 py-2 font-mono text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                     placeholder={t('body.jsonPlaceholder')}
                   />
-                ) : (
+                )}
+
+                {bodyMode === 'keyvalue' && (
                   <div className="space-y-3">
                     {keyValuePairs.map((pair, index) => (
                       <div key={index} className="flex items-center gap-2">
@@ -964,6 +1037,150 @@ export default function IntegrationPage() {
                       <Plus className="h-4 w-4" />
                       {t('body.addField')}
                     </button>
+                  </div>
+                )}
+
+                {bodyMode === 'csv' && (
+                  <div className="space-y-4">
+                    {/* CSV Input Mode Toggle */}
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => setCsvInputMode('inline')}
+                        className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
+                          csvInputMode === 'inline'
+                            ? 'bg-primary text-white'
+                            : 'bg-muted text-muted-foreground hover:text-foreground'
+                        }`}
+                      >
+                        <Braces className="h-3.5 w-3.5" />
+                        {t('body.csvPasteType')}
+                      </button>
+                      <button
+                        onClick={() => setCsvInputMode('upload')}
+                        className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
+                          csvInputMode === 'upload'
+                            ? 'bg-primary text-white'
+                            : 'bg-muted text-muted-foreground hover:text-foreground'
+                        }`}
+                      >
+                        <Upload className="h-3.5 w-3.5" />
+                        {t('body.csvUploadFile')}
+                      </button>
+                    </div>
+
+                    {/* Inline CSV Editor */}
+                    {csvInputMode === 'inline' && (
+                      <textarea
+                        value={csvText}
+                        onChange={(e) => handleCsvTextChange(e.target.value)}
+                        rows={10}
+                        className="w-full rounded-md border border-input bg-background px-3 py-2 font-mono text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                        placeholder={t('body.csvPlaceholder')}
+                      />
+                    )}
+
+                    {/* File Upload */}
+                    {csvInputMode === 'upload' && (
+                      <div className="space-y-3">
+                        {!csvFile ? (
+                          <label className="flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-border p-8 transition-colors hover:border-primary/50 hover:bg-muted/50">
+                            <Upload className="mb-2 h-8 w-8 text-muted-foreground" />
+                            <span className="text-sm font-medium text-foreground-dark">
+                              {t('body.csvDropzone')}
+                            </span>
+                            <span className="mt-1 text-xs text-muted-foreground">.csv</span>
+                            <input
+                              type="file"
+                              accept=".csv"
+                              className="hidden"
+                              onChange={(e) => {
+                                const file = e.target.files?.[0]
+                                if (file) handleCsvFileUpload(file)
+                              }}
+                            />
+                          </label>
+                        ) : (
+                          <div className="flex items-center justify-between rounded-lg border border-border bg-muted/50 p-4">
+                            <div className="flex items-center gap-3">
+                              <FileText className="h-8 w-8 text-primary" />
+                              <div>
+                                <p className="font-medium text-foreground-dark">{csvFile.name}</p>
+                                <p className="text-xs text-muted-foreground">
+                                  {parsedCsvData ? `${parsedCsvData.data.length} rows` : 'Parsing...'}
+                                </p>
+                              </div>
+                            </div>
+                            <Button variant="ghost" size="sm" onClick={handleCsvFileRemove}>
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {/* CSV Preview */}
+                    {parsedCsvData && parsedCsvData.data.length > 0 && (
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <h4 className="text-sm font-medium text-foreground-dark">{t('body.csvPreview')}</h4>
+                          <span className="text-sm text-muted-foreground">
+                            {t('body.csvRowCount', { count: parsedCsvData.data.length })}
+                          </span>
+                        </div>
+                        <div className="max-h-48 overflow-auto rounded-lg border border-border">
+                          <table className="w-full text-sm">
+                            <thead className="sticky top-0 bg-muted">
+                              <tr>
+                                {parsedCsvData.headers.map((header) => (
+                                  <th key={header} className="border-b border-border px-3 py-2 text-left font-medium">
+                                    {header}
+                                  </th>
+                                ))}
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {parsedCsvData.data.slice(0, 5).map((row, i) => (
+                                <tr key={i} className="border-b border-border last:border-0">
+                                  {parsedCsvData.headers.map((header) => (
+                                    <td key={header} className="px-3 py-2 text-foreground-light">
+                                      {String(row[header] ?? '')}
+                                    </td>
+                                  ))}
+                                </tr>
+                              ))}
+                              {parsedCsvData.data.length > 5 && (
+                                <tr>
+                                  <td colSpan={parsedCsvData.headers.length} className="px-3 py-2 text-center text-muted-foreground">
+                                    ... {parsedCsvData.data.length - 5} more rows
+                                  </td>
+                                </tr>
+                              )}
+                            </tbody>
+                          </table>
+                        </div>
+                        {isCsvOverLimit && (
+                          <div className="flex items-start gap-2 rounded-lg bg-destructive/10 p-3">
+                            <AlertCircle className="mt-0.5 h-4 w-4 flex-shrink-0 text-destructive" />
+                            <div>
+                              <p className="text-sm font-medium text-destructive">{t('body.csvTooManyRows')}</p>
+                              <p className="mt-1 text-xs text-destructive">
+                                {t('body.csvMaxRows', { count: MAX_CSV_ROWS, current: csvRowCount })}
+                              </p>
+                            </div>
+                          </div>
+                        )}
+                        {parsedCsvData.errors.length > 0 && (
+                          <div className="rounded-lg bg-destructive/10 p-3">
+                            <p className="text-sm font-medium text-destructive">{t('body.csvInvalid')}</p>
+                            <ul className="mt-1 text-xs text-destructive">
+                              {parsedCsvData.errors.slice(0, 3).map((err, i) => (
+                                <li key={i}>{err}</li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
                 )}
 
@@ -1274,7 +1491,9 @@ export default function IntegrationPage() {
                           selectedLang,
                           selectedTemplate,
                           selectedToken,
-                          jsonData,
+                          bodyMode === 'csv' && parsedCsvData
+                            ? JSON.stringify(parsedCsvData.data, null, 2)
+                            : jsonData,
                           generationMode,
                           webhookUrl
                         )}

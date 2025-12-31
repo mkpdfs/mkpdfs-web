@@ -88,7 +88,7 @@ export interface Subscription {
 // PDF Generation types
 export interface GeneratePdfRequest {
   templateId: string
-  data: Record<string, unknown>
+  data: Record<string, unknown> | Record<string, unknown>[]
   async?: boolean
   sendEmail?: string[]
 }
