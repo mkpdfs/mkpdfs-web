@@ -70,6 +70,38 @@ export function AIGenerateSection({ onSaveComplete }: AIGenerateSectionProps) {
     }
   }, [editedData])
 
+  // PDF preview request handler - must be defined before early return
+  const handleRequestPdfPreview = useCallback(async () => {
+    if (!editedTemplate) return
+
+    setIsPreviewLoading(true)
+    setPreviewUrl(null)
+
+    try {
+      const templateBlob = new Blob([editedTemplate], { type: 'text/html' })
+      const templateFile = new File([templateBlob], `preview-${Date.now()}.hbs`)
+
+      const uploadedTemplate = await uploadTemplate.mutateAsync({
+        file: templateFile,
+        name: `_preview_${Date.now()}`,
+        description: 'AI Preview - Temporary',
+      })
+
+      const pdfResult = await generatePdf.mutateAsync({
+        templateId: uploadedTemplate.id,
+        data: parsedSampleData,
+      })
+
+      if (pdfResult.pdfUrl) {
+        setPreviewUrl(pdfResult.pdfUrl)
+      }
+    } catch (err) {
+      console.error('Preview generation failed:', err)
+    } finally {
+      setIsPreviewLoading(false)
+    }
+  }, [editedTemplate, parsedSampleData, uploadTemplate, generatePdf])
+
   if (!hasAccess) {
     return <UpgradePrompt feature={ai('featureName')} requiredPlan="starter" />
   }
@@ -148,37 +180,6 @@ export function AIGenerateSection({ onSaveComplete }: AIGenerateSectionProps) {
       setIsPreviewLoading(false)
     }
   }
-
-  const handleRequestPdfPreview = useCallback(async () => {
-    if (!editedTemplate) return
-
-    setIsPreviewLoading(true)
-    setPreviewUrl(null)
-
-    try {
-      const templateBlob = new Blob([editedTemplate], { type: 'text/html' })
-      const templateFile = new File([templateBlob], `preview-${Date.now()}.hbs`)
-
-      const uploadedTemplate = await uploadTemplate.mutateAsync({
-        file: templateFile,
-        name: `_preview_${Date.now()}`,
-        description: 'AI Preview - Temporary',
-      })
-
-      const pdfResult = await generatePdf.mutateAsync({
-        templateId: uploadedTemplate.id,
-        data: parsedSampleData,
-      })
-
-      if (pdfResult.pdfUrl) {
-        setPreviewUrl(pdfResult.pdfUrl)
-      }
-    } catch (err) {
-      console.error('Preview generation failed:', err)
-    } finally {
-      setIsPreviewLoading(false)
-    }
-  }, [editedTemplate, parsedSampleData, uploadTemplate, generatePdf])
 
   const handleSave = async () => {
     if (!generatedResult) return
