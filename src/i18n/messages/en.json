@@ -267,7 +267,8 @@
       "step2": "Create an API key",
       "step2Suffix": "for programmatic access",
       "step3": "Generate your first PDF",
-      "uploadFirstTemplate": "Upload Your First Template"
+      "uploadFirstTemplate": "Upload Your First Template",
+      "dismiss": "Dismiss guide"
     }
   },
   "templates": {
@@ -655,6 +656,60 @@
     },
     "useSuccess": "Template Added",
     "useError": "Failed to add template",
-    "limitReached": "Template limit reached. Upgrade your plan to add more templates."
+    "limitReached": "Template limit reached. Upgrade your plan to add more templates.",
+    "templates": {
+      "mp-business-invoice": {
+        "name": "Professional Invoice",
+        "description": "Clean, professional invoice template with itemized billing, tax calculations, and payment terms. Perfect for freelancers and small businesses."
+      },
+      "mp-business-quote": {
+        "name": "Service Quote",
+        "description": "Professional quote/estimate template for service-based businesses. Includes detailed service breakdown and validity period."
+      },
+      "mp-business-receipt": {
+        "name": "Payment Receipt",
+        "description": "Simple, clean payment receipt for confirming transactions. Ideal for retail and service businesses."
+      },
+      "mp-cert-completion": {
+        "name": "Course Completion Certificate",
+        "description": "Elegant certificate for course or training completion. Features a professional design with customizable colors and fields."
+      },
+      "mp-cert-achievement": {
+        "name": "Achievement Award",
+        "description": "Recognition certificate for outstanding achievements. Perfect for employee recognition, academic awards, or competition winners."
+      },
+      "mp-cert-participation": {
+        "name": "Participation Certificate",
+        "description": "Certificate acknowledging event or program participation. Great for workshops, conferences, and community events."
+      },
+      "mp-marketing-brochure": {
+        "name": "Product Brochure",
+        "description": "Professional product brochure template with features, pricing, and call-to-action. Ideal for product launches and sales materials."
+      },
+      "mp-marketing-flyer": {
+        "name": "Event Flyer",
+        "description": "Eye-catching flyer for events and promotions. Features bold design elements and clear call-to-action."
+      },
+      "mp-marketing-newsletter": {
+        "name": "Email Newsletter",
+        "description": "Professional newsletter template with sections for articles, updates, and CTAs. Perfect for regular customer communications."
+      },
+      "mp-personal-resume": {
+        "name": "Modern Resume",
+        "description": "Clean, modern resume template with sections for experience, skills, and education. ATS-friendly design."
+      },
+      "mp-personal-letter": {
+        "name": "Formal Letter",
+        "description": "Professional letter template for business correspondence. Includes proper formatting and structure."
+      },
+      "mp-personal-invitation": {
+        "name": "Event Invitation",
+        "description": "Elegant invitation template for parties and events. Customizable design for any occasion."
+      },
+      "mp-personal-cover-letter": {
+        "name": "Cover Letter",
+        "description": "Professional cover letter template for job applications. Modern design with sections for key achievements and why you're the perfect fit."
+      }
+    }
   }
 }

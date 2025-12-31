@@ -19,6 +19,15 @@ interface TemplateCardProps {
 export function TemplateCard({ template, onPreview, onUse, isLoading, isAdded }: TemplateCardProps) {
   const t = useTranslations('marketplace')
   const categoryT = useTranslations('marketplace.categories')
+  const templatesT = useTranslations('marketplace.templates')
+
+  // Get localized name and description, falling back to backend values
+  const templateName = templatesT.has(`${template.templateId}.name`)
+    ? templatesT(`${template.templateId}.name`)
+    : template.name
+  const templateDescription = templatesT.has(`${template.templateId}.description`)
+    ? templatesT(`${template.templateId}.description`)
+    : template.description
 
   return (
     <Card className="group transition-all hover:shadow-md">
@@ -42,9 +51,9 @@ export function TemplateCard({ template, onPreview, onUse, isLoading, isAdded }:
         </div>
 
         {/* Template Info */}
-        <h3 className="font-medium text-gray-900">{template.name}</h3>
+        <h3 className="font-medium text-gray-900">{templateName}</h3>
         <p className="mt-1 line-clamp-2 text-sm text-gray-500">
-          {template.description}
+          {templateDescription}
         </p>
 
         {/* Category Badge */}

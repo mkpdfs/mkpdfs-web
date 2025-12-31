@@ -267,7 +267,8 @@
       "step2": "Crea una clave API",
       "step2Suffix": "para acceso programático",
       "step3": "Genera tu primer PDF",
-      "uploadFirstTemplate": "Sube Tu Primera Plantilla"
+      "uploadFirstTemplate": "Sube Tu Primera Plantilla",
+      "dismiss": "Cerrar guía"
     }
   },
   "templates": {
@@ -655,6 +656,60 @@
     },
     "useSuccess": "Plantilla Agregada",
     "useError": "Error al agregar plantilla",
-    "limitReached": "Límite de plantillas alcanzado. Mejora tu plan para agregar más plantillas."
+    "limitReached": "Límite de plantillas alcanzado. Mejora tu plan para agregar más plantillas.",
+    "templates": {
+      "mp-business-invoice": {
+        "name": "Factura Profesional",
+        "description": "Plantilla de factura limpia y profesional con facturación detallada, cálculos de impuestos y condiciones de pago. Perfecta para freelancers y pequeñas empresas."
+      },
+      "mp-business-quote": {
+        "name": "Cotización de Servicios",
+        "description": "Plantilla profesional de cotización/presupuesto para empresas de servicios. Incluye desglose detallado de servicios y período de validez."
+      },
+      "mp-business-receipt": {
+        "name": "Recibo de Pago",
+        "description": "Recibo de pago simple y limpio para confirmar transacciones. Ideal para comercios minoristas y negocios de servicios."
+      },
+      "mp-cert-completion": {
+        "name": "Certificado de Finalización de Curso",
+        "description": "Elegante certificado para finalización de cursos o capacitaciones. Diseño profesional con colores y campos personalizables."
+      },
+      "mp-cert-achievement": {
+        "name": "Premio de Logro",
+        "description": "Certificado de reconocimiento por logros destacados. Perfecto para reconocimiento de empleados, premios académicos o ganadores de competencias."
+      },
+      "mp-cert-participation": {
+        "name": "Certificado de Participación",
+        "description": "Certificado que reconoce la participación en eventos o programas. Ideal para talleres, conferencias y eventos comunitarios."
+      },
+      "mp-marketing-brochure": {
+        "name": "Folleto de Producto",
+        "description": "Plantilla profesional de folleto con características del producto, precios y llamado a la acción. Ideal para lanzamientos de productos y materiales de venta."
+      },
+      "mp-marketing-flyer": {
+        "name": "Volante de Evento",
+        "description": "Volante llamativo para eventos y promociones. Cuenta con elementos de diseño atractivos y un claro llamado a la acción."
+      },
+      "mp-marketing-newsletter": {
+        "name": "Boletín Informativo",
+        "description": "Plantilla profesional de boletín con secciones para artículos, actualizaciones y CTAs. Perfecto para comunicaciones regulares con clientes."
+      },
+      "mp-personal-resume": {
+        "name": "Currículum Moderno",
+        "description": "Plantilla de currículum limpia y moderna con secciones para experiencia, habilidades y educación. Diseño compatible con sistemas ATS."
+      },
+      "mp-personal-letter": {
+        "name": "Carta Formal",
+        "description": "Plantilla profesional de carta para correspondencia empresarial. Incluye formato y estructura adecuados."
+      },
+      "mp-personal-invitation": {
+        "name": "Invitación de Evento",
+        "description": "Elegante plantilla de invitación para fiestas y eventos. Diseño personalizable para cualquier ocasión."
+      },
+      "mp-personal-cover-letter": {
+        "name": "Carta de Presentación",
+        "description": "Plantilla profesional de carta de presentación para solicitudes de empleo. Diseño moderno con secciones para logros clave y por qué eres el candidato ideal."
+      }
+    }
   }
 }

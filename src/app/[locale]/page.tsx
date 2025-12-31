@@ -10,7 +10,7 @@ import {
   Check,
   Github,
 } from 'lucide-react'
-import { HeroSection, ScrollReveal } from '@/components/landing'
+import { HeroSection, ScrollReveal, LandingHeader } from '@/components/landing'
 
 type Props = {
   params: Promise<{ locale: string }>
@@ -115,43 +115,13 @@ export default async function LandingPage({ params }: Props) {
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <header className="fixed inset-x-0 top-0 z-50 bg-white/80 backdrop-blur-sm">
-        <nav className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8">
-          <div className="flex lg:flex-1">
-            <Link href="/" className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-secondary">
-                <FileText className="h-5 w-5 text-white" />
-              </div>
-              <span className="text-xl font-bold text-foreground-dark">{common('brandName')}</span>
-            </Link>
-          </div>
-          <div className="hidden lg:flex lg:gap-x-8">
-            <a href="#features" className="text-sm font-medium text-foreground-light hover:text-foreground">
-              {nav('features')}
-            </a>
-            <a href="#pricing" className="text-sm font-medium text-foreground-light hover:text-foreground">
-              {nav('pricing')}
-            </a>
-            <a href="https://docs.mkpdfs.com" className="text-sm font-medium text-foreground-light hover:text-foreground">
-              {nav('docs')}
-            </a>
-          </div>
-          <div className="flex flex-1 items-center justify-end gap-4">
-            <Link
-              href="/login"
-              className="text-sm font-medium text-foreground-light hover:text-foreground"
-            >
-              {nav('signIn')}
-            </Link>
-            <Link
-              href="/register"
-              className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary-600"
-            >
-              {nav('getStarted')}
-            </Link>
-          </div>
-        </nav>
-      </header>
+      <LandingHeader
+        brandName={common('brandName')}
+        featuresLabel={nav('features')}
+        pricingLabel={nav('pricing')}
+        signInLabel={nav('signIn')}
+        getStartedLabel={nav('getStarted')}
+      />
 
       {/* Hero */}
       <HeroSection
@@ -159,7 +129,6 @@ export default async function LandingPage({ params }: Props) {
         titleHighlight={t('hero.titleHighlight')}
         subtitle={t('hero.subtitle')}
         ctaText={t('hero.cta')}
-        docsText={t('hero.viewDocs')}
         curlCode={`curl -X POST https://api.mkpdfs.com/pdf/generate \\
   -H "X-Api-Key: tlfy_your_api_key" \\
   -H "Content-Type: application/json" \\
@@ -278,19 +247,13 @@ export default async function LandingPage({ params }: Props) {
               <p className="mx-auto mt-4 max-w-xl text-lg text-white/80">
                 {t('cta.subtitle')}
               </p>
-              <div className="mt-10 flex items-center justify-center gap-x-6">
+              <div className="mt-10 flex items-center justify-center">
                 <Link
                   href="/register"
                   className="rounded-md bg-white px-6 py-3 text-sm font-semibold text-primary shadow-sm hover:bg-gray-100"
                 >
                   {t('cta.button')}
                 </Link>
-                <a
-                  href="https://docs.mkpdfs.com"
-                  className="text-sm font-semibold text-white"
-                >
-                  {t('cta.learnMore')} <span aria-hidden="true">→</span>
-                </a>
               </div>
             </div>
           </ScrollReveal>
@@ -311,12 +274,6 @@ export default async function LandingPage({ params }: Props) {
               {t('footer.copyright', { year: new Date().getFullYear() })}
             </p>
             <div className="flex gap-6">
-              <a href="#" className="text-sm text-foreground-light hover:text-foreground">
-                {t('footer.privacy')}
-              </a>
-              <a href="#" className="text-sm text-foreground-light hover:text-foreground">
-                {t('footer.terms')}
-              </a>
               <a href="https://github.com/mkpdfs" className="text-foreground-light hover:text-foreground">
                 <Github className="h-5 w-5" />
               </a>

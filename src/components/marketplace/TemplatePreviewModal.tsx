@@ -27,6 +27,7 @@ export function TemplatePreviewModal({
 }: TemplatePreviewModalProps) {
   const t = useTranslations('marketplace.preview')
   const categoryT = useTranslations('marketplace.categories')
+  const templatesT = useTranslations('marketplace.templates')
 
   const [activeTab, setActiveTab] = useState<'preview' | 'code' | 'data'>('preview')
   const [pdfUrl, setPdfUrl] = useState<string | null>(null)
@@ -48,13 +49,21 @@ export function TemplatePreviewModal({
 
   const sampleData = template.sampleDataJson ? JSON.parse(template.sampleDataJson) : {}
 
+  // Get localized name and description, falling back to backend values
+  const templateName = templatesT.has(`${template.templateId}.name`)
+    ? templatesT(`${template.templateId}.name`)
+    : template.name
+  const templateDescription = templatesT.has(`${template.templateId}.description`)
+    ? templatesT(`${template.templateId}.description`)
+    : template.description
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
       <div className="relative max-h-[90vh] w-full max-w-4xl overflow-hidden rounded-xl bg-white shadow-2xl">
         {/* Header */}
         <div className="flex items-center justify-between border-b px-6 py-4">
           <div>
-            <h2 className="text-xl font-semibold text-gray-900">{template.name}</h2>
+            <h2 className="text-xl font-semibold text-gray-900">{templateName}</h2>
             <p className="mt-1 text-sm text-gray-500">
               <span className="rounded-full bg-primary-50 px-2 py-0.5 text-xs font-medium text-primary">
                 {getCategoryLabel(template.category, categoryT)}
@@ -134,7 +143,7 @@ export function TemplatePreviewModal({
 
         {/* Description */}
         <div className="border-t bg-gray-50 px-6 py-4">
-          <p className="text-sm text-gray-600">{template.description}</p>
+          <p className="text-sm text-gray-600">{templateDescription}</p>
           {template.tags && template.tags.length > 0 && (
             <div className="mt-2 flex flex-wrap gap-1">
               {template.tags.map((tag) => (

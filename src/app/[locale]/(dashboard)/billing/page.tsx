@@ -1,14 +1,16 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, Button } from '@/components/ui'
 import { CreditCard, Check, Zap, Loader2, ExternalLink } from 'lucide-react'
 import { useProfile } from '@/hooks/useApi'
 import { createCheckoutSession, createPortalSession } from '@/lib/api'
 import { useTranslations } from 'next-intl'
+import { useQueryClient } from '@tanstack/react-query'
 
 export default function BillingPage() {
-  const { data: profile, isLoading } = useProfile()
+  const queryClient = useQueryClient()
+  const { data: profile, isLoading, refetch } = useProfile()
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null)
   const [loadingPortal, setLoadingPortal] = useState(false)
   const t = useTranslations('billing')
@@ -77,6 +79,26 @@ export default function BillingPage() {
 
   const currentPlan = profile?.subscription?.plan || 'free'
   const hasStripeSubscription = !!profile?.subscription?.stripeCustomerId
+
+  // Refresh profile on mount and periodically to catch subscription updates from webhooks
+  useEffect(() => {
+    // Invalidate cache on mount to get fresh data
+    queryClient.invalidateQueries({ queryKey: ['profile'] })
+
+    // Poll for updates every 5 seconds for 30 seconds after page load
+    // This catches webhook updates that happen after Stripe checkout
+    let pollCount = 0
+    const maxPolls = 6
+    const interval = setInterval(() => {
+      pollCount++
+      refetch()
+      if (pollCount >= maxPolls) {
+        clearInterval(interval)
+      }
+    }, 5000)
+
+    return () => clearInterval(interval)
+  }, [queryClient, refetch])
 
   const handleUpgrade = async (planId: string) => {
     if (planId === 'enterprise') {

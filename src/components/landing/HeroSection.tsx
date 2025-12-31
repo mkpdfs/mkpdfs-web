@@ -10,7 +10,6 @@ interface HeroSectionProps {
   titleHighlight: string
   subtitle: string
   ctaText: string
-  docsText: string
   curlCode: string
 }
 
@@ -19,7 +18,6 @@ export function HeroSection({
   titleHighlight,
   subtitle,
   ctaText,
-  docsText,
   curlCode,
 }: HeroSectionProps) {
   return (
@@ -38,7 +36,7 @@ export function HeroSection({
             {subtitle}
           </p>
           <div
-            className="mt-10 flex items-center justify-center gap-x-6 opacity-0 animate-hero-entrance"
+            className="mt-10 flex items-center justify-center opacity-0 animate-hero-entrance"
             style={{ animationDelay: '0.4s' }}
           >
             <Link
@@ -48,12 +46,6 @@ export function HeroSection({
               {ctaText}
               <ArrowRight className="h-4 w-4" />
             </Link>
-            <a
-              href="https://docs.mkpdfs.com"
-              className="text-sm font-semibold leading-6 text-foreground"
-            >
-              {docsText} <span aria-hidden="true">→</span>
-            </a>
           </div>
         </div>
 

@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { useTranslations } from 'next-intl'
 import { Link } from '@/i18n/routing'
 import { useAuth } from '@/providers'
@@ -13,13 +14,28 @@ import {
   ArrowRight,
   Upload,
   Wand2,
+  Check,
+  X,
 } from 'lucide-react'
+
+const ONBOARDING_DISMISSED_KEY = 'mkpdfs_onboarding_dismissed'
 
 export default function DashboardPage() {
   const { user } = useAuth()
   const { data: usage, isLoading: usageLoading } = useUsage()
   const { data: profile, isLoading: profileLoading } = useProfile()
   const t = useTranslations('dashboard')
+  const [onboardingDismissed, setOnboardingDismissed] = useState(true) // Default true to prevent flash
+
+  useEffect(() => {
+    const dismissed = localStorage.getItem(ONBOARDING_DISMISSED_KEY)
+    setOnboardingDismissed(dismissed === 'true')
+  }, [])
+
+  const dismissOnboarding = () => {
+    localStorage.setItem(ONBOARDING_DISMISSED_KEY, 'true')
+    setOnboardingDismissed(true)
+  }
 
   const isLoading = usageLoading || profileLoading
 
@@ -66,7 +82,7 @@ export default function DashboardPage() {
       name: t('quickActions.generatePdf.name'),
       description: t('quickActions.generatePdf.description'),
       icon: Sparkles,
-      href: '/generate',
+      href: '/integration',
       color: 'from-primary to-secondary',
     },
     {
@@ -177,42 +193,62 @@ export default function DashboardPage() {
       </div>
 
       {/* Getting Started */}
-      {(usageData?.templatesUploaded ?? 0) === 0 && (
+      {!onboardingDismissed && (
         <Card className="border-dashed">
-          <CardHeader>
+          <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="text-lg">{t('gettingStarted.title')}</CardTitle>
+            <button
+              onClick={dismissOnboarding}
+              className="text-foreground-light hover:text-foreground transition-colors"
+              aria-label={t('gettingStarted.dismiss')}
+            >
+              <X className="h-5 w-5" />
+            </button>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               <p className="text-sm text-foreground-light">
                 {t('gettingStarted.intro')}
               </p>
-              <ol className="list-inside list-decimal space-y-2 text-sm text-foreground-light">
-                <li>
-                  <Link href="/templates" className="text-primary hover:underline">
+              <ol className="space-y-3 text-sm text-foreground-light">
+                <li className="flex items-center gap-3">
+                  <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full ${(usageData?.templatesUploaded ?? 0) > 0 ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-500'}`}>
+                    {(usageData?.templatesUploaded ?? 0) > 0 ? <Check className="h-4 w-4" /> : '1'}
+                  </span>
+                  <Link href="/templates" className={`hover:underline ${(usageData?.templatesUploaded ?? 0) > 0 ? 'text-green-600' : 'text-primary'}`}>
                     {t('gettingStarted.step1')}
                   </Link>
                 </li>
-                <li>
-                  <Link href="/api-keys" className="text-primary hover:underline">
-                    {t('gettingStarted.step2')}
-                  </Link>{' '}
-                  {t('gettingStarted.step2Suffix')}
+                <li className="flex items-center gap-3">
+                  <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full ${(usageData?.tokensCreated ?? 0) > 0 ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-500'}`}>
+                    {(usageData?.tokensCreated ?? 0) > 0 ? <Check className="h-4 w-4" /> : '2'}
+                  </span>
+                  <span>
+                    <Link href="/api-keys" className={`hover:underline ${(usageData?.tokensCreated ?? 0) > 0 ? 'text-green-600' : 'text-primary'}`}>
+                      {t('gettingStarted.step2')}
+                    </Link>{' '}
+                    {t('gettingStarted.step2Suffix')}
+                  </span>
                 </li>
-                <li>
-                  <Link href="/generate" className="text-primary hover:underline">
+                <li className="flex items-center gap-3">
+                  <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full ${(usageData?.pagesGenerated ?? 0) > 0 ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-500'}`}>
+                    {(usageData?.pagesGenerated ?? 0) > 0 ? <Check className="h-4 w-4" /> : '3'}
+                  </span>
+                  <Link href="/integration" className={`hover:underline ${(usageData?.pagesGenerated ?? 0) > 0 ? 'text-green-600' : 'text-primary'}`}>
                     {t('gettingStarted.step3')}
                   </Link>
                 </li>
               </ol>
-              <div className="pt-2">
-                <Link href="/templates">
-                  <Button>
-                    <Upload className="mr-2 h-4 w-4" />
-                    {t('gettingStarted.uploadFirstTemplate')}
-                  </Button>
-                </Link>
-              </div>
+              {(usageData?.templatesUploaded ?? 0) === 0 && (
+                <div className="pt-2">
+                  <Link href="/templates">
+                    <Button>
+                      <Upload className="mr-2 h-4 w-4" />
+                      {t('gettingStarted.uploadFirstTemplate')}
+                    </Button>
+                  </Link>
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>

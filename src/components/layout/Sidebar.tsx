@@ -7,7 +7,6 @@ import {
   LayoutDashboard,
   FileText,
   Key,
-  Settings,
   CreditCard,
   FileText as Logo,
   Store,
@@ -30,7 +29,6 @@ export function Sidebar() {
   ]
 
   const secondaryNavigation = [
-    { name: t('settings'), href: '/settings', icon: Settings },
     { name: t('billing'), href: '/billing', icon: CreditCard },
   ]
 
