@@ -51,8 +51,8 @@ const config: Config = {
         background: 'hsl(var(--background))',
         foreground: {
           DEFAULT: 'hsl(var(--foreground))',
-          dark: '#111827',            // Gray-900
-          light: '#6B7280',           // Gray-500
+          dark: 'hsl(var(--foreground-dark))',
+          light: 'hsl(var(--foreground-light))',
         },
         muted: {
           DEFAULT: 'hsl(var(--muted))',
