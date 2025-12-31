@@ -47,31 +47,31 @@ const config: Config = {
           start: '#3B82F6',           // Blue
           end: '#8B5CF6',             // Violet
         },
-        // Semantic colors
-        background: '#ffffff',
+        // Semantic colors (using CSS variables for dark mode support)
+        background: 'hsl(var(--background))',
         foreground: {
-          DEFAULT: '#1F2937',         // Gray-800
+          DEFAULT: 'hsl(var(--foreground))',
           dark: '#111827',            // Gray-900
           light: '#6B7280',           // Gray-500
         },
         muted: {
-          DEFAULT: '#F3F4F6',         // Gray-100
-          foreground: '#6B7280',      // Gray-500
+          DEFAULT: 'hsl(var(--muted))',
+          foreground: 'hsl(var(--muted-foreground))',
         },
         card: {
-          DEFAULT: '#ffffff',
-          foreground: '#111827',
+          DEFAULT: 'hsl(var(--card))',
+          foreground: 'hsl(var(--card-foreground))',
         },
-        border: '#E5E7EB',            // Gray-200
-        input: '#E5E7EB',
-        ring: '#3B82F6',
+        border: 'hsl(var(--border))',
+        input: 'hsl(var(--input))',
+        ring: 'hsl(var(--ring))',
         accent: {
-          DEFAULT: '#EFF6FF',
-          foreground: '#1E40AF',
+          DEFAULT: 'hsl(var(--accent))',
+          foreground: 'hsl(var(--accent-foreground))',
         },
         destructive: {
-          DEFAULT: '#EF4444',
-          foreground: '#ffffff',
+          DEFAULT: 'hsl(var(--destructive))',
+          foreground: 'hsl(var(--destructive-foreground))',
         },
         success: {
           DEFAULT: '#22C55E',
