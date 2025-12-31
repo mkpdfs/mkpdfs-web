@@ -50,7 +50,7 @@ export function HeroSection({
         </div>
 
         <div
-          className="mx-auto mt-16 max-w-2xl rounded-xl bg-foreground-dark p-6 shadow-2xl opacity-0 animate-hero-entrance"
+          className="mx-auto mt-16 max-w-2xl rounded-xl bg-slate-900 p-6 shadow-2xl opacity-0 animate-hero-entrance"
           style={{ animationDelay: '0.6s' }}
         >
           <div className="flex items-center gap-2 border-b border-white/10 pb-4">
