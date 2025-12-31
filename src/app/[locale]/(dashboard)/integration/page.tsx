@@ -57,7 +57,7 @@ import {
   Upload,
   Table,
 } from 'lucide-react'
-import { parseCSV, type ParseCsvResult } from '@/lib/csv'
+import { parseCSV, jsonToCsv, type ParseCsvResult } from '@/lib/csv'
 
 type Language = 'curl' | 'javascript' | 'python' | 'go'
 type BodyMode = 'json' | 'keyvalue' | 'csv'
@@ -636,6 +636,10 @@ export default function IntegrationPage() {
         const formatted = JSON.stringify(parsed, null, 2)
         setJsonData(formatted)
         setKeyValuePairs(jsonToKeyValuePairs(formatted))
+        // Also update CSV data
+        const csvContent = jsonToCsv(parsed)
+        setCsvText(csvContent)
+        setParsedCsvData(parseCSV(csvContent))
       } catch {
         // Keep current data
       }
@@ -673,10 +677,17 @@ export default function IntegrationPage() {
     } else if (newMode === 'json' && bodyMode === 'keyvalue') {
       setJsonData(keyValuePairsToJson(keyValuePairs))
     }
-    // When switching to CSV mode, parse the initial CSV text
+    // When switching to CSV mode, convert current JSON data to CSV
     if (newMode === 'csv' && bodyMode !== 'csv') {
-      const result = parseCSV(csvText)
-      setParsedCsvData(result)
+      try {
+        const parsed = JSON.parse(jsonData)
+        const csvContent = jsonToCsv(parsed)
+        setCsvText(csvContent)
+        setParsedCsvData(parseCSV(csvContent))
+      } catch {
+        // If JSON is invalid, just parse current CSV text
+        setParsedCsvData(parseCSV(csvText))
+      }
     }
     setBodyMode(newMode)
   }

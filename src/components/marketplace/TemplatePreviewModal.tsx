@@ -165,8 +165,7 @@ export function TemplatePreviewModal({
           </Button>
           {isAdded ? (
             <Button
-              variant="outline"
-              className="border-green-500 text-green-600 hover:bg-green-50 hover:text-green-700"
+              variant="success"
               disabled
             >
               <Check className="mr-1.5 h-4 w-4" />

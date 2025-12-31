@@ -43,3 +43,33 @@ export function isValidCsv(content: string): boolean {
   const lines = content.trim().split('\n')
   return lines.length >= 2 // At least header + 1 data row
 }
+
+/**
+ * Convert a JSON object or array to CSV string
+ */
+export function jsonToCsv(data: Record<string, unknown> | Record<string, unknown>[]): string {
+  const dataArray = Array.isArray(data) ? data : [data]
+  if (dataArray.length === 0) return ''
+
+  // Get all unique keys from all objects
+  const headers = Array.from(
+    new Set(dataArray.flatMap(obj => Object.keys(obj)))
+  )
+
+  // Build CSV rows
+  const headerRow = headers.join(',')
+  const dataRows = dataArray.map(obj =>
+    headers.map(header => {
+      const value = obj[header]
+      if (value === null || value === undefined) return ''
+      const strValue = String(value)
+      // Escape values containing commas, quotes, or newlines
+      if (strValue.includes(',') || strValue.includes('"') || strValue.includes('\n')) {
+        return `"${strValue.replace(/"/g, '""')}"`
+      }
+      return strValue
+    }).join(',')
+  )
+
+  return [headerRow, ...dataRows].join('\n')
+}
