@@ -113,7 +113,7 @@ export default async function LandingPage({ params }: Props) {
   ]
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background">
       {/* Header */}
       <LandingHeader
         brandName={common('brandName')}
@@ -159,7 +159,7 @@ export default async function LandingPage({ params }: Props) {
           <div className="mx-auto mt-16 grid max-w-5xl gap-8 sm:grid-cols-2 lg:grid-cols-3">
             {features.map((feature, index) => (
               <ScrollReveal key={feature.name} delay={index * 150}>
-                <div className="rounded-xl border border-border bg-white p-6 transition-shadow hover:shadow-lg h-full">
+                <div className="rounded-xl border border-border bg-card p-6 transition-shadow hover:shadow-lg h-full">
                   <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-secondary">
                     <feature.icon className="h-6 w-6 text-white" />
                   </div>
@@ -190,7 +190,7 @@ export default async function LandingPage({ params }: Props) {
             {plans.map((plan, index) => (
               <ScrollReveal key={plan.name} delay={index * 100}>
                 <div
-                  className={`relative rounded-2xl bg-white p-8 shadow-sm h-full ${
+                  className={`relative rounded-2xl bg-card p-8 shadow-sm h-full ${
                     plan.popular ? 'ring-2 ring-primary' : 'border border-border'
                   }`}
                 >
@@ -261,7 +261,7 @@ export default async function LandingPage({ params }: Props) {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-border bg-white py-12">
+      <footer className="border-t border-border bg-background py-12">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="flex flex-col items-center justify-between gap-6 sm:flex-row">
             <div className="flex items-center gap-2">

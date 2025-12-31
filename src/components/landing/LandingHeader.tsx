@@ -3,6 +3,7 @@
 import { Link } from '@/i18n/routing'
 import { FileText } from 'lucide-react'
 import { LanguageSelector } from '@/components/ui/LanguageSelector'
+import { ThemeToggle } from '@/components/ui/ThemeToggle'
 
 interface LandingHeaderProps {
   brandName: string
@@ -20,7 +21,7 @@ export function LandingHeader({
   getStartedLabel,
 }: LandingHeaderProps) {
   return (
-    <header className="fixed inset-x-0 top-0 z-50 bg-white/80 backdrop-blur-sm">
+    <header className="fixed inset-x-0 top-0 z-50 bg-background/80 backdrop-blur-sm">
       <nav className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8">
         <div className="flex lg:flex-1">
           <Link href="/" className="flex items-center gap-2">
@@ -39,6 +40,7 @@ export function LandingHeader({
           </a>
         </div>
         <div className="flex flex-1 items-center justify-end gap-4">
+          <ThemeToggle />
           <LanguageSelector variant="compact" />
           <Link
             href="/login"

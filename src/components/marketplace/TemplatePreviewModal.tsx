@@ -59,12 +59,12 @@ export function TemplatePreviewModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="relative max-h-[90vh] w-full max-w-4xl overflow-hidden rounded-xl bg-white shadow-2xl">
+      <div className="relative max-h-[90vh] w-full max-w-4xl overflow-hidden rounded-xl bg-card shadow-2xl">
         {/* Header */}
         <div className="flex items-center justify-between border-b px-6 py-4">
           <div>
-            <h2 className="text-xl font-semibold text-gray-900">{templateName}</h2>
-            <p className="mt-1 text-sm text-gray-500">
+            <h2 className="text-xl font-semibold text-foreground">{templateName}</h2>
+            <p className="mt-1 text-sm text-muted-foreground">
               <span className="rounded-full bg-primary-50 px-2 py-0.5 text-xs font-medium text-primary">
                 {getCategoryLabel(template.category, categoryT)}
               </span>
@@ -72,7 +72,7 @@ export function TemplatePreviewModal({
           </div>
           <button
             onClick={onClose}
-            className="rounded-lg p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+            className="rounded-lg p-2 text-muted-foreground hover:bg-muted hover:text-foreground"
           >
             <X className="h-5 w-5" />
           </button>
@@ -80,7 +80,7 @@ export function TemplatePreviewModal({
 
         {/* Thumbnail Preview */}
         {template.thumbnailUrl && (
-          <div className="border-b bg-gray-50 px-6 py-4">
+          <div className="border-b bg-muted px-6 py-4">
             <div className="relative mx-auto h-64 w-full max-w-xl">
               <Image
                 src={template.thumbnailUrl}
@@ -101,7 +101,7 @@ export function TemplatePreviewModal({
             className={`flex items-center gap-2 border-b-2 px-4 py-3 text-sm font-medium transition-colors ${
               activeTab === 'preview'
                 ? 'border-primary text-primary'
-                : 'border-transparent text-gray-500 hover:text-gray-700'
+                : 'border-transparent text-muted-foreground hover:text-foreground'
             }`}
           >
             <FileText className="h-4 w-4" />
@@ -112,7 +112,7 @@ export function TemplatePreviewModal({
             className={`flex items-center gap-2 border-b-2 px-4 py-3 text-sm font-medium transition-colors ${
               activeTab === 'data'
                 ? 'border-primary text-primary'
-                : 'border-transparent text-gray-500 hover:text-gray-700'
+                : 'border-transparent text-muted-foreground hover:text-foreground'
             }`}
           >
             <Code className="h-4 w-4" />
@@ -127,13 +127,13 @@ export function TemplatePreviewModal({
               <Spinner size="lg" />
             </div>
           ) : activeTab === 'preview' ? (
-            <div className="rounded-lg border bg-gray-50 p-4">
+            <div className="rounded-lg border bg-muted p-4">
               <pre className="max-h-96 overflow-auto text-sm">
                 <code>{previewData?.content || t('loadingTemplate')}</code>
               </pre>
             </div>
           ) : (
-            <div className="rounded-lg border bg-gray-50 p-4">
+            <div className="rounded-lg border bg-muted p-4">
               <pre className="max-h-96 overflow-auto text-sm">
                 <code>{JSON.stringify(sampleData, null, 2)}</code>
               </pre>
@@ -142,14 +142,14 @@ export function TemplatePreviewModal({
         </div>
 
         {/* Description */}
-        <div className="border-t bg-gray-50 px-6 py-4">
-          <p className="text-sm text-gray-600">{templateDescription}</p>
+        <div className="border-t bg-muted px-6 py-4">
+          <p className="text-sm text-muted-foreground">{templateDescription}</p>
           {template.tags && template.tags.length > 0 && (
             <div className="mt-2 flex flex-wrap gap-1">
               {template.tags.map((tag) => (
                 <span
                   key={tag}
-                  className="rounded bg-gray-200 px-2 py-0.5 text-xs text-gray-600"
+                  className="rounded bg-muted px-2 py-0.5 text-xs text-muted-foreground"
                 >
                   {tag}
                 </span>

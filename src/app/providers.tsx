@@ -1,6 +1,6 @@
 'use client'
 
-import { AuthProvider, QueryProvider } from '@/providers'
+import { AuthProvider, QueryProvider, ThemeProvider } from '@/providers'
 import { Toaster } from '@/components/ui'
 
 interface ProvidersProps {
@@ -9,11 +9,13 @@ interface ProvidersProps {
 
 export function Providers({ children }: ProvidersProps) {
   return (
-    <QueryProvider>
-      <AuthProvider>
-        {children}
-        <Toaster />
-      </AuthProvider>
-    </QueryProvider>
+    <ThemeProvider>
+      <QueryProvider>
+        <AuthProvider>
+          {children}
+          <Toaster />
+        </AuthProvider>
+      </QueryProvider>
+    </ThemeProvider>
   )
 }

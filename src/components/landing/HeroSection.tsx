@@ -22,7 +22,7 @@ export function HeroSection({
 }: HeroSectionProps) {
   return (
     <section className="relative overflow-hidden pt-32 pb-20 sm:pt-40 sm:pb-24">
-      <div className="absolute inset-0 -z-10 bg-gradient-to-br from-primary-50 via-white to-secondary-50" />
+      <div className="absolute inset-0 -z-10 bg-gradient-to-br from-primary-50 via-background to-secondary-50 dark:from-primary-950/30 dark:via-background dark:to-secondary-950/30" />
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-3xl text-center">
           <h1 className="text-4xl font-bold tracking-tight text-foreground-dark sm:text-6xl opacity-0 animate-hero-entrance">

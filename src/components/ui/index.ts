@@ -34,3 +34,4 @@ export {
   DialogTitle,
   DialogDescription,
 } from './Dialog'
+export { ThemeToggle } from './ThemeToggle'

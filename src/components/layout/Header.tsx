@@ -5,7 +5,7 @@ import { Link, usePathname } from '@/i18n/routing'
 import { useTranslations } from 'next-intl'
 import { useAuth } from '@/providers'
 import { cn } from '@/lib/utils'
-import { Button, LanguageSelector } from '@/components/ui'
+import { Button, LanguageSelector, ThemeToggle } from '@/components/ui'
 import {
   Menu,
   X,
@@ -42,7 +42,7 @@ export function Header() {
   const t = useTranslations('nav')
 
   return (
-    <header className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-border bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
+    <header className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-border bg-background px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
       {/* Mobile menu button */}
       <button
         type="button"
@@ -61,6 +61,7 @@ export function Header() {
 
         {/* User menu */}
         <div className="flex items-center gap-x-4 lg:gap-x-6">
+          <ThemeToggle className="hidden sm:flex" />
           <LanguageSelector variant="default" className="hidden sm:block" />
 
           <div className="hidden lg:block lg:h-6 lg:w-px lg:bg-border" />
@@ -89,7 +90,7 @@ export function Header() {
           />
 
           {/* Menu panel */}
-          <div className="fixed inset-y-0 left-0 z-50 w-full max-w-xs overflow-y-auto bg-white px-6 py-6 sm:ring-1 sm:ring-border">
+          <div className="fixed inset-y-0 left-0 z-50 w-full max-w-xs overflow-y-auto bg-background px-6 py-6 sm:ring-1 sm:ring-border">
             <div className="flex items-center justify-between">
               <Link href="/dashboard" className="flex items-center gap-2" onClick={() => setMobileMenuOpen(false)}>
                 <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-secondary">
