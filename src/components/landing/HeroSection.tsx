@@ -1,15 +1,18 @@
 'use client'
 
+import * as React from 'react'
 import { Link } from '@/i18n/routing'
 import { ArrowRight } from 'lucide-react'
 import { AnimatedGradientText } from './AnimatedGradientText'
 import { TypewriterCode } from './TypewriterCode'
+import { ContactEnterpriseModal } from './ContactEnterpriseModal'
 
 interface HeroSectionProps {
   title: string
   titleHighlight: string
   subtitle: string
   ctaText: string
+  contactText: string
   curlCode: string
 }
 
@@ -18,8 +21,10 @@ export function HeroSection({
   titleHighlight,
   subtitle,
   ctaText,
+  contactText,
   curlCode,
 }: HeroSectionProps) {
+  const [contactModalOpen, setContactModalOpen] = React.useState(false)
   return (
     <section className="relative overflow-hidden pt-32 pb-20 sm:pt-40 sm:pb-24">
       <div className="absolute inset-0 -z-10 bg-gradient-to-br from-primary-50 via-background to-secondary-50 dark:from-primary-950/30 dark:via-background dark:to-secondary-950/30" />
@@ -36,7 +41,7 @@ export function HeroSection({
             {subtitle}
           </p>
           <div
-            className="mt-10 flex items-center justify-center opacity-0 animate-hero-entrance"
+            className="mt-10 flex items-center justify-center gap-4 opacity-0 animate-hero-entrance"
             style={{ animationDelay: '0.4s' }}
           >
             <Link
@@ -46,6 +51,12 @@ export function HeroSection({
               {ctaText}
               <ArrowRight className="h-4 w-4" />
             </Link>
+            <button
+              onClick={() => setContactModalOpen(true)}
+              className="rounded-md border border-border bg-background px-6 py-3 text-sm font-semibold text-foreground hover:bg-muted transition-colors"
+            >
+              {contactText}
+            </button>
           </div>
         </div>
 
@@ -61,6 +72,11 @@ export function HeroSection({
           <TypewriterCode code={curlCode} typingSpeed={20} startDelay={1200} />
         </div>
       </div>
+
+      <ContactEnterpriseModal
+        open={contactModalOpen}
+        onOpenChange={setContactModalOpen}
+      />
     </section>
   )
 }

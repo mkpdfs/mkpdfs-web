@@ -129,6 +129,7 @@ export default async function LandingPage({ params }: Props) {
         titleHighlight={t('hero.titleHighlight')}
         subtitle={t('hero.subtitle')}
         ctaText={t('hero.cta')}
+        contactText={t('hero.contact')}
         curlCode={`curl -X POST https://api.mkpdfs.com/pdf/generate \\
   -H "X-Api-Key: tlfy_your_api_key" \\
   -H "Content-Type: application/json" \\
