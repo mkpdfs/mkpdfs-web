@@ -756,5 +756,18 @@
         "description": "Plantilla profesional de carta de presentación para solicitudes de empleo. Diseño moderno con secciones para logros clave y por qué eres el candidato ideal."
       }
     }
+  },
+  "contactEnterprise": {
+    "title": "Contactar Ventas Enterprise",
+    "description": "Cuéntanos sobre tus necesidades y te responderemos en 24 horas.",
+    "nameLabel": "Nombre",
+    "namePlaceholder": "Tu nombre",
+    "emailLabel": "Correo electrónico",
+    "emailPlaceholder": "tu@empresa.com",
+    "messageLabel": "Mensaje",
+    "messagePlaceholder": "Cuéntanos sobre tus requerimientos, volumen esperado y necesidades específicas...",
+    "successMessage": "¡Gracias! Nuestro equipo te contactará en las próximas 24 horas.",
+    "errorMessage": "Algo salió mal. Por favor intenta de nuevo o escríbenos directamente.",
+    "rateLimitMessage": "Demasiadas solicitudes. Por favor intenta más tarde."
   }
 }

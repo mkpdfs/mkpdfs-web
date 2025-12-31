@@ -257,3 +257,39 @@ export async function useMarketplaceTemplate(templateId: string): Promise<Templa
   )
   return response.template
 }
+
+// ============================================
+// Contact Enterprise (public endpoint)
+// ============================================
+
+interface ContactEnterpriseRequest {
+  name: string
+  email: string
+  message: string
+}
+
+interface ContactEnterpriseResponse {
+  success: boolean
+  message: string
+  remaining?: number
+}
+
+export async function contactEnterprise(
+  data: ContactEnterpriseRequest
+): Promise<ContactEnterpriseResponse> {
+  const response = await fetch(`${API_URL}/contact/enterprise`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  })
+
+  const result = await response.json()
+
+  if (!response.ok) {
+    throw new Error(result.message || 'Failed to send message')
+  }
+
+  return result
+}

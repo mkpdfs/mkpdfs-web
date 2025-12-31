@@ -756,5 +756,18 @@
         "description": "Professional cover letter template for job applications. Modern design with sections for key achievements and why you're the perfect fit."
       }
     }
+  },
+  "contactEnterprise": {
+    "title": "Contact Enterprise Sales",
+    "description": "Tell us about your needs and we'll get back to you within 24 hours.",
+    "nameLabel": "Name",
+    "namePlaceholder": "Your name",
+    "emailLabel": "Email",
+    "emailPlaceholder": "you@company.com",
+    "messageLabel": "Message",
+    "messagePlaceholder": "Tell us about your requirements, expected volume, and any specific needs...",
+    "successMessage": "Thank you! Our team will contact you within 24 hours.",
+    "errorMessage": "Something went wrong. Please try again or email us directly.",
+    "rateLimitMessage": "Too many requests. Please try again later."
   }
 }

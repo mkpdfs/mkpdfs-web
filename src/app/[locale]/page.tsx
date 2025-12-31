@@ -10,7 +10,7 @@ import {
   Check,
   Github,
 } from 'lucide-react'
-import { HeroSection, ScrollReveal, LandingHeader } from '@/components/landing'
+import { HeroSection, ScrollReveal, LandingHeader, EnterprisePricingCard } from '@/components/landing'
 
 type Props = {
   params: Promise<{ locale: string }>
@@ -187,51 +187,67 @@ export default async function LandingPage({ params }: Props) {
           </ScrollReveal>
 
           <div className="mx-auto mt-16 grid max-w-6xl gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {plans.map((plan, index) => (
-              <ScrollReveal key={plan.name} delay={index * 100}>
-                <div
-                  className={`relative rounded-2xl bg-card p-8 shadow-sm h-full ${
-                    plan.popular ? 'ring-2 ring-primary' : 'border border-border'
-                  }`}
-                >
-                  {plan.popular && (
-                    <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                      <span className="rounded-full bg-primary px-4 py-1 text-sm font-medium text-white">
-                        {t('pricing.mostPopular')}
-                      </span>
-                    </div>
-                  )}
-                  <h3 className="text-lg font-semibold text-foreground-dark">{plan.name}</h3>
-                  <p className="mt-1 text-sm text-foreground-light">{plan.description}</p>
-                  <p className="mt-4 text-4xl font-bold text-foreground-dark">
-                    {plan.price}
-                    {plan.price !== 'Custom' && plan.price !== 'Personalizado' && (
-                      <span className="text-base font-normal text-foreground-light">{common('perMonth')}</span>
-                    )}
-                  </p>
+            {plans.map((plan, index) => {
+              const isEnterprise = plan.price === 'Custom' || plan.price === 'Personalizado'
 
-                  <ul className="mt-6 space-y-3">
-                    {plan.features.map((feature) => (
-                      <li key={feature} className="flex items-center gap-3 text-sm text-foreground-light">
-                        <Check className="h-4 w-4 flex-shrink-0 text-success" />
-                        {feature}
-                      </li>
-                    ))}
-                  </ul>
+              if (isEnterprise) {
+                return (
+                  <ScrollReveal key={plan.name} delay={index * 100}>
+                    <EnterprisePricingCard
+                      name={plan.name}
+                      description={plan.description}
+                      price={plan.price}
+                      features={plan.features}
+                      contactSalesText={t('pricing.contactSales')}
+                    />
+                  </ScrollReveal>
+                )
+              }
 
-                  <Link
-                    href="/register"
-                    className={`mt-8 block w-full rounded-md px-4 py-2.5 text-center text-sm font-semibold ${
-                      plan.popular
-                        ? 'bg-primary text-white hover:bg-primary-600'
-                        : 'border border-border text-foreground hover:bg-muted'
+              return (
+                <ScrollReveal key={plan.name} delay={index * 100}>
+                  <div
+                    className={`relative rounded-2xl bg-card p-8 shadow-sm h-full ${
+                      plan.popular ? 'ring-2 ring-primary' : 'border border-border'
                     }`}
                   >
-                    {plan.price === 'Custom' || plan.price === 'Personalizado' ? t('pricing.contactSales') : nav('getStarted')}
-                  </Link>
-                </div>
-              </ScrollReveal>
-            ))}
+                    {plan.popular && (
+                      <div className="absolute -top-4 left-1/2 -translate-x-1/2">
+                        <span className="rounded-full bg-primary px-4 py-1 text-sm font-medium text-white">
+                          {t('pricing.mostPopular')}
+                        </span>
+                      </div>
+                    )}
+                    <h3 className="text-lg font-semibold text-foreground-dark">{plan.name}</h3>
+                    <p className="mt-1 text-sm text-foreground-light">{plan.description}</p>
+                    <p className="mt-4 text-4xl font-bold text-foreground-dark">
+                      {plan.price}
+                      <span className="text-base font-normal text-foreground-light">{common('perMonth')}</span>
+                    </p>
+
+                    <ul className="mt-6 space-y-3">
+                      {plan.features.map((feature) => (
+                        <li key={feature} className="flex items-center gap-3 text-sm text-foreground-light">
+                          <Check className="h-4 w-4 flex-shrink-0 text-success" />
+                          {feature}
+                        </li>
+                      ))}
+                    </ul>
+
+                    <Link
+                      href="/register"
+                      className={`mt-8 block w-full rounded-md px-4 py-2.5 text-center text-sm font-semibold ${
+                        plan.popular
+                          ? 'bg-primary text-white hover:bg-primary-600'
+                          : 'border border-border text-foreground hover:bg-muted'
+                      }`}
+                    >
+                      {nav('getStarted')}
+                    </Link>
+                  </div>
+                </ScrollReveal>
+              )
+            })}
           </div>
         </div>
       </section>

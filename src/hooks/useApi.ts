@@ -24,6 +24,7 @@ import {
   getMarketplaceTemplate,
   getMarketplaceTemplatePreview,
   useMarketplaceTemplate as copyMarketplaceTemplate,
+  contactEnterprise,
 } from '@/lib/api'
 import type {
   MkpdfsUser,
@@ -256,5 +257,16 @@ export function useCopyMarketplaceTemplate() {
       queryClient.invalidateQueries({ queryKey: queryKeys.templates })
       queryClient.invalidateQueries({ queryKey: queryKeys.usage })
     },
+  })
+}
+
+// ============================================
+// Contact Enterprise Hook (public)
+// ============================================
+
+export function useContactEnterprise() {
+  return useMutation({
+    mutationFn: (data: { name: string; email: string; message: string }) =>
+      contactEnterprise(data),
   })
 }
