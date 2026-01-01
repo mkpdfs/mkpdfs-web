@@ -217,7 +217,7 @@ export default function BillingPage() {
       {/* Available Plans */}
       <div>
         <h2 className="mb-4 text-lg font-semibold text-foreground-dark">{t('plans.title')}</h2>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2 2xl:grid-cols-4">
           {plans.map((plan) => {
             const isCurrent = currentPlan === plan.id ||
               (currentPlan === 'starter' && plan.id === 'basic')
