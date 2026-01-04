@@ -205,7 +205,8 @@ export function AIGenerateSection({ onSaveComplete }: AIGenerateSectionProps) {
       setCurrentJobId(null)
       aiMessageIdRef.current = null
     }
-  }, [jobStatus, ai, errors, currentJobType, currentJobId, generatePdfPreview])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [jobStatus, currentJobType, currentJobId, generatePdfPreview])
 
   // PDF preview request handler
   const handleRequestPdfPreview = useCallback(async () => {
