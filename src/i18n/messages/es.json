@@ -689,6 +689,8 @@
       "submitting": "Enviando tu solicitud...",
       "uploadingImage": "Subiendo imagen...",
       "jobSubmitted": "Solicitud enviada, procesando...",
+      "analyzingSubmitted": "Analizando tu solicitud...",
+      "questionsReady": "Por favor responde algunas preguntas para personalizar tu plantilla.",
       "templateGenerated": "¡Plantilla \"{name}\" generada exitosamente!",
       "templateSaved": "La plantilla \"{name}\" se ha guardado en tu biblioteca."
     },

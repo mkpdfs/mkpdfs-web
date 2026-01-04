@@ -689,6 +689,8 @@
       "submitting": "Submitting your request...",
       "uploadingImage": "Uploading image...",
       "jobSubmitted": "Request submitted, processing...",
+      "analyzingSubmitted": "Analyzing your request...",
+      "questionsReady": "Please answer a few questions to customize your template.",
       "templateGenerated": "Template \"{name}\" generated successfully!",
       "templateSaved": "Template \"{name}\" has been saved to your library."
     },
