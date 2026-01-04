@@ -1,14 +1,15 @@
 'use client'
 
 import { useState, useCallback, useMemo, useEffect, useRef } from 'react'
-import { Sparkles, Save } from 'lucide-react'
-import { Button, Spinner } from '@/components/ui'
+import { Sparkles, Save, ArrowLeft } from 'lucide-react'
+import { Button, Spinner, Card, CardContent, CardHeader, CardTitle } from '@/components/ui'
 import { UpgradePrompt } from '@/components/UpgradePrompt'
-import { FloatingChatWidget, type ChatMessage } from '@/components/ai'
+import { FloatingChatWidget, type ChatMessage, QuestionForm } from '@/components/ai'
 import { FullScreenPreview } from '@/components/ai'
 import { useProfile, useSubmitAIGeneration, useAIJobStatus, useUploadTemplate, useGeneratePdf, useUploadAIImage } from '@/hooks/useApi'
 import { toast } from '@/hooks/useToast'
 import { useTranslations } from 'next-intl'
+import type { StructuredQuestion, QuestionAnswer, ImageAnalysis } from '@/lib/api'
 
 interface AIGenerateSectionProps {
   onSaveComplete?: () => void
@@ -19,6 +20,9 @@ interface GeneratedTemplate {
   name: string
   description: string
 }
+
+// Flow steps for two-step generation
+type FlowStep = 'prompt' | 'analyzing' | 'questions' | 'generating' | 'complete'
 
 export function AIGenerateSection({ onSaveComplete }: AIGenerateSectionProps) {
   const t = useTranslations('templates')
@@ -41,10 +45,20 @@ export function AIGenerateSection({ onSaveComplete }: AIGenerateSectionProps) {
     imageBase64?: string
     imageMediaType?: string
     imageS3Key?: string
+    originalPrompt?: string // Store the original prompt for generation job
   }>({})
+
+  // Two-step flow state
+  const [flowStep, setFlowStep] = useState<FlowStep>('prompt')
+  const [analysisJobId, setAnalysisJobId] = useState<string | null>(null)
+  const [analysisResult, setAnalysisResult] = useState<{
+    questions: StructuredQuestion[]
+    imageAnalysis?: ImageAnalysis
+  } | null>(null)
 
   // Job polling state
   const [currentJobId, setCurrentJobId] = useState<string | null>(null)
+  const [currentJobType, setCurrentJobType] = useState<'analysis' | 'generation'>('generation')
   const aiMessageIdRef = useRef<string | null>(null)
 
   // Query job status with polling
@@ -76,71 +90,7 @@ export function AIGenerateSection({ onSaveComplete }: AIGenerateSectionProps) {
     }
   }, [editedData])
 
-  // Handle job status updates
-  useEffect(() => {
-    if (!jobStatus || !aiMessageIdRef.current) return
-
-    const aiMessageId = aiMessageIdRef.current
-
-    if (jobStatus.status === 'processing') {
-      // Update message to show processing
-      setMessages(prev => prev.map(msg =>
-        msg.id === aiMessageId
-          ? {
-              ...msg,
-              content: ai('chat.generating'),
-              isLoading: true,
-            }
-          : msg
-      ))
-    } else if (jobStatus.status === 'completed' && jobStatus.template) {
-      // Job completed successfully
-      setMessages(prev => prev.map(msg =>
-        msg.id === aiMessageId
-          ? {
-              ...msg,
-              content: ai('chat.templateGenerated', { name: jobStatus.template!.name }),
-              isLoading: false,
-            }
-          : msg
-      ))
-
-      // Update generated template and editor
-      setGeneratedTemplate(jobStatus.template)
-      setEditedTemplate(jobStatus.template.content)
-      setEditedData(JSON.stringify(jobStatus.sampleData || {}, null, 2))
-
-      // Clear job tracking
-      setCurrentJobId(null)
-      aiMessageIdRef.current = null
-
-      // Auto-generate PDF preview
-      generatePdfPreview(jobStatus.template.content, jobStatus.sampleData || {})
-    } else if (jobStatus.status === 'failed') {
-      // Job failed
-      setMessages(prev => prev.map(msg =>
-        msg.id === aiMessageId
-          ? {
-              ...msg,
-              content: jobStatus.error || errors('generic'),
-              isLoading: false,
-            }
-          : msg
-      ))
-
-      toast({
-        title: ai('generateError'),
-        description: jobStatus.error || errors('generic'),
-        variant: 'destructive',
-      })
-
-      // Clear job tracking
-      setCurrentJobId(null)
-      aiMessageIdRef.current = null
-    }
-  }, [jobStatus, ai, errors])
-
-  // Generate PDF preview helper
+  // Generate PDF preview helper (defined before useEffect that uses it)
   const generatePdfPreview = useCallback(async (templateContent: string, sampleData: Record<string, unknown>) => {
     setIsPreviewLoading(true)
     try {
@@ -167,6 +117,95 @@ export function AIGenerateSection({ onSaveComplete }: AIGenerateSectionProps) {
       setIsPreviewLoading(false)
     }
   }, [uploadTemplate, generatePdf])
+
+  // Handle job status updates
+  useEffect(() => {
+    if (!jobStatus || !aiMessageIdRef.current) return
+
+    const aiMessageId = aiMessageIdRef.current
+
+    if (jobStatus.status === 'processing') {
+      // Update message to show processing
+      const processingMessage = currentJobType === 'analysis'
+        ? (ai('chat.analyzing') || 'Analyzing your requirements...')
+        : ai('chat.generating')
+      setMessages(prev => prev.map(msg =>
+        msg.id === aiMessageId
+          ? { ...msg, content: processingMessage, isLoading: true }
+          : msg
+      ))
+    } else if (jobStatus.status === 'completed') {
+      // Handle completion based on job type
+      if (currentJobType === 'analysis' && jobStatus.questions) {
+        // Analysis job completed - show questions
+        setMessages(prev => prev.map(msg =>
+          msg.id === aiMessageId
+            ? {
+                ...msg,
+                content: ai('chat.analysisComplete') || 'Analysis complete! Please answer a few questions to help create your template.',
+                isLoading: false,
+              }
+            : msg
+        ))
+
+        // Store analysis result and show question form
+        setAnalysisResult({
+          questions: jobStatus.questions,
+          imageAnalysis: jobStatus.imageAnalysis,
+        })
+        setAnalysisJobId(currentJobId)
+        setFlowStep('questions')
+        setCurrentJobId(null)
+        aiMessageIdRef.current = null
+      } else if (jobStatus.template) {
+        // Generation job completed successfully
+        setMessages(prev => prev.map(msg =>
+          msg.id === aiMessageId
+            ? {
+                ...msg,
+                content: ai('chat.templateGenerated', { name: jobStatus.template!.name }),
+                isLoading: false,
+              }
+            : msg
+        ))
+
+        // Update generated template and editor
+        setGeneratedTemplate(jobStatus.template)
+        setEditedTemplate(jobStatus.template.content)
+        setEditedData(JSON.stringify(jobStatus.sampleData || {}, null, 2))
+        setFlowStep('complete')
+
+        // Clear job tracking
+        setCurrentJobId(null)
+        aiMessageIdRef.current = null
+
+        // Auto-generate PDF preview
+        generatePdfPreview(jobStatus.template.content, jobStatus.sampleData || {})
+      }
+    } else if (jobStatus.status === 'failed') {
+      // Job failed
+      setMessages(prev => prev.map(msg =>
+        msg.id === aiMessageId
+          ? {
+              ...msg,
+              content: jobStatus.error || errors('generic'),
+              isLoading: false,
+            }
+          : msg
+      ))
+
+      toast({
+        title: ai('generateError'),
+        description: jobStatus.error || errors('generic'),
+        variant: 'destructive',
+      })
+
+      // Reset flow step
+      setFlowStep('prompt')
+      setCurrentJobId(null)
+      aiMessageIdRef.current = null
+    }
+  }, [jobStatus, ai, errors, currentJobType, currentJobId, generatePdfPreview])
 
   // PDF preview request handler
   const handleRequestPdfPreview = useCallback(async () => {
@@ -271,25 +310,49 @@ export function AIGenerateSection({ onSaveComplete }: AIGenerateSectionProps) {
           : msg
       ))
 
-      // Submit async AI generation job
-      const result = await submitAIGeneration.mutateAsync({
-        prompt: message,
-        imageBase64: finalImageBase64,
-        imageMediaType: finalImageMediaType,
-        imageS3Key: finalImageS3Key,
-        previousTemplate: editedTemplate || undefined,
-        feedback: editedTemplate ? message : undefined,
-      })
+      // Determine if this is a new template or iteration on existing
+      const isIteration = !!editedTemplate
 
-      // Start polling for job status
-      setCurrentJobId(result.jobId)
+      if (isIteration) {
+        // Iteration mode: Submit generation job directly (skip analysis)
+        const result = await submitAIGeneration.mutateAsync({
+          jobType: 'generation',
+          prompt: message,
+          imageBase64: finalImageBase64,
+          imageMediaType: finalImageMediaType,
+          imageS3Key: finalImageS3Key,
+          previousTemplate: editedTemplate,
+          feedback: message,
+        })
+
+        setCurrentJobId(result.jobId)
+        setCurrentJobType('generation')
+        setFlowStep('generating')
+      } else {
+        // New template: Submit analysis job first (two-step flow)
+        const result = await submitAIGeneration.mutateAsync({
+          jobType: 'analysis',
+          prompt: message,
+          imageBase64: finalImageBase64,
+          imageMediaType: finalImageMediaType,
+          imageS3Key: finalImageS3Key,
+        })
+
+        // Store original prompt for generation job
+        setConversationContext(prev => ({ ...prev, originalPrompt: message }))
+        setCurrentJobId(result.jobId)
+        setCurrentJobType('analysis')
+        setFlowStep('analyzing')
+      }
 
       // Update message to show job submitted
       setMessages(prev => prev.map(msg =>
         msg.id === aiMessageId
           ? {
               ...msg,
-              content: ai('chat.jobSubmitted'),
+              content: isIteration
+                ? ai('chat.jobSubmitted')
+                : (ai('chat.analyzingSubmitted') || 'Analyzing your requirements...'),
               isLoading: true,
             }
           : msg
@@ -325,6 +388,65 @@ export function AIGenerateSection({ onSaveComplete }: AIGenerateSectionProps) {
     MAX_BASE64_SIZE,
   ])
 
+  // Handle question form submission
+  const handleQuestionSubmit = useCallback(async (answers: QuestionAnswer[]) => {
+    if (!analysisJobId || !conversationContext.originalPrompt) return
+
+    // Add AI message for generation
+    const aiMessageId = `ai-gen-${Date.now()}`
+    aiMessageIdRef.current = aiMessageId
+    setMessages(prev => [...prev, {
+      id: aiMessageId,
+      role: 'assistant',
+      content: ai('chat.generatingFromAnswers') || 'Generating your template based on your answers...',
+      timestamp: new Date(),
+      isLoading: true,
+    }])
+
+    try {
+      // Submit generation job with analysis context
+      const result = await submitAIGeneration.mutateAsync({
+        jobType: 'generation',
+        prompt: conversationContext.originalPrompt,
+        imageS3Key: conversationContext.imageS3Key,
+        analysisJobId,
+        answers,
+      })
+
+      setCurrentJobId(result.jobId)
+      setCurrentJobType('generation')
+      setFlowStep('generating')
+    } catch (err) {
+      setMessages(prev => prev.map(msg =>
+        msg.id === aiMessageId
+          ? {
+              ...msg,
+              content: err instanceof Error ? err.message : errors('generic'),
+              isLoading: false,
+            }
+          : msg
+      ))
+
+      toast({
+        title: ai('generateError'),
+        description: err instanceof Error ? err.message : errors('generic'),
+        variant: 'destructive',
+      })
+
+      setFlowStep('questions')
+      aiMessageIdRef.current = null
+    }
+  }, [analysisJobId, conversationContext, submitAIGeneration, ai, errors])
+
+  // Handle back from questions to prompt
+  const handleBackToPrompt = useCallback(() => {
+    setFlowStep('prompt')
+    setAnalysisResult(null)
+    setAnalysisJobId(null)
+    // Keep the conversation context (image) but clear the original prompt
+    setConversationContext(prev => ({ ...prev, originalPrompt: undefined }))
+  }, [])
+
   // Handle saving the template
   const handleSave = useCallback(async () => {
     if (!generatedTemplate) return
@@ -352,13 +474,16 @@ export function AIGenerateSection({ onSaveComplete }: AIGenerateSectionProps) {
         timestamp: new Date(),
       }])
 
-      // Clear state
+      // Clear all state including two-step flow
       setGeneratedTemplate(null)
       setEditedTemplate('')
       setEditedData('')
       setPreviewUrl(null)
       setConversationContext({})
       setMessages([])
+      setFlowStep('prompt')
+      setAnalysisJobId(null)
+      setAnalysisResult(null)
 
       onSaveComplete?.()
     } catch (err) {
@@ -421,23 +546,57 @@ export function AIGenerateSection({ onSaveComplete }: AIGenerateSectionProps) {
         )}
       </div>
 
-      {/* Full-screen preview */}
-      <FullScreenPreview
-        templateContent={editedTemplate}
-        sampleData={parsedSampleData}
-        pdfUrl={previewUrl}
-        isPdfLoading={isPreviewLoading}
-        onRequestPdf={handleRequestPdfPreview}
-        className="h-full"
-      />
+      {/* Question Form (shown during 'questions' step) */}
+      {flowStep === 'questions' && analysisResult && (
+        <Card className="h-full">
+          <CardHeader className="pb-4">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-lg">
+                {ai('questionsTitle') || 'Help us understand your template needs'}
+              </CardTitle>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleBackToPrompt}
+              >
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                {ai('startOver') || 'Start Over'}
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent className="h-[calc(100%-5rem)] overflow-hidden">
+            <QuestionForm
+              questions={analysisResult.questions}
+              imageAnalysis={analysisResult.imageAnalysis}
+              onSubmit={handleQuestionSubmit}
+              onBack={handleBackToPrompt}
+              isSubmitting={isGenerating}
+            />
+          </CardContent>
+        </Card>
+      )}
 
-      {/* Floating chat widget */}
-      <FloatingChatWidget
-        messages={messages}
-        onSendMessage={handleSendMessage}
-        isGenerating={isGenerating}
-        showCodeEditorToggle={!!generatedTemplate}
-      />
+      {/* Full-screen preview (shown when not in questions step) */}
+      {flowStep !== 'questions' && (
+        <>
+          <FullScreenPreview
+            templateContent={editedTemplate}
+            sampleData={parsedSampleData}
+            pdfUrl={previewUrl}
+            isPdfLoading={isPreviewLoading}
+            onRequestPdf={handleRequestPdfPreview}
+            className="h-full"
+          />
+
+          {/* Floating chat widget */}
+          <FloatingChatWidget
+            messages={messages}
+            onSendMessage={handleSendMessage}
+            isGenerating={isGenerating}
+            showCodeEditorToggle={!!generatedTemplate}
+          />
+        </>
+      )}
     </div>
   )
 }

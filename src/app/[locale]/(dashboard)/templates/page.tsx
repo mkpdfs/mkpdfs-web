@@ -1,12 +1,15 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import { useTemplates, useDeleteTemplate, useUploadTemplate } from '@/hooks/useApi'
 import { Card, CardContent, Button, Spinner, Input, Label, DropZone } from '@/components/ui'
 import { formatDate } from '@/lib/utils'
 import { toast } from '@/hooks/useToast'
-import { FileText, Trash2, Search, Upload, X } from 'lucide-react'
+import { FileText, Trash2, Search, Upload, X, Eye } from 'lucide-react'
 import { useTranslations } from 'next-intl'
+import { UserTemplatePreviewModal } from '@/components/templates/UserTemplatePreviewModal'
+import type { Template } from '@/types'
 
 export default function TemplatesPage() {
   const { data: templates, isLoading, error } = useTemplates()
@@ -21,6 +24,7 @@ export default function TemplatesPage() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [templateName, setTemplateName] = useState('')
   const [description, setDescription] = useState('')
+  const [previewTemplate, setPreviewTemplate] = useState<Template | null>(null)
 
   const handleFileSelect = (file: File) => {
     setSelectedFile(file)
@@ -66,17 +70,20 @@ export default function TemplatesPage() {
     template.name.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
-  const handleDelete = async (templateId: string, templateName: string) => {
-    if (!confirm(t('card.deleteConfirm'))) {
+  const handleDelete = async (template: Template, fromModal = false) => {
+    if (!fromModal && !confirm(t('card.deleteConfirm'))) {
       return
     }
 
     try {
-      await deleteTemplate.mutateAsync(templateId)
+      await deleteTemplate.mutateAsync(template.id)
       toast({
         title: t('card.delete'),
-        description: `"${templateName}"`,
+        description: `"${template.name}"`,
       })
+      if (previewTemplate?.id === template.id) {
+        setPreviewTemplate(null)
+      }
     } catch (err) {
       toast({
         title: common('error'),
@@ -84,6 +91,13 @@ export default function TemplatesPage() {
         variant: 'destructive',
       })
     }
+  }
+
+  const handleDeleteFromModal = async (template: Template) => {
+    if (!confirm(t('card.deleteConfirm'))) {
+      return
+    }
+    await handleDelete(template, true)
   }
 
   return (
@@ -144,32 +158,59 @@ export default function TemplatesPage() {
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {filteredTemplates?.map((template) => (
-            <Card key={template.id} className="transition-shadow hover:shadow-md">
-              <CardContent className="p-6">
-                <div className="flex items-start justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="rounded-lg bg-primary-50 p-2.5">
-                      <FileText className="h-5 w-5 text-primary" />
-                    </div>
-                    <div>
-                      <h3 className="font-medium text-foreground-dark">{template.name}</h3>
-                      <p className="text-sm text-foreground-light">
-                        {formatDate(template.createdAt)}
-                      </p>
-                    </div>
+            <Card
+              key={template.id}
+              className="group cursor-pointer overflow-hidden transition-shadow hover:shadow-md"
+              onClick={() => setPreviewTemplate(template)}
+            >
+              {/* Thumbnail Area */}
+              <div className="relative aspect-video w-full overflow-hidden bg-muted">
+                {template.thumbnailUrl ? (
+                  <Image
+                    src={template.thumbnailUrl}
+                    alt={template.name}
+                    fill
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    className="object-cover transition-transform group-hover:scale-105"
+                  />
+                ) : (
+                  <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-primary/20 to-primary/5">
+                    <FileText className="h-12 w-12 text-primary/40" />
+                  </div>
+                )}
+                {/* Hover overlay with preview button */}
+                <div className="absolute inset-0 flex items-center justify-center bg-black/0 opacity-0 transition-all group-hover:bg-black/20 group-hover:opacity-100">
+                  <div className="rounded-full bg-white/90 p-2 shadow-lg">
+                    <Eye className="h-5 w-5 text-foreground-dark" />
+                  </div>
+                </div>
+              </div>
+
+              <CardContent className="p-4">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0 flex-1">
+                    <h3 className="truncate font-medium text-foreground-dark">
+                      {template.name}
+                    </h3>
+                    <p className="text-sm text-foreground-light">
+                      {formatDate(template.createdAt)}
+                    </p>
                   </div>
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={() => handleDelete(template.id, template.name)}
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      handleDelete(template)
+                    }}
                     disabled={deleteTemplate.isPending}
-                    className="text-foreground-light hover:text-destructive"
+                    className="shrink-0 text-foreground-light hover:text-destructive"
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
                 </div>
                 {template.description && (
-                  <p className="mt-3 text-sm text-foreground-light line-clamp-2">
+                  <p className="mt-2 text-sm text-foreground-light line-clamp-2">
                     {template.description}
                   </p>
                 )}
@@ -276,6 +317,14 @@ export default function TemplatesPage() {
           </div>
         </div>
       )}
+
+      {/* Preview Modal */}
+      <UserTemplatePreviewModal
+        template={previewTemplate}
+        onClose={() => setPreviewTemplate(null)}
+        onDelete={handleDeleteFromModal}
+        isDeleteLoading={deleteTemplate.isPending}
+      />
     </div>
   )
 }

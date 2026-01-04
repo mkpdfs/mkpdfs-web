@@ -303,6 +303,10 @@
       "submit": "Subir",
       "success": "Plantilla subida exitosamente",
       "error": "Error al subir plantilla"
+    },
+    "preview": {
+      "templateCode": "Código de Plantilla",
+      "loadingTemplate": "Cargando plantilla..."
     }
   },
   "create": {
@@ -621,6 +625,7 @@
     "remainingGenerations": "Generaciones IA",
     "unlimited": "Ilimitado",
     "limitReached": "Límite mensual alcanzado",
+    "limitWarning": "Quedan pocas generaciones",
     "promptLabel": "Describe tu plantilla",
     "promptPlaceholder": "ej., Plantilla de factura con logo de empresa, tabla de artículos con cantidad, descripción, precio unitario y total, sección de cálculo de impuestos, y términos de pago al final...",
     "generating": "Generando...",
@@ -655,7 +660,8 @@
       "renderError": "Error al renderizar plantilla",
       "generatingPdf": "Generando vista previa PDF...",
       "clickToGenerate": "Haz clic para generar vista previa PDF",
-      "generatePdf": "Generar PDF"
+      "generatePdf": "Generar PDF",
+      "pdfError": "Error al Generar PDF"
     },
     "comparison": {
       "title": "Comparar Versiones",
@@ -670,6 +676,25 @@
       "label": "¿Qué te gustaría cambiar?",
       "placeholder": "ej., Hacer el encabezado más grande, agregar pie de página con números de página, cambiar el esquema de colores a azul...",
       "regenerateWith": "Regenerar con Retroalimentación"
+    },
+    "chat": {
+      "title": "Asistente IA",
+      "open": "Chat",
+      "welcome": "¡Hola! Describe tu plantilla o sube una imagen de referencia para comenzar.",
+      "placeholder": "Describe tu plantilla...",
+      "thinking": "Pensando...",
+      "toggleCode": "Mostrar Editor de Código",
+      "generating": "Generando tu plantilla...",
+      "saveTemplate": "Guardar Plantilla",
+      "submitting": "Enviando tu solicitud...",
+      "uploadingImage": "Subiendo imagen...",
+      "jobSubmitted": "Solicitud enviada, procesando...",
+      "templateGenerated": "¡Plantilla \"{name}\" generada exitosamente!",
+      "templateSaved": "La plantilla \"{name}\" se ha guardado en tu biblioteca."
+    },
+    "fullscreen": {
+      "emptyTitle": "Crea Tu Plantilla",
+      "emptyDescription": "Inicia una conversación con el asistente IA para generar una plantilla PDF profesional."
     }
   },
   "marketplace": {

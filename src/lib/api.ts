@@ -8,6 +8,7 @@
 import { getIdToken } from './auth'
 import type {
   Template,
+  TemplateWithContent,
   ApiToken,
   CreateTokenResponse,
   UsageStats,
@@ -119,6 +120,11 @@ export async function deleteTemplate(templateId: string): Promise<void> {
   })
 }
 
+export async function getTemplate(templateId: string): Promise<TemplateWithContent> {
+  const response = await authFetch<{ template: TemplateWithContent }>(`/templates/${templateId}`)
+  return response.template
+}
+
 // ============================================
 // API Tokens
 // ============================================
@@ -216,6 +222,141 @@ export async function generateAITemplate(
     method: 'POST',
     body: JSON.stringify(request),
   })
+}
+
+// ============================================
+// AI Generation Types (Two-Step Flow)
+// ============================================
+
+export interface StructuredQuestion {
+  id: string
+  category: 'fields' | 'images' | 'tables' | 'layout'
+  question: string
+  type: 'single_choice' | 'multiple_choice' | 'text' | 'boolean'
+  options?: string[]
+  defaultValue?: string | string[] | boolean
+  required: boolean
+  helperText?: string
+}
+
+export interface QuestionAnswer {
+  questionId: string
+  value: string | string[] | boolean
+}
+
+export interface ImageAnalysis {
+  detectedFields: string[]
+  suggestedLayout: string
+  documentType: string
+}
+
+// Async AI generation (job-based)
+export interface SubmitAIJobRequest {
+  // Job type: 'analysis' for first step, 'generation' for second step
+  jobType?: 'analysis' | 'generation'
+  prompt: string
+  templateType?: string
+  // Option 1: Direct base64 (for small images < 500KB)
+  imageBase64?: string
+  imageMediaType?: 'image/png' | 'image/jpeg' | 'image/webp'
+  // Option 2: S3 key (for large images, uploaded via presigned URL)
+  imageS3Key?: string
+  // For 'generation' jobs - reference to analysis job and user's answers
+  analysisJobId?: string
+  answers?: QuestionAnswer[]
+  // Legacy iteration support
+  previousTemplate?: string
+  feedback?: string
+}
+
+export interface SubmitAIJobResponse {
+  success: boolean
+  jobId: string
+  jobType?: 'analysis' | 'generation'
+  status: 'pending'
+  statusUrl: string
+  message: string
+}
+
+export interface AIJobStatus {
+  jobId: string
+  jobType: 'analysis' | 'generation'
+  status: 'pending' | 'processing' | 'completed' | 'failed'
+  prompt: string
+  hasImage: boolean
+  createdAt: string
+  updatedAt: string
+  // Analysis job output (when completed):
+  questions?: StructuredQuestion[]
+  imageAnalysis?: ImageAnalysis
+  // Generation job output (when completed):
+  template?: {
+    content: string
+    name: string
+    description: string
+  }
+  sampleData?: Record<string, unknown>
+  completedAt?: string
+  // When failed:
+  error?: string
+  errorCode?: string
+}
+
+export async function submitAIGeneration(
+  request: SubmitAIJobRequest
+): Promise<SubmitAIJobResponse> {
+  return authFetch<SubmitAIJobResponse>('/ai/generate-template-async', {
+    method: 'POST',
+    body: JSON.stringify(request),
+  })
+}
+
+export async function getAIJobStatus(jobId: string): Promise<AIJobStatus> {
+  return authFetch<AIJobStatus>(`/ai/jobs/${jobId}`, {
+    method: 'GET',
+  })
+}
+
+// Get presigned URL for uploading large images to S3
+export interface GetImageUploadUrlRequest {
+  contentType: 'image/png' | 'image/jpeg' | 'image/webp'
+  filename?: string
+}
+
+export interface GetImageUploadUrlResponse {
+  success: boolean
+  uploadUrl: string
+  s3Key: string
+  expiresIn: number
+  maxFileSize: number
+}
+
+export async function getAIImageUploadUrl(
+  request: GetImageUploadUrlRequest
+): Promise<GetImageUploadUrlResponse> {
+  return authFetch<GetImageUploadUrlResponse>('/ai/image-upload-url', {
+    method: 'POST',
+    body: JSON.stringify(request),
+  })
+}
+
+// Upload image directly to S3 using presigned URL
+export async function uploadImageToS3(
+  uploadUrl: string,
+  file: Blob,
+  contentType: string
+): Promise<void> {
+  const response = await fetch(uploadUrl, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': contentType,
+    },
+    body: file,
+  })
+
+  if (!response.ok) {
+    throw new Error(`Failed to upload image: ${response.status}`)
+  }
 }
 
 // ============================================

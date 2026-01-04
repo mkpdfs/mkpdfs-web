@@ -23,6 +23,7 @@ export interface CurrentUsage {
   yearMonth: string
   pdfCount: number
   totalSizeMB: number
+  aiGenerationCount?: number
 }
 
 // Template types
@@ -33,8 +34,14 @@ export interface Template {
   description?: string
   s3Key: string
   sourceMarketplaceId?: string // Links to original marketplace template if copied
+  thumbnailUrl?: string | null // Thumbnail URL (from marketplace source if available)
   createdAt: string
   updatedAt: string
+}
+
+// Template with content (for preview)
+export interface TemplateWithContent extends Template {
+  content: string
 }
 
 // API Token types

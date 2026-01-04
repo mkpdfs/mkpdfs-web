@@ -303,6 +303,10 @@
       "submit": "Upload",
       "success": "Template uploaded successfully",
       "error": "Failed to upload template"
+    },
+    "preview": {
+      "templateCode": "Template Code",
+      "loadingTemplate": "Loading template..."
     }
   },
   "create": {
@@ -621,6 +625,7 @@
     "remainingGenerations": "AI Generations",
     "unlimited": "Unlimited",
     "limitReached": "Monthly limit reached",
+    "limitWarning": "Running low on generations",
     "promptLabel": "Describe your template",
     "promptPlaceholder": "e.g., Invoice template with company logo, line items table with quantity, description, unit price and total, tax calculation section, and payment terms at the bottom...",
     "generating": "Generating...",
@@ -655,7 +660,8 @@
       "renderError": "Template render error",
       "generatingPdf": "Generating PDF preview...",
       "clickToGenerate": "Click to generate PDF preview",
-      "generatePdf": "Generate PDF"
+      "generatePdf": "Generate PDF",
+      "pdfError": "PDF Generation Failed"
     },
     "comparison": {
       "title": "Compare Versions",
@@ -670,6 +676,25 @@
       "label": "What would you like to change?",
       "placeholder": "e.g., Make the header larger, add a footer with page numbers, change the color scheme to blue...",
       "regenerateWith": "Regenerate with Feedback"
+    },
+    "chat": {
+      "title": "AI Assistant",
+      "open": "Chat",
+      "welcome": "Hi! Describe your template or upload a reference image to get started.",
+      "placeholder": "Describe your template...",
+      "thinking": "Thinking...",
+      "toggleCode": "Toggle Code Editor",
+      "generating": "Generating your template...",
+      "saveTemplate": "Save Template",
+      "submitting": "Submitting your request...",
+      "uploadingImage": "Uploading image...",
+      "jobSubmitted": "Request submitted, processing...",
+      "templateGenerated": "Template \"{name}\" generated successfully!",
+      "templateSaved": "Template \"{name}\" has been saved to your library."
+    },
+    "fullscreen": {
+      "emptyTitle": "Create Your Template",
+      "emptyDescription": "Start a conversation with the AI assistant to generate a professional PDF template."
     }
   },
   "marketplace": {

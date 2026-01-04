@@ -10,6 +10,7 @@ import {
   getProfile,
   updateProfile,
   getTemplates,
+  getTemplate,
   uploadTemplate,
   deleteTemplate,
   getTokens,
@@ -20,11 +21,18 @@ import {
   generatePdfAsync,
   getJobStatus,
   generateAITemplate,
+  submitAIGeneration,
+  getAIJobStatus,
+  getAIImageUploadUrl,
+  uploadImageToS3,
   getMarketplaceTemplates,
   getMarketplaceTemplate,
   getMarketplaceTemplatePreview,
   useMarketplaceTemplate as copyMarketplaceTemplate,
   contactEnterprise,
+  type SubmitAIJobRequest,
+  type AIJobStatus,
+  type GetImageUploadUrlRequest,
 } from '@/lib/api'
 import type {
   MkpdfsUser,
@@ -44,6 +52,7 @@ import type {
 export const queryKeys = {
   profile: ['profile'] as const,
   templates: ['templates'] as const,
+  template: (id: string) => ['template', id] as const,
   tokens: ['tokens'] as const,
   usage: ['usage'] as const,
   marketplaceTemplates: (category?: string) => ['marketplace', 'templates', category] as const,
@@ -112,6 +121,14 @@ export function useDeleteTemplate() {
       queryClient.invalidateQueries({ queryKey: queryKeys.templates })
       queryClient.invalidateQueries({ queryKey: queryKeys.usage })
     },
+  })
+}
+
+export function useTemplate(templateId: string) {
+  return useQuery({
+    queryKey: queryKeys.template(templateId),
+    queryFn: () => getTemplate(templateId),
+    enabled: !!templateId,
   })
 }
 
@@ -217,6 +234,57 @@ export function useGenerateAITemplate() {
       // Refresh profile to update remaining AI generations count
       queryClient.invalidateQueries({ queryKey: queryKeys.profile })
       queryClient.invalidateQueries({ queryKey: queryKeys.usage })
+    },
+  })
+}
+
+// ============================================
+// Async AI Generation Hooks (Job-based)
+// ============================================
+
+export function useSubmitAIGeneration() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (request: SubmitAIJobRequest) => submitAIGeneration(request),
+    onSuccess: () => {
+      // Refresh profile to update remaining AI generations count
+      queryClient.invalidateQueries({ queryKey: queryKeys.profile })
+      queryClient.invalidateQueries({ queryKey: queryKeys.usage })
+    },
+  })
+}
+
+export function useAIJobStatus(jobId: string | null, options?: { polling?: boolean }) {
+  return useQuery({
+    queryKey: ['ai-job', jobId] as const,
+    queryFn: () => getAIJobStatus(jobId!),
+    enabled: !!jobId,
+    // Poll every 2 seconds while job is pending/processing
+    refetchInterval: (query) => {
+      if (!options?.polling) return false
+      const status = (query.state.data as AIJobStatus | undefined)?.status
+      if (status === 'pending' || status === 'processing') {
+        return 2000 // Poll every 2 seconds
+      }
+      return false // Stop polling when completed or failed
+    },
+    refetchOnWindowFocus: false,
+  })
+}
+
+// Hook to upload large images to S3 (for images > 500KB)
+export function useUploadAIImage() {
+  return useMutation({
+    mutationFn: async ({ file, contentType }: { file: Blob; contentType: 'image/png' | 'image/jpeg' | 'image/webp' }) => {
+      // 1. Get presigned upload URL
+      const { uploadUrl, s3Key } = await getAIImageUploadUrl({ contentType })
+
+      // 2. Upload to S3
+      await uploadImageToS3(uploadUrl, file, contentType)
+
+      // 3. Return the S3 key for use in AI generation
+      return { s3Key }
     },
   })
 }
