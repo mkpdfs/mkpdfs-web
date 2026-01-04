@@ -85,7 +85,12 @@ export async function getTemplates(): Promise<Template[]> {
   return response.templates || []
 }
 
-export async function uploadTemplate(file: File, name: string, description?: string): Promise<Template> {
+export async function uploadTemplate(
+  file: File,
+  name: string,
+  description?: string,
+  thumbnailKey?: string
+): Promise<Template> {
   const idToken = await getIdToken()
 
   const formData = new FormData()
@@ -93,6 +98,9 @@ export async function uploadTemplate(file: File, name: string, description?: str
   formData.append('name', name)
   if (description) {
     formData.append('description', description)
+  }
+  if (thumbnailKey) {
+    formData.append('thumbnailKey', thumbnailKey)
   }
 
   const headers: Record<string, string> = {}
@@ -296,6 +304,8 @@ export interface AIJobStatus {
     description: string
   }
   sampleData?: Record<string, unknown>
+  thumbnailKey?: string | null // S3 key for thumbnail (for saving)
+  thumbnailUrl?: string | null // Presigned URL for thumbnail (for display)
   completedAt?: string
   // When failed:
   error?: string

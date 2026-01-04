@@ -19,6 +19,7 @@ interface GeneratedTemplate {
   content: string
   name: string
   description: string
+  thumbnailKey?: string | null
 }
 
 // Flow steps for two-step generation
@@ -169,8 +170,11 @@ export function AIGenerateSection({ onSaveComplete }: AIGenerateSectionProps) {
             : msg
         ))
 
-        // Update generated template and editor
-        setGeneratedTemplate(jobStatus.template)
+        // Update generated template and editor (include thumbnailKey for saving)
+        setGeneratedTemplate({
+          ...jobStatus.template,
+          thumbnailKey: jobStatus.thumbnailKey,
+        })
         setEditedTemplate(jobStatus.template.content)
         setEditedData(JSON.stringify(jobStatus.sampleData || {}, null, 2))
         setFlowStep('complete')
@@ -460,6 +464,7 @@ export function AIGenerateSection({ onSaveComplete }: AIGenerateSectionProps) {
         file: templateFile,
         name: generatedTemplate.name,
         description: generatedTemplate.description,
+        thumbnailKey: generatedTemplate.thumbnailKey || undefined,
       })
 
       toast({

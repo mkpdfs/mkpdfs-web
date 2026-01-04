@@ -100,11 +100,13 @@ export function useUploadTemplate() {
       file,
       name,
       description,
+      thumbnailKey,
     }: {
       file: File
       name: string
       description?: string
-    }) => uploadTemplate(file, name, description),
+      thumbnailKey?: string
+    }) => uploadTemplate(file, name, description, thumbnailKey),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.templates })
       queryClient.invalidateQueries({ queryKey: queryKeys.usage })
@@ -260,12 +262,12 @@ export function useAIJobStatus(jobId: string | null, options?: { polling?: boole
     queryKey: ['ai-job', jobId] as const,
     queryFn: () => getAIJobStatus(jobId!),
     enabled: !!jobId,
-    // Poll every 2 seconds while job is pending/processing
+    // Poll every 3 seconds while job is pending/processing
     refetchInterval: (query) => {
       if (!options?.polling) return false
       const status = (query.state.data as AIJobStatus | undefined)?.status
       if (status === 'pending' || status === 'processing') {
-        return 2000 // Poll every 2 seconds
+        return 3000 // Poll every 3 seconds
       }
       return false // Stop polling when completed or failed
     },

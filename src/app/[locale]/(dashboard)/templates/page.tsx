@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Image from 'next/image'
 import { useTemplates, useDeleteTemplate, useUploadTemplate } from '@/hooks/useApi'
-import { Card, CardContent, Button, Spinner, Input, Label, DropZone } from '@/components/ui'
+import { Card, CardContent, Button, Spinner, Input, Label, DropZone, Dialog, DialogContent, DialogHeader, DialogFooter, DialogTitle, DialogDescription } from '@/components/ui'
 import { formatDate } from '@/lib/utils'
 import { toast } from '@/hooks/useToast'
 import { FileText, Trash2, Search, Upload, X, Eye } from 'lucide-react'
@@ -25,6 +25,7 @@ export default function TemplatesPage() {
   const [templateName, setTemplateName] = useState('')
   const [description, setDescription] = useState('')
   const [previewTemplate, setPreviewTemplate] = useState<Template | null>(null)
+  const [templateToDelete, setTemplateToDelete] = useState<Template | null>(null)
 
   const handleFileSelect = (file: File) => {
     setSelectedFile(file)
@@ -70,18 +71,21 @@ export default function TemplatesPage() {
     template.name.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
-  const handleDelete = async (template: Template, fromModal = false) => {
-    if (!fromModal && !confirm(t('card.deleteConfirm'))) {
-      return
-    }
+  const handleDeleteClick = (template: Template, e?: React.MouseEvent) => {
+    e?.stopPropagation()
+    setTemplateToDelete(template)
+  }
+
+  const handleConfirmDelete = async () => {
+    if (!templateToDelete) return
 
     try {
-      await deleteTemplate.mutateAsync(template.id)
+      await deleteTemplate.mutateAsync(templateToDelete.id)
       toast({
         title: t('card.delete'),
-        description: `"${template.name}"`,
+        description: `"${templateToDelete.name}"`,
       })
-      if (previewTemplate?.id === template.id) {
+      if (previewTemplate?.id === templateToDelete.id) {
         setPreviewTemplate(null)
       }
     } catch (err) {
@@ -90,14 +94,13 @@ export default function TemplatesPage() {
         description: errors('generic'),
         variant: 'destructive',
       })
+    } finally {
+      setTemplateToDelete(null)
     }
   }
 
-  const handleDeleteFromModal = async (template: Template) => {
-    if (!confirm(t('card.deleteConfirm'))) {
-      return
-    }
-    await handleDelete(template, true)
+  const handleDeleteFromModal = (template: Template) => {
+    setTemplateToDelete(template)
   }
 
   return (
@@ -199,10 +202,7 @@ export default function TemplatesPage() {
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      handleDelete(template)
-                    }}
+                    onClick={(e) => handleDeleteClick(template, e)}
                     disabled={deleteTemplate.isPending}
                     className="shrink-0 text-foreground-light hover:text-destructive"
                   >
@@ -325,6 +325,52 @@ export default function TemplatesPage() {
         onDelete={handleDeleteFromModal}
         isDeleteLoading={deleteTemplate.isPending}
       />
+
+      {/* Delete Confirmation Modal */}
+      <Dialog open={!!templateToDelete} onOpenChange={(open) => !open && setTemplateToDelete(null)}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-destructive">
+              <Trash2 className="h-5 w-5" />
+              {t('card.delete')}
+            </DialogTitle>
+            <DialogDescription className="pt-2">
+              {t('card.deleteConfirm')}
+              {templateToDelete && (
+                <span className="mt-2 block font-medium text-foreground">
+                  &quot;{templateToDelete.name}&quot;
+                </span>
+              )}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button
+              variant="outline"
+              onClick={() => setTemplateToDelete(null)}
+              disabled={deleteTemplate.isPending}
+            >
+              {common('cancel')}
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleConfirmDelete}
+              disabled={deleteTemplate.isPending}
+            >
+              {deleteTemplate.isPending ? (
+                <>
+                  <Spinner size="sm" className="mr-2" />
+                  {common('loading')}
+                </>
+              ) : (
+                <>
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  {common('delete')}
+                </>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
