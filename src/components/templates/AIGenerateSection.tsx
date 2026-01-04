@@ -61,6 +61,7 @@ export function AIGenerateSection({ onSaveComplete }: AIGenerateSectionProps) {
   const [currentJobId, setCurrentJobId] = useState<string | null>(null)
   const [currentJobType, setCurrentJobType] = useState<'analysis' | 'generation'>('generation')
   const aiMessageIdRef = useRef<string | null>(null)
+  const processedJobIdRef = useRef<string | null>(null)
 
   // Query job status with polling
   const { data: jobStatus } = useAIJobStatus(currentJobId, { polling: true })
@@ -121,7 +122,13 @@ export function AIGenerateSection({ onSaveComplete }: AIGenerateSectionProps) {
 
   // Handle job status updates
   useEffect(() => {
-    if (!jobStatus || !aiMessageIdRef.current) return
+    if (!jobStatus || !aiMessageIdRef.current || !currentJobId) return
+
+    // Skip if we've already processed this job's completion
+    if ((jobStatus.status === 'completed' || jobStatus.status === 'failed') &&
+        processedJobIdRef.current === currentJobId) {
+      return
+    }
 
     const aiMessageId = aiMessageIdRef.current
 
@@ -156,6 +163,7 @@ export function AIGenerateSection({ onSaveComplete }: AIGenerateSectionProps) {
         })
         setAnalysisJobId(currentJobId)
         setFlowStep('questions')
+        processedJobIdRef.current = currentJobId
         setCurrentJobId(null)
         aiMessageIdRef.current = null
       } else if (jobStatus.template) {
@@ -179,7 +187,8 @@ export function AIGenerateSection({ onSaveComplete }: AIGenerateSectionProps) {
         setEditedData(JSON.stringify(jobStatus.sampleData || {}, null, 2))
         setFlowStep('complete')
 
-        // Clear job tracking
+        // Mark as processed and clear job tracking
+        processedJobIdRef.current = currentJobId
         setCurrentJobId(null)
         aiMessageIdRef.current = null
 
@@ -206,6 +215,7 @@ export function AIGenerateSection({ onSaveComplete }: AIGenerateSectionProps) {
 
       // Reset flow step
       setFlowStep('prompt')
+      processedJobIdRef.current = currentJobId
       setCurrentJobId(null)
       aiMessageIdRef.current = null
     }
