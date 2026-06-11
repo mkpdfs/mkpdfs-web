@@ -446,10 +446,18 @@ export async function updatePassword(
 
 /**
  * Sign in with Google OAuth
+ *
+ * @param customState Optional state (e.g. a post-login redirect path) carried
+ * through the Cognito round-trip and surfaced on /callback via the
+ * 'customOAuthState' Hub event. Query params do not survive the OAuth
+ * redirect, so this is the canonical Amplify v6 mechanism.
  */
-export async function signInWithGoogle(): Promise<void> {
+export async function signInWithGoogle(customState?: string): Promise<void> {
   try {
-    await signInWithRedirect({ provider: 'Google' })
+    await signInWithRedirect({
+      provider: 'Google',
+      ...(customState ? { customState } : {}),
+    })
   } catch (error) {
     console.error('[Auth] Google sign in error:', error)
     throw error

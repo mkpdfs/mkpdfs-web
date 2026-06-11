@@ -1,15 +1,19 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Hub } from 'aws-amplify/utils'
 import { getCurrentUser, fetchUserAttributes } from 'aws-amplify/auth'
 import { initializeAuth } from '@/lib/auth'
+import { sanitizeRedirectPath } from '@/lib/utils'
 import { PageLoader } from '@/components/ui'
 
 export default function CallbackClient() {
   const router = useRouter()
   const [error, setError] = useState<string | null>(null)
+  // Post-login destination carried through the OAuth round-trip via
+  // customState (set by LoginClient as a locale-prefixed path).
+  const redirectTargetRef = useRef<string | null>(null)
 
   useEffect(() => {
     // Initialize auth if not already done
@@ -23,8 +27,8 @@ export default function CallbackClient() {
 
         console.info('[Callback] OAuth successful, user:', user.userId, attributes.email)
 
-        // Redirect to dashboard
-        router.replace('/en/dashboard')
+        // Redirect to the preserved destination, or dashboard by default
+        router.replace(redirectTargetRef.current ?? '/en/dashboard')
       } catch (err) {
         console.error('[Callback] Auth check failed:', err)
         // If no user yet, wait for the Hub event
@@ -45,9 +49,19 @@ export default function CallbackClient() {
           setError('Failed to sign in with Google. Please try again.')
           setTimeout(() => router.replace('/en/login'), 3000)
           break
-        case 'customOAuthState':
+        case 'customOAuthState': {
           console.info('[Callback] Custom OAuth state:', payload.data)
+          const target = sanitizeRedirectPath(
+            typeof payload.data === 'string' ? payload.data : null
+          )
+          if (target) {
+            redirectTargetRef.current = target
+            // Re-run in case the signInWithRedirect handler already navigated
+            // to the default destination before this event arrived.
+            checkAuth()
+          }
           break
+        }
       }
     })
 

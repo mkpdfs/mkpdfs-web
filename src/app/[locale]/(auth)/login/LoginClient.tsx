@@ -1,15 +1,28 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useTranslations } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import { Link, useRouter } from '@/i18n/routing'
 import { useAuth } from '@/providers'
 import { signInWithGoogle, isOAuthConfigured } from '@/lib/auth'
+import { sanitizeRedirectPath } from '@/lib/utils'
 import { Button, Input, Label, Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter, PageLoader } from '@/components/ui'
 import { Eye, EyeOff, FileText } from 'lucide-react'
 
+/**
+ * Read the sanitized `redirect` query param (relative app path only).
+ * Uses window.location instead of useSearchParams to avoid the Suspense
+ * requirement on statically generated pages.
+ */
+function getRedirectTarget(): string | null {
+  if (typeof window === 'undefined') return null
+  const param = new URLSearchParams(window.location.search).get('redirect')
+  return sanitizeRedirectPath(param)
+}
+
 export default function LoginClient() {
   const router = useRouter()
+  const locale = useLocale()
   const { signIn, isAuthenticated, isLoading, isInitializing, error, clearError } = useAuth()
   const t = useTranslations('auth.login')
 
@@ -24,7 +37,10 @@ export default function LoginClient() {
   const handleGoogleSignIn = async () => {
     setIsGoogleLoading(true)
     try {
-      await signInWithGoogle()
+      // Query params are lost through the Cognito OAuth round-trip, so carry
+      // the (locale-prefixed) destination via customState; /callback restores it.
+      const redirect = getRedirectTarget()
+      await signInWithGoogle(redirect ? `/${locale}${redirect}` : undefined)
     } catch {
       setIsGoogleLoading(false)
     }
@@ -33,7 +49,7 @@ export default function LoginClient() {
   // Auto-redirect if already authenticated
   useEffect(() => {
     if (!isInitializing && isAuthenticated) {
-      router.replace('/dashboard')
+      router.replace(getRedirectTarget() ?? '/dashboard')
     }
   }, [isInitializing, isAuthenticated, router])
 
@@ -52,7 +68,7 @@ export default function LoginClient() {
     const success = await signIn(email, password)
 
     if (success) {
-      router.push('/dashboard')
+      router.push(getRedirectTarget() ?? '/dashboard')
     }
 
     setIsSubmitting(false)

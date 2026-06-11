@@ -17,6 +17,7 @@ import {
   signOut as authSignOut,
   getUser,
 } from '@/lib/auth'
+import { sanitizeRedirectPath } from '@/lib/utils'
 import type { MkpdfsUser } from '@/types'
 
 // Auth context state
@@ -258,8 +259,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
       state.isAuthenticated &&
       (basePath === '/login' || basePath === '/register')
     ) {
-      // Redirect to dashboard if authenticated and on login/register page
-      router.push('/dashboard')
+      // Redirect if authenticated and on login/register page.
+      // Honor a safe `redirect` query param (e.g. /login?redirect=/cli/authorize)
+      // so the original destination survives the login flow.
+      const redirectParam =
+        typeof window !== 'undefined'
+          ? sanitizeRedirectPath(
+              new URLSearchParams(window.location.search).get('redirect')
+            )
+          : null
+      router.push(redirectParam ?? '/dashboard')
     }
   }, [state.isAuthenticated, state.isLoading, state.isInitializing, pathname, router])
 

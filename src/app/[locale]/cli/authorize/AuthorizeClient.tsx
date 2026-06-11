@@ -24,7 +24,8 @@ export default function AuthorizeClient() {
   >('idle')
 
   useEffect(() => {
-    if (!isInitializing && !isLoading && !isAuthenticated) router.push('/login')
+    if (!isInitializing && !isLoading && !isAuthenticated)
+      router.push('/login?redirect=/cli/authorize')
   }, [isAuthenticated, isInitializing, isLoading, router])
 
   if (isInitializing || isLoading || !isAuthenticated) return null

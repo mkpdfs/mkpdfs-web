@@ -21,3 +21,16 @@ export function truncate(str: string, length: number): string {
   if (str.length <= length) return str
   return str.slice(0, length) + '...'
 }
+
+/**
+ * Validate a post-login redirect target.
+ * Only relative paths within the app are allowed: must start with a single '/'
+ * (rejects absolute URLs, protocol-relative '//evil.com' and '/\evil.com').
+ * Returns the path if safe, otherwise null.
+ */
+export function sanitizeRedirectPath(value: string | null | undefined): string | null {
+  if (!value) return null
+  if (!value.startsWith('/')) return null
+  if (value.startsWith('//') || value.startsWith('/\\')) return null
+  return value
+}
