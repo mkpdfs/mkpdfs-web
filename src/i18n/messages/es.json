@@ -800,6 +800,19 @@
       }
     }
   },
+  "cli": {
+    "authorize": {
+      "title": "Autorizar CLI",
+      "subtitle": "Ingresa el código que aparece en tu terminal",
+      "warning": "Aprueba solo si este código exacto aparece en tu terminal. Aprobar le da a esa terminal acceso a tu cuenta de mkpdfs.",
+      "approve": "Aprobar",
+      "deny": "Rechazar",
+      "error": "Código no encontrado o expirado. Revisa tu terminal e intenta de nuevo.",
+      "successTitle": "CLI autorizado",
+      "deniedTitle": "Solicitud rechazada",
+      "returnToTerminal": "Puedes cerrar esta pestaña y volver a tu terminal."
+    }
+  },
   "contactEnterprise": {
     "title": "Contactar Ventas Enterprise",
     "description": "Cuéntanos sobre tus necesidades y te responderemos en 24 horas.",

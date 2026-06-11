@@ -800,6 +800,19 @@
       }
     }
   },
+  "cli": {
+    "authorize": {
+      "title": "Authorize CLI",
+      "subtitle": "Enter the code shown in your terminal",
+      "warning": "Only approve if this exact code appears in your terminal. Approving grants that terminal access to your mkpdfs account.",
+      "approve": "Approve",
+      "deny": "Deny",
+      "error": "Code not found or expired. Check your terminal and try again.",
+      "successTitle": "CLI authorized",
+      "deniedTitle": "Request denied",
+      "returnToTerminal": "You can close this tab and return to your terminal."
+    }
+  },
   "contactEnterprise": {
     "title": "Contact Enterprise Sales",
     "description": "Tell us about your needs and we'll get back to you within 24 hours.",
