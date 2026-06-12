@@ -95,7 +95,7 @@ export interface Subscription {
 
 export interface LedgerEntry {
   entryId: string
-  type: 'purchase' | 'auto_recharge' | 'debit'
+  type: 'purchase' | 'auto_recharge' | 'debit' | 'refund'
   amount: number
   balanceAfter?: number | null
   description?: string | null

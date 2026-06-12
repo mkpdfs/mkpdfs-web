@@ -605,7 +605,8 @@
       "purchase": "Credit pack purchase",
       "auto_recharge": "Auto-recharge",
       "debit": "PDF generation",
-      "balanceAfter": "Balance: {count}"
+      "balanceAfter": "Balance: {count}",
+      "refund": "Refund"
     },
     "tagline": "Pay for pages, not servers. Credits never expire.",
     "thisMonth": {

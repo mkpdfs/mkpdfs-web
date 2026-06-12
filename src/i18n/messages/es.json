@@ -605,7 +605,8 @@
       "purchase": "Compra de paquete de créditos",
       "auto_recharge": "Auto-recarga",
       "debit": "Generación de PDF",
-      "balanceAfter": "Saldo: {count}"
+      "balanceAfter": "Saldo: {count}",
+      "refund": "Reembolso"
     },
     "tagline": "Paga por páginas, no por servidores. Los créditos nunca expiran.",
     "thisMonth": {
