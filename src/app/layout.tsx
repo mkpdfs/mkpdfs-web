@@ -78,7 +78,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  themeColor: '#3B82F6',
+  themeColor: '#8C6CFF',
 }
 
 type Props = {
@@ -95,37 +95,11 @@ const jsonLd = {
   operatingSystem: 'Web',
   url: 'https://mkpdfs.com',
   offers: {
-    '@type': 'AggregateOffer',
+    '@type': 'Offer',
+    name: 'Pay-as-you-go credits',
+    description: '$10 of credits ≈ 1,000 PDF pages ($0.01/page). 100 free pages to start, no card required.',
+    price: '10',
     priceCurrency: 'USD',
-    lowPrice: '0',
-    highPrice: '199',
-    offerCount: '4',
-    offers: [
-      {
-        '@type': 'Offer',
-        name: 'Free',
-        price: '0',
-        priceCurrency: 'USD',
-      },
-      {
-        '@type': 'Offer',
-        name: 'Starter',
-        price: '9',
-        priceCurrency: 'USD',
-      },
-      {
-        '@type': 'Offer',
-        name: 'Professional',
-        price: '49',
-        priceCurrency: 'USD',
-      },
-      {
-        '@type': 'Offer',
-        name: 'Enterprise',
-        price: '199',
-        priceCurrency: 'USD',
-      },
-    ],
   },
   featureList: [
     'Handlebars PDF templates',

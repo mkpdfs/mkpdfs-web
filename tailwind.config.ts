@@ -93,6 +93,8 @@ const config: Config = {
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
+        geist: ['var(--font-geist-sans)', 'system-ui', 'sans-serif'],
+        'geist-mono': ['var(--font-geist-mono)', 'ui-monospace', 'monospace'],
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',

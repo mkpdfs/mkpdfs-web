@@ -48,6 +48,131 @@
     "billing": "Facturación",
     "signOut": "Cerrar sesión"
   },
+  "marketing": {
+    "nav": {
+      "howItWorks": "Cómo funciona",
+      "templates": "Plantillas"
+    },
+    "hero": {
+      "badge": "$10 ≈ 1,000 páginas PDF",
+      "badgeCta": "Ver precios →",
+      "title1": "PDFs a escala,",
+      "title2": "cero infraestructura.",
+      "subtitle": "Elige una plantilla o sube la tuya y genera PDFs con una sola llamada al API — o directo desde el dashboard. Sin Puppeteer, sin crashes de Chromium, sin cold starts. Nosotros operamos la infraestructura.",
+      "ctaPrimary": "Empieza gratis",
+      "ctaSecondary": "Mira cómo funciona",
+      "microcopy": "Sin tarjeta · 100 páginas gratis · En vivo en 2 minutos"
+    },
+    "logos": {
+      "title": "Reemplazando stacks de PDF frágiles en"
+    },
+    "how": {
+      "eyebrow": "Cómo funciona",
+      "title": "Tres pasos para tu primer PDF",
+      "subtitle": "De cero a una URL de PDF descargable en minutos. Sin servidores, sin navegadores, sin tickets de DevOps.",
+      "step1Title": "Elige o sube una plantilla",
+      "step1Body": "Empieza con una plantilla precargada — facturas, recibos, reportes — o sube tu propio HTML + Handlebars. ¿Necesitas algo a la medida? Pídelo y lo construimos.",
+      "step2Title": "Envía tus datos",
+      "step2Body": "Haz POST de JSON al API con un token para server-to-server, o llena los campos directo en el portal de administración. El mismo motor, tú eliges el flujo.",
+      "step3Title": "Obtén un PDF o miles",
+      "step3Body": "Recibe una URL de PDF hosteado al instante. Genera un documento, o procesa miles en lote con webhooks. Escalamos automáticamente — nunca tocas un navegador."
+    },
+    "features": {
+      "eyebrow": "Por qué mkpdfs",
+      "title": "Sáltate la infraestructura. Lanza más rápido.",
+      "subtitle": "Todo lo que construirías tú mismo — ya corriendo, probado y listo para escalar.",
+      "handlebarsTitle": "Plantillas Handlebars",
+      "handlebarsBody": "Escribe HTML + Handlebars, sube una vez, genera por siempre. Partials, helpers y condicionales soportados.",
+      "fastTitle": "Rápido y confiable",
+      "fastBody": "Navegadores pre-calentados, sin cold starts. Sync para trabajos rápidos, async con webhooks para lotes pesados.",
+      "apiTitle": "Una llamada al API",
+      "apiBody": "Haz POST de tus datos y recibe la URL del PDF. Eso es todo. Funciona desde cualquier lenguaje y framework.",
+      "secureTitle": "Seguro y aislado",
+      "secureBody": "Plantillas y datos aislados por cuenta. Tokens de API cifrados y con alcance limitado. Sin estado compartido.",
+      "trackingTitle": "Métricas de uso",
+      "trackingBody": "Ve exactamente lo que usas. Rastrea conteos de generación, monitorea tendencias y exporta para conciliación.",
+      "teamTitle": "Listo para equipos",
+      "teamBody": "Múltiples tokens de API, plantillas compartidas. Da acceso a tu equipo sin compartir credenciales."
+    },
+    "templates": {
+      "eyebrow": "Plantillas",
+      "title": "Empieza con una plantilla, o trae la tuya",
+      "subtitle": "Una biblioteca creciente de layouts listos para producción. Clona uno, ajusta el HTML o sube el tuyo desde cero.",
+      "upload": "Subir una plantilla",
+      "footerPrefix": "¿No ves lo que necesitas?",
+      "footerLink": "Pide una plantilla a la medida →",
+      "items": {
+        "invoice": { "name": "Factura", "desc": "Partidas, impuestos, totales" },
+        "receipt": { "name": "Recibo", "desc": "Comprobante compacto de transacción" },
+        "report": { "name": "Reporte", "desc": "Gráficas, tablas, resúmenes" },
+        "certificate": { "name": "Certificado", "desc": "Premios y acreditaciones" },
+        "contract": { "name": "Contrato", "desc": "Cláusulas y bloques de firma" },
+        "boarding": { "name": "Pase de abordar", "desc": "Código de barras + detalles del viaje" },
+        "statement": { "name": "Estado de cuenta", "desc": "Resumen mensual de cuenta" },
+        "quote": { "name": "Cotización", "desc": "Propuestas y estimados" }
+      }
+    },
+    "twoWays": {
+      "eyebrow": "Dos formas de generar",
+      "title": "Seguro, S2S — o a mano",
+      "s2sTitle": "Server-to-server",
+      "s2sTagline": "Para producción y automatización",
+      "s2sBody": "Autentícate con un token de API de alcance limitado y genera desde tu backend. Ideal para facturas al hacer checkout, reportes programados o lotes de alto volumen.",
+      "s2sChip1": "Sync y async",
+      "s2sChip2": "Webhooks",
+      "s2sChip3": "Headers de rate limit",
+      "portalTitle": "Portal de administración",
+      "portalTagline": "Para casos puntuales y equipos no técnicos",
+      "portalBody": "Elige una plantilla, llena los campos y genera. Sin código. Perfecto para ops, finanzas o quien necesite un documento ahora mismo.",
+      "portalChip1": "Vista previa en vivo",
+      "portalChip2": "Sin código",
+      "portalChip3": "Historial y re-ejecución",
+      "mockTemplateLabel": "Plantilla",
+      "mockTemplateValue": "Factura",
+      "mockCustomerLabel": "Cliente",
+      "mockCustomerValue": "Acme Corp",
+      "mockGenerate": "Generar PDF"
+    },
+    "pricing": {
+      "eyebrow": "Precios",
+      "title": "Créditos que prácticamente nunca se acaban",
+      "subtitle": "Paga por páginas, no por servidores. $10 generan aproximadamente 1,000 páginas PDF — la mayoría de los equipos nunca agota su saldo.",
+      "ofCredits": "en créditos",
+      "approxPages": "1,000 páginas PDF",
+      "perPage": "$0.01 / página",
+      "bullet1": "Los créditos nunca expiran — recarga cuando quieras",
+      "bullet2": "Todas las plantillas, API + portal, tokens ilimitados",
+      "bullet3": "Descuentos por volumen automáticos",
+      "bullet4": "100 páginas gratis para empezar — sin tarjeta",
+      "cta": "Empieza con 100 páginas gratis",
+      "enterprisePrefix": "¿Necesitas volumen enterprise, SSO o un SLA?",
+      "enterpriseLink": "Hablemos →"
+    },
+    "cta": {
+      "title": "Deja de mantener un stack de PDFs.",
+      "subtitle": "Crea una cuenta, toma una plantilla y publica tu primer PDF antes de que se enfríe tu café.",
+      "primary": "Empieza gratis",
+      "docs": "Lee la documentación"
+    },
+    "footer": {
+      "tagline": "Generación de PDFs como servicio. Plantillas entran, PDFs salen — nosotros operamos la infraestructura.",
+      "product": "Producto",
+      "features": "Funcionalidades",
+      "templates": "Plantillas",
+      "pricing": "Precios",
+      "changelog": "Changelog",
+      "developers": "Desarrolladores",
+      "documentation": "Documentación",
+      "apiReference": "Referencia del API",
+      "status": "Status",
+      "company": "Compañía",
+      "about": "Acerca de",
+      "contact": "Contacto",
+      "privacy": "Privacidad",
+      "copyright": "© {year} mkpdfs. Todos los derechos reservados.",
+      "operational": "Todos los sistemas en operación"
+    }
+  },
   "landing": {
     "hero": {
       "title": "Generación de PDFs",

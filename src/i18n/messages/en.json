@@ -48,6 +48,131 @@
     "billing": "Billing",
     "signOut": "Sign out"
   },
+  "marketing": {
+    "nav": {
+      "howItWorks": "How it works",
+      "templates": "Templates"
+    },
+    "hero": {
+      "badge": "$10 ≈ 1,000 PDF pages",
+      "badgeCta": "See pricing →",
+      "title1": "PDFs at scale,",
+      "title2": "zero infrastructure.",
+      "subtitle": "Pick a template or upload your own, then generate PDFs with one API call — or straight from the dashboard. No Puppeteer, no Chromium crashes, no cold starts. We run the infrastructure.",
+      "ctaPrimary": "Start for free",
+      "ctaSecondary": "See how it works",
+      "microcopy": "No credit card · 100 free pages · Live in 2 minutes"
+    },
+    "logos": {
+      "title": "Replacing fragile in-house PDF stacks at"
+    },
+    "how": {
+      "eyebrow": "How it works",
+      "title": "Three steps to your first PDF",
+      "subtitle": "From zero to a downloadable PDF URL in minutes. No servers, no browsers, no DevOps tickets.",
+      "step1Title": "Pick or upload a template",
+      "step1Body": "Start from a pre-loaded template — invoices, receipts, reports — or upload your own HTML + Handlebars. Need something custom? Request it and we'll build it.",
+      "step2Title": "Send your data",
+      "step2Body": "POST JSON to the API with a token for server-to-server, or fill the fields right in the admin portal. Same engine, your choice of workflow.",
+      "step3Title": "Get one PDF or thousands",
+      "step3Body": "Receive a hosted PDF URL instantly. Generate one document, or batch thousands async with webhooks. We auto-scale — you never touch a browser."
+    },
+    "features": {
+      "eyebrow": "Why mkpdfs",
+      "title": "Skip the infrastructure. Ship faster.",
+      "subtitle": "Everything you'd build yourself — already running, tested, and ready to scale.",
+      "handlebarsTitle": "Handlebars templates",
+      "handlebarsBody": "Write HTML + Handlebars, upload once, generate forever. Partials, helpers, and conditionals all supported.",
+      "fastTitle": "Fast & reliable",
+      "fastBody": "Pre-warmed browsers, no cold starts. Sync for quick jobs, async with webhooks for heavy batches.",
+      "apiTitle": "One API call",
+      "apiBody": "POST your data, get a PDF URL back. That's it. Works from any language, any framework.",
+      "secureTitle": "Secure & isolated",
+      "secureBody": "Templates and data are isolated per account. Encrypted, scoped API tokens. No shared state.",
+      "trackingTitle": "Usage tracking",
+      "trackingBody": "See exactly what you're using. Track generation counts, monitor trends, export for billing reconciliation.",
+      "teamTitle": "Team ready",
+      "teamBody": "Multiple API tokens, shared templates. Give your team access without sharing credentials."
+    },
+    "templates": {
+      "eyebrow": "Templates",
+      "title": "Start from a template, or bring your own",
+      "subtitle": "A growing library of production-ready layouts. Clone one, tweak the HTML, or upload your own from scratch.",
+      "upload": "Upload a template",
+      "footerPrefix": "Don't see what you need?",
+      "footerLink": "Request a custom template →",
+      "items": {
+        "invoice": { "name": "Invoice", "desc": "Line items, taxes, totals" },
+        "receipt": { "name": "Receipt", "desc": "Compact transaction proof" },
+        "report": { "name": "Report", "desc": "Charts, tables, summaries" },
+        "certificate": { "name": "Certificate", "desc": "Awards & completions" },
+        "contract": { "name": "Contract", "desc": "Clauses & signature blocks" },
+        "boarding": { "name": "Boarding pass", "desc": "Barcode + trip details" },
+        "statement": { "name": "Statement", "desc": "Monthly account summary" },
+        "quote": { "name": "Quote", "desc": "Proposals & estimates" }
+      }
+    },
+    "twoWays": {
+      "eyebrow": "Two ways to generate",
+      "title": "Securely, S2S — or by hand",
+      "s2sTitle": "Server-to-server",
+      "s2sTagline": "For production & automation",
+      "s2sBody": "Authenticate with a scoped API token and generate from your backend. Ideal for invoices on checkout, reports on a schedule, or high-volume batches.",
+      "s2sChip1": "Sync & async",
+      "s2sChip2": "Webhooks",
+      "s2sChip3": "Rate-limit headers",
+      "portalTitle": "Admin portal",
+      "portalTagline": "For one-offs & non-technical teams",
+      "portalBody": "Pick a template, fill in the fields, hit generate. No code required. Perfect for ops, finance, or anyone who just needs a document right now.",
+      "portalChip1": "Live preview",
+      "portalChip2": "No code",
+      "portalChip3": "History & re-run",
+      "mockTemplateLabel": "Template",
+      "mockTemplateValue": "Invoice",
+      "mockCustomerLabel": "Customer",
+      "mockCustomerValue": "Acme Corp",
+      "mockGenerate": "Generate PDF"
+    },
+    "pricing": {
+      "eyebrow": "Pricing",
+      "title": "Credits that basically never run out",
+      "subtitle": "Pay for pages, not servers. $10 generates roughly 1,000 PDF pages — most teams never touch their balance.",
+      "ofCredits": "of credits",
+      "approxPages": "1,000 PDF pages",
+      "perPage": "$0.01 / page",
+      "bullet1": "Credits never expire — top up whenever",
+      "bullet2": "All templates, API + portal, unlimited tokens",
+      "bullet3": "Volume discounts kick in automatically",
+      "bullet4": "100 free pages to start — no card required",
+      "cta": "Start with 100 free pages",
+      "enterprisePrefix": "Need enterprise volume, SSO, or an SLA?",
+      "enterpriseLink": "Talk to us →"
+    },
+    "cta": {
+      "title": "Stop maintaining a PDF stack.",
+      "subtitle": "Spin up an account, grab a template, and ship your first PDF before your coffee's cold.",
+      "primary": "Start for free",
+      "docs": "Read the docs"
+    },
+    "footer": {
+      "tagline": "PDF generation as a service. Templates in, PDFs out — we run the infrastructure.",
+      "product": "Product",
+      "features": "Features",
+      "templates": "Templates",
+      "pricing": "Pricing",
+      "changelog": "Changelog",
+      "developers": "Developers",
+      "documentation": "Documentation",
+      "apiReference": "API reference",
+      "status": "Status",
+      "company": "Company",
+      "about": "About",
+      "contact": "Contact",
+      "privacy": "Privacy",
+      "copyright": "© {year} mkpdfs. All rights reserved.",
+      "operational": "All systems operational"
+    }
+  },
   "landing": {
     "hero": {
       "title": "PDF Generation",
