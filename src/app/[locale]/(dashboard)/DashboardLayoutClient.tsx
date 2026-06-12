@@ -32,7 +32,7 @@ export default function DashboardLayoutClient({
 
   return (
     <div
-      className={`${GeistSans.variable} ${GeistMono.variable} dark flex h-screen overflow-hidden bg-[#08080A] font-geist text-[#F4F4F6]`}
+      className={`${GeistSans.variable} ${GeistMono.variable} flex h-screen overflow-hidden bg-surface font-geist text-fg`}
     >
       <Sidebar />
 

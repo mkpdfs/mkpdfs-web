@@ -12,19 +12,35 @@ interface ThemeContextValue {
   toggleTheme: () => void
 }
 
+const STORAGE_KEY = 'mkpdfs-theme'
+
 const ThemeContext = createContext<ThemeContextValue | undefined>(undefined)
 
-function getSystemTheme(): ResolvedTheme {
-  if (typeof window === 'undefined') return 'light'
-  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+// Shared resolver — mirrors the inline no-flash script in layout.tsx.
+// Stored explicit choice wins; else follow the OS; else default to dark
+// (default-dark applies ONLY when matchMedia is unavailable, not when the OS is light).
+function resolve(theme: Theme): ResolvedTheme {
+  if (theme === 'light' || theme === 'dark') return theme
+  if (typeof window !== 'undefined' && window.matchMedia) {
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+  }
+  return 'dark'
+}
+
+function getStored(): Theme {
+  if (typeof window === 'undefined') return 'system'
+  const s = localStorage.getItem(STORAGE_KEY)
+  return s === 'light' || s === 'dark' ? s : 'system'
 }
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>('system')
-  const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>('light')
+  // Read the persisted choice up front so we never start out of sync with the
+  // class the inline head script already applied to <html>.
+  const [theme, setThemeState] = useState<Theme>(getStored)
+  const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>(() => resolve(getStored()))
 
   const updateResolvedTheme = useCallback(() => {
-    const resolved = theme === 'system' ? getSystemTheme() : theme
+    const resolved = resolve(theme)
     setResolvedTheme(resolved)
 
     const root = document.documentElement
@@ -48,6 +64,13 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   }, [theme, updateResolvedTheme])
 
   const setTheme = useCallback((newTheme: Theme) => {
+    if (typeof window !== 'undefined') {
+      if (newTheme === 'system') {
+        localStorage.removeItem(STORAGE_KEY)
+      } else {
+        localStorage.setItem(STORAGE_KEY, newTheme)
+      }
+    }
     setThemeState(newTheme)
   }, [])
 

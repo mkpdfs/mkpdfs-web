@@ -25,7 +25,7 @@ export default async function LandingPage({ params }: Props) {
 
   return (
     <div
-      className={`${GeistSans.variable} ${GeistMono.variable} mk-landing dark relative min-h-screen overflow-x-hidden bg-[#08080A] font-geist text-[#F4F4F6]`}
+      className={`${GeistSans.variable} ${GeistMono.variable} mk-landing relative min-h-screen overflow-x-hidden bg-surface font-geist text-fg`}
     >
       {/* ambient violet glow + faint grid, masked from the top */}
       <div

@@ -66,8 +66,35 @@ const config: Config = {
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
         accent: {
-          DEFAULT: 'hsl(var(--accent))',
+          DEFAULT: 'hsl(var(--accent-hsl))',
           foreground: 'hsl(var(--accent-foreground))',
+        },
+        // mkpdfs semantic token system (RGB triples → theme-aware via .dark)
+        ink: 'rgb(var(--ink) / <alpha-value>)',
+        shadow: 'rgb(var(--shadow) / <alpha-value>)',
+        surface: {
+          DEFAULT: 'rgb(var(--surface) / <alpha-value>)',
+          raised: 'rgb(var(--surface-raised) / <alpha-value>)',
+          card: 'rgb(var(--surface-card) / <alpha-value>)',
+          overlay: 'rgb(var(--surface-overlay) / <alpha-value>)',
+        },
+        fg: {
+          DEFAULT: 'rgb(var(--fg) / <alpha-value>)',
+          muted: 'rgb(var(--fg-muted) / <alpha-value>)',
+          dim: 'rgb(var(--fg-dim) / <alpha-value>)',
+          faint: 'rgb(var(--fg-faint) / <alpha-value>)',
+        },
+        brand: {
+          DEFAULT: 'rgb(var(--brand) / <alpha-value>)',
+          text: 'rgb(var(--brand-text) / <alpha-value>)',
+          strong: 'rgb(var(--brand-strong) / <alpha-value>)',
+          deep: 'rgb(var(--brand-deep) / <alpha-value>)',
+        },
+        ok: 'rgb(var(--ok) / <alpha-value>)',
+        warn: 'rgb(var(--warn) / <alpha-value>)',
+        danger: {
+          DEFAULT: 'rgb(var(--danger) / <alpha-value>)',
+          soft: 'rgb(var(--danger-soft) / <alpha-value>)',
         },
         destructive: {
           DEFAULT: 'hsl(var(--destructive))',

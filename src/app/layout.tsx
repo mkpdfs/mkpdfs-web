@@ -78,7 +78,10 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  themeColor: '#8C6CFF',
+  themeColor: [
+    { media: '(prefers-color-scheme: dark)', color: '#08080A' },
+    { media: '(prefers-color-scheme: light)', color: '#F5F5F8' },
+  ],
 }
 
 type Props = {
@@ -129,9 +132,20 @@ export default function RootLayout({ children }: Props) {
             __html: `
               (function() {
                 try {
-                  var isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                  document.documentElement.classList.add(isDark ? 'dark' : 'light');
-                } catch (e) {}
+                  var s = localStorage.getItem('mkpdfs-theme');
+                  var resolved;
+                  if (s === 'light' || s === 'dark') {
+                    resolved = s;
+                  } else if (window.matchMedia) {
+                    resolved = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+                  } else {
+                    resolved = 'dark';
+                  }
+                  document.documentElement.classList.remove('light', 'dark');
+                  document.documentElement.classList.add(resolved);
+                } catch (e) {
+                  document.documentElement.classList.add('dark');
+                }
               })();
             `,
           }}

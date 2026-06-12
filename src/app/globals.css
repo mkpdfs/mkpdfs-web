@@ -4,29 +4,54 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 47.4% 11.2%;
-    --foreground-dark: 220 13% 9%;
-    --foreground-light: 220 9% 46%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    color-scheme: light;
+
+    /* shadcn HSL semantic vars (kept in sync with the mkpdfs palette below) */
+    --background: 240 13% 97%;          /* #F5F5F8 */
+    --foreground: 240 8% 12%;           /* #16161A */
+    --foreground-dark: 240 8% 12%;
+    --foreground-light: 232 6% 40%;     /* #5F5F6B */
+    --muted: 240 20% 98%;
+    --muted-foreground: 232 6% 40%;     /* #5F5F6B */
     --card: 0 0% 100%;
-    --card-foreground: 222.2 47.4% 11.2%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --primary: 217.2 91.2% 59.8%;
+    --card-foreground: 240 8% 12%;
+    --border: 240 13% 91%;
+    --input: 240 13% 91%;
+    --primary: 252 100% 71%;            /* #8C6CFF */
     --primary-foreground: 0 0% 100%;
     --secondary: 250 89.5% 70.2%;
     --secondary-foreground: 0 0% 100%;
-    --accent: 214.3 91.2% 96.9%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
+    --accent-hsl: 252 100% 96%;
+    --accent-foreground: 240 8% 12%;
+    --destructive: 347 62% 49%;         /* #C92F4D */
     --destructive-foreground: 0 0% 100%;
-    --ring: 217.2 91.2% 59.8%;
+    --ring: 252 100% 71%;
     --radius: 0.5rem;
+
+    /* --- mkpdfs token system: RGB triples (light) --- */
+    --ink: 10 10 30;
+    --shadow: 0 0 0;
+    --surface: 245 245 248;
+    --surface-raised: 255 255 255;
+    --surface-card: 248 248 251;
+    --surface-overlay: 237 237 242;
+    --fg: 22 22 26;
+    --fg-muted: 95 95 107;
+    --fg-dim: 112 112 123;
+    --fg-faint: 154 154 162;
+    --brand: 140 108 255;
+    --brand-text: 124 92 255;
+    --brand-strong: 107 79 224;
+    --brand-deep: 91 63 224;
+    --ok: 31 138 91;
+    --danger: 201 47 77;
+    --danger-soft: 255 108 140;
+    --warn: 224 161 79;
   }
 
   .dark {
+    color-scheme: dark;
+
     --background: 215 28% 10%;
     --foreground: 210 40% 98%;
     --foreground-dark: 210 40% 98%;
@@ -41,11 +66,31 @@
     --primary-foreground: 0 0% 100%;
     --secondary: 250 89.5% 70.2%;
     --secondary-foreground: 0 0% 100%;
-    --accent: 217.2 32.6% 17.5%;
+    --accent-hsl: 217.2 32.6% 17.5%;
     --accent-foreground: 210 40% 98%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
     --ring: 217.2 91.2% 59.8%;
+
+    /* --- mkpdfs token system: RGB triples (dark) --- */
+    --ink: 255 255 255;
+    --shadow: 0 0 0;
+    --surface: 8 8 10;
+    --surface-raised: 12 12 15;
+    --surface-card: 16 16 20;
+    --surface-overlay: 26 26 32;
+    --fg: 244 244 246;
+    --fg-muted: 156 156 168;
+    --fg-dim: 126 126 137;
+    --fg-faint: 92 92 102;
+    --brand: 140 108 255;
+    --brand-text: 183 166 255;
+    --brand-strong: 201 187 255;
+    --brand-deep: 91 63 224;
+    --ok: 124 240 176;
+    --danger: 255 107 107;
+    --danger-soft: 255 138 155;
+    --warn: 254 188 46;
   }
 
   * {
