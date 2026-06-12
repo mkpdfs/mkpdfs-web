@@ -102,14 +102,38 @@
       "footerPrefix": "¿No ves lo que necesitas?",
       "footerLink": "Pide una plantilla a la medida →",
       "items": {
-        "invoice": { "name": "Factura", "desc": "Partidas, impuestos, totales" },
-        "receipt": { "name": "Recibo", "desc": "Comprobante compacto de transacción" },
-        "report": { "name": "Reporte", "desc": "Gráficas, tablas, resúmenes" },
-        "certificate": { "name": "Certificado", "desc": "Premios y acreditaciones" },
-        "contract": { "name": "Contrato", "desc": "Cláusulas y bloques de firma" },
-        "boarding": { "name": "Pase de abordar", "desc": "Código de barras + detalles del viaje" },
-        "statement": { "name": "Estado de cuenta", "desc": "Resumen mensual de cuenta" },
-        "quote": { "name": "Cotización", "desc": "Propuestas y estimados" }
+        "invoice": {
+          "name": "Factura",
+          "desc": "Partidas, impuestos, totales"
+        },
+        "receipt": {
+          "name": "Recibo",
+          "desc": "Comprobante compacto de transacción"
+        },
+        "report": {
+          "name": "Reporte",
+          "desc": "Gráficas, tablas, resúmenes"
+        },
+        "certificate": {
+          "name": "Certificado",
+          "desc": "Premios y acreditaciones"
+        },
+        "contract": {
+          "name": "Contrato",
+          "desc": "Cláusulas y bloques de firma"
+        },
+        "boarding": {
+          "name": "Pase de abordar",
+          "desc": "Código de barras + detalles del viaje"
+        },
+        "statement": {
+          "name": "Estado de cuenta",
+          "desc": "Resumen mensual de cuenta"
+        },
+        "quote": {
+          "name": "Cotización",
+          "desc": "Propuestas y estimados"
+        }
       }
     },
     "twoWays": {
@@ -310,9 +334,9 @@
     "subtitle": "Esto es lo que está pasando con tu generación de PDFs hoy.",
     "unlimited": "Ilimitado",
     "stats": {
-      "pagesGenerated": "Páginas Generadas",
       "templates": "Plantillas",
-      "apiKeys": "Claves API"
+      "apiKeys": "Claves API",
+      "credits": "Créditos Restantes"
     },
     "quickActions": {
       "title": "Acciones Rápidas",

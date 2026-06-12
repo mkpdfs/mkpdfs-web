@@ -102,14 +102,38 @@
       "footerPrefix": "Don't see what you need?",
       "footerLink": "Request a custom template →",
       "items": {
-        "invoice": { "name": "Invoice", "desc": "Line items, taxes, totals" },
-        "receipt": { "name": "Receipt", "desc": "Compact transaction proof" },
-        "report": { "name": "Report", "desc": "Charts, tables, summaries" },
-        "certificate": { "name": "Certificate", "desc": "Awards & completions" },
-        "contract": { "name": "Contract", "desc": "Clauses & signature blocks" },
-        "boarding": { "name": "Boarding pass", "desc": "Barcode + trip details" },
-        "statement": { "name": "Statement", "desc": "Monthly account summary" },
-        "quote": { "name": "Quote", "desc": "Proposals & estimates" }
+        "invoice": {
+          "name": "Invoice",
+          "desc": "Line items, taxes, totals"
+        },
+        "receipt": {
+          "name": "Receipt",
+          "desc": "Compact transaction proof"
+        },
+        "report": {
+          "name": "Report",
+          "desc": "Charts, tables, summaries"
+        },
+        "certificate": {
+          "name": "Certificate",
+          "desc": "Awards & completions"
+        },
+        "contract": {
+          "name": "Contract",
+          "desc": "Clauses & signature blocks"
+        },
+        "boarding": {
+          "name": "Boarding pass",
+          "desc": "Barcode + trip details"
+        },
+        "statement": {
+          "name": "Statement",
+          "desc": "Monthly account summary"
+        },
+        "quote": {
+          "name": "Quote",
+          "desc": "Proposals & estimates"
+        }
       }
     },
     "twoWays": {
@@ -310,9 +334,9 @@
     "subtitle": "Here's what's happening with your PDF generation today.",
     "unlimited": "Unlimited",
     "stats": {
-      "pagesGenerated": "Pages Generated",
       "templates": "Templates",
-      "apiKeys": "API Keys"
+      "apiKeys": "API Keys",
+      "credits": "Credits Remaining"
     },
     "quickActions": {
       "title": "Quick Actions",

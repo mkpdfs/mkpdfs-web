@@ -8,6 +8,7 @@ import { useUsage, useProfile } from '@/hooks/useApi'
 import { Card, CardHeader, CardTitle, CardContent, Button, Spinner } from '@/components/ui'
 import { formatNumber } from '@/lib/utils'
 import {
+  CreditCard,
   FileText,
   Sparkles,
   Key,
@@ -43,12 +44,12 @@ export default function DashboardPage() {
   const limits = profile?.subscriptionLimits
   const stats = [
     {
-      key: 'pagesGenerated',
-      name: t('stats.pagesGenerated'),
-      value: usageData?.pagesGenerated ?? 0,
-      limit: limits?.pagesPerMonth ?? 100,
-      icon: FileText,
-      href: null,
+      key: 'credits',
+      name: t('stats.credits'),
+      value: profile?.subscription?.creditBalance ?? 0,
+      limit: null as number | null, // balance, not a quota — no bar
+      icon: CreditCard,
+      href: '/billing',
       color: 'text-primary',
       bgColor: 'bg-primary-50',
       barColor: 'bg-primary',
@@ -118,8 +119,9 @@ export default function DashboardPage() {
       {/* Stats Grid */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {stats.map((stat) => {
+          const hasLimit = stat.limit != null
           const isUnlimited = stat.limit === -1
-          const percentage = isUnlimited ? 0 : (stat.value / stat.limit) * 100
+          const percentage = !hasLimit || isUnlimited ? 0 : (stat.value / stat.limit!) * 100
           const cardContent = (
             <Card className={stat.href ? 'transition-shadow hover:shadow-md' : ''}>
               <CardContent className="p-6">
@@ -134,14 +136,16 @@ export default function DashboardPage() {
                     ) : (
                       <p className="text-2xl font-semibold text-foreground-dark">
                         {formatNumber(stat.value)}
-                        <span className="text-sm font-normal text-foreground-light">
-                          {isUnlimited ? ` / ${t('unlimited')}` : ` / ${formatNumber(stat.limit)}`}
-                        </span>
+                        {hasLimit && (
+                          <span className="text-sm font-normal text-foreground-light">
+                            {isUnlimited ? ` / ${t('unlimited')}` : ` / ${formatNumber(stat.limit!)}`}
+                          </span>
+                        )}
                       </p>
                     )}
                   </div>
                 </div>
-                {!isLoading && (
+                {!isLoading && hasLimit && (
                   <div className="mt-4">
                     <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
                       <div
