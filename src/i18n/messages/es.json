@@ -23,8 +23,8 @@
     "download": "Descargar",
     "upload": "Subir",
     "perMonth": "/mes",
-    "upgradeRequired": "Mejora al plan {plan} o superior para acceder a esta función.",
-    "upgradeNow": "Mejorar Ahora"
+    "creditsRequired": "Esta función requiere saldo de créditos. Compra un paquete para desbloquearla.",
+    "buyCredits": "Comprar créditos"
   },
   "metadata": {
     "title": "mkpdfs - API de Generación de PDFs para Developers",

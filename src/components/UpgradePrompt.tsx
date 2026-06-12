@@ -7,18 +7,11 @@ import { useTranslations } from 'next-intl'
 
 interface UpgradePromptProps {
   feature: string
-  requiredPlan?: 'starter' | 'professional' | 'enterprise'
 }
 
-export function UpgradePrompt({ feature, requiredPlan = 'starter' }: UpgradePromptProps) {
-  const t = useTranslations('billing')
+/** Shown when a feature needs a positive credit balance (credits model). */
+export function UpgradePrompt({ feature }: UpgradePromptProps) {
   const common = useTranslations('common')
-
-  const planNames: Record<string, string> = {
-    starter: t('currentPlan.starter'),
-    professional: t('currentPlan.professional'),
-    enterprise: t('currentPlan.enterprise'),
-  }
 
   return (
     <Card className="border-dashed">
@@ -28,10 +21,10 @@ export function UpgradePrompt({ feature, requiredPlan = 'starter' }: UpgradeProm
           {feature}
         </h3>
         <p className="text-sm text-foreground-light mb-4">
-          {common('upgradeRequired', { plan: planNames[requiredPlan] })}
+          {common('creditsRequired')}
         </p>
         <Button asChild>
-          <Link href="/billing">{common('upgradeNow')}</Link>
+          <Link href="/billing">{common('buyCredits')}</Link>
         </Button>
       </CardContent>
     </Card>

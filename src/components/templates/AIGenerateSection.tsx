@@ -75,9 +75,9 @@ export function AIGenerateSection({ onSaveComplete }: AIGenerateSectionProps) {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const [isPreviewLoading, setIsPreviewLoading] = useState(false)
 
-  // Subscription checks
-  const plan = profile?.subscription?.plan || 'free'
-  const hasAccess = plan !== 'free'
+  // Credits checks (mirrors the backend AI gate: enterprise or balance > 0)
+  const plan = profile?.subscription?.plan || 'credits'
+  const hasAccess = plan === 'enterprise' || (profile?.subscription?.creditBalance ?? 0) > 0
   const aiLimit = profile?.subscriptionLimits?.aiGenerationsPerMonth ?? 0
   const isUnlimited = aiLimit === -1
   const currentUsage = profile?.currentUsage?.aiGenerationCount ?? 0
@@ -512,7 +512,7 @@ export function AIGenerateSection({ onSaveComplete }: AIGenerateSectionProps) {
   }, [generatedTemplate, editedTemplate, uploadTemplate, ai, errors, onSaveComplete])
 
   if (!hasAccess) {
-    return <UpgradePrompt feature={ai('featureName')} requiredPlan="starter" />
+    return <UpgradePrompt feature={ai('featureName')} />
   }
 
   const displayRemaining = isUnlimited
