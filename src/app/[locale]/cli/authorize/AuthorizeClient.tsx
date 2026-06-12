@@ -75,20 +75,20 @@ export default function AuthorizeClient() {
         )}
         <div className="flex gap-3">
           <Button
-            className="flex-1"
-            disabled={!valid || state === 'submitting'}
-            isLoading={state === 'submitting'}
-            onClick={() => act('approve')}
-          >
-            {t('approve')}
-          </Button>
-          <Button
             variant="destructive"
             className="flex-1"
             disabled={!valid || state === 'submitting'}
             onClick={() => act('deny')}
           >
             {t('deny')}
+          </Button>
+          <Button
+            className="flex-1"
+            disabled={!valid || state === 'submitting'}
+            isLoading={state === 'submitting'}
+            onClick={() => act('approve')}
+          >
+            {t('approve')}
           </Button>
         </div>
       </CardContent>
