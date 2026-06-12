@@ -11,12 +11,6 @@ import {
   useJobStatus,
 } from '@/hooks/useApi'
 import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  Button,
-  Input,
   Spinner,
   Dialog,
   DialogContent,
@@ -32,7 +26,6 @@ import {
   Code,
   Copy,
   Check,
-  Key,
   FileText,
   Zap,
   Clock,
@@ -56,6 +49,8 @@ import {
   EyeOff,
   Upload,
   Table,
+  Activity,
+  Package,
 } from 'lucide-react'
 import { parseCSV, jsonToCsv, type ParseCsvResult } from '@/lib/csv'
 
@@ -70,12 +65,41 @@ const MAX_CSV_ROWS = 50
 
 const languages: { id: Language; label: string }[] = [
   { id: 'curl', label: 'cURL' },
-  { id: 'javascript', label: 'JavaScript' },
+  { id: 'javascript', label: 'Node' },
   { id: 'python', label: 'Python' },
   { id: 'go', label: 'Go' },
 ]
 
 const defaultJsonData = '{\n  "name": "John Doe",\n  "date": "2025-01-01"\n}'
+
+// ============================================
+// Shared dark style fragments
+// ============================================
+
+const cardCls =
+  'rounded-[14px] border border-white/[0.09] bg-[linear-gradient(180deg,rgba(255,255,255,0.025),rgba(255,255,255,0))] px-[22px] py-5'
+
+const fieldCls =
+  'w-full rounded-[9px] border border-white/10 bg-white/[0.03] px-3 py-2.5 text-sm text-[#F4F4F6] transition-colors placeholder:text-[#5C5C66] focus:border-[#8C6CFF]/60 focus:outline-none'
+
+const selectCls = `${fieldCls} [&>option]:bg-[#101014] [&>option]:text-[#F4F4F6]`
+
+const monoFieldCls =
+  'w-full rounded-[9px] border border-white/10 bg-white/[0.03] px-3 py-2.5 font-geist-mono text-[12.5px] leading-[1.7] text-[#D6D6E0] transition-colors placeholder:text-[#5C5C66] focus:border-[#8C6CFF]/60 focus:outline-none'
+
+const btnPrimaryCls =
+  'inline-flex items-center justify-center gap-2 rounded-[10px] bg-[linear-gradient(140deg,#8C6CFF,#5B3FE0)] px-5 py-[10px] text-sm font-semibold text-white shadow-[0_6px_20px_rgba(124,92,255,0.35),inset_0_1px_0_rgba(255,255,255,0.2)] transition-all hover:-translate-y-px hover:shadow-[0_10px_28px_rgba(124,92,255,0.5)] disabled:pointer-events-none disabled:opacity-40'
+
+const btnSecondaryCls =
+  'inline-flex items-center justify-center gap-2 rounded-[10px] border border-white/10 bg-white/[0.05] px-4 py-[10px] text-sm font-medium text-[#9C9CA8] transition-colors hover:bg-white/[0.08] hover:text-[#F4F4F6] disabled:pointer-events-none disabled:opacity-40'
+
+const pillActiveCls = 'bg-[#8C6CFF]/[0.18] text-[#C9BBFF]'
+const pillIdleCls = 'bg-transparent text-[#7C7C86] hover:text-[#A0A0AB]'
+const pillBaseCls =
+  'flex items-center gap-1.5 rounded-[7px] px-3 py-[5px] font-geist-mono text-[12.5px] transition-all'
+
+const sectionLabelCls =
+  'mb-3 font-geist-mono text-[11.5px] uppercase tracking-[0.1em] text-[#7E7E89]'
 
 // ============================================
 // Helper Functions
@@ -374,7 +398,15 @@ func main() {
 // Components
 // ============================================
 
-function CodeBlock({ code }: { code: string }) {
+function CopyButton({
+  code,
+  label,
+  copiedLabel,
+}: {
+  code: string
+  label: string
+  copiedLabel: string
+}) {
   const [copied, setCopied] = useState(false)
 
   const handleCopy = async () => {
@@ -384,24 +416,82 @@ function CodeBlock({ code }: { code: string }) {
   }
 
   return (
-    <div className="relative">
-      <button
-        onClick={handleCopy}
-        className="absolute right-2 top-2 flex items-center gap-1.5 rounded-md bg-zinc-800 px-2 py-1 text-xs text-zinc-300 transition-colors hover:bg-zinc-700"
-      >
-        {copied ? (
-          <>
-            <Check className="h-3 w-3 text-green-400" />
-            Copied!
-          </>
-        ) : (
-          <>
-            <Copy className="h-3 w-3" />
-            Copy
-          </>
-        )}
-      </button>
-      <pre className="overflow-x-auto rounded-lg bg-zinc-950 p-4 text-sm text-zinc-100">
+    <button
+      onClick={handleCopy}
+      className="ml-auto flex h-[30px] items-center gap-[7px] rounded-lg border border-white/10 bg-white/[0.05] px-3 text-[12.5px] font-medium text-[#9C9CA8] transition-colors hover:text-[#F4F4F6]"
+    >
+      {copied ? (
+        <>
+          <Check className="h-[13px] w-[13px] text-[#7CF0B0]" strokeWidth={2.2} />
+          {copiedLabel}
+        </>
+      ) : (
+        <>
+          <Copy className="h-[13px] w-[13px]" strokeWidth={2} />
+          {label}
+        </>
+      )}
+    </button>
+  )
+}
+
+function TabbedCodeBlock({
+  code,
+  selectedLang,
+  onSelectLang,
+  copyLabel,
+  copiedLabel,
+}: {
+  code: string
+  selectedLang: Language
+  onSelectLang: (lang: Language) => void
+  copyLabel: string
+  copiedLabel: string
+}) {
+  return (
+    <div className="overflow-hidden rounded-[14px] border border-white/10 bg-[linear-gradient(180deg,#101014,#0C0C0F)]">
+      <div className="flex flex-wrap items-center gap-1 border-b border-white/[0.07] px-3.5 py-[11px]">
+        {languages.map((lang) => (
+          <button
+            key={lang.id}
+            type="button"
+            onClick={() => onSelectLang(lang.id)}
+            className={`rounded-[7px] px-3 py-[5px] font-geist-mono text-[12.5px] transition-all active:scale-95 ${
+              selectedLang === lang.id ? pillActiveCls : pillIdleCls
+            }`}
+          >
+            {lang.label}
+          </button>
+        ))}
+        <CopyButton code={code} label={copyLabel} copiedLabel={copiedLabel} />
+      </div>
+      <pre className="m-0 min-h-[230px] overflow-x-auto px-[22px] py-5 font-geist-mono text-[13px] leading-[1.7] text-[#D6D6E0]">
+        <code>{code}</code>
+      </pre>
+    </div>
+  )
+}
+
+function LabeledCodeBlock({
+  code,
+  label,
+  copyLabel,
+  copiedLabel,
+}: {
+  code: string
+  label: string
+  copyLabel: string
+  copiedLabel: string
+}) {
+  return (
+    <div className="overflow-hidden rounded-[14px] border border-white/10 bg-[linear-gradient(180deg,#101014,#0C0C0F)]">
+      <div className="flex items-center border-b border-white/[0.07] px-3.5 py-[9px]">
+        <span className="font-geist-mono text-[11px] uppercase tracking-[0.08em] text-[#5C5C66]">
+          {label}
+        </span>
+        <CopyButton code={code} label={copyLabel} copiedLabel={copiedLabel} />
+      </div>
+      <pre className="m-0 overflow-x-auto px-[22px] py-4 font-geist-mono text-[12.5px] leading-[1.7] text-[#D6D6E0]">
         <code>{code}</code>
       </pre>
     </div>
@@ -427,21 +517,21 @@ function StepIndicator({
     <button
       onClick={onClick}
       disabled={!isClickable}
-      className={`flex items-center gap-2 ${isClickable ? 'cursor-pointer' : 'cursor-not-allowed opacity-50'}`}
+      className={`flex items-center gap-2.5 ${isClickable ? 'cursor-pointer' : 'cursor-not-allowed opacity-50'}`}
     >
-      <div
-        className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-medium transition-colors ${
+      <span
+        className={`flex h-[26px] w-[26px] shrink-0 items-center justify-center rounded-full border-[1.5px] font-geist-mono text-xs font-semibold transition-colors ${
           isCompleted
-            ? 'bg-green-500 text-white'
+            ? 'border-[#3FBF7F]/50 bg-[#3FBF7F]/[0.15] text-[#7CF0B0]'
             : isCurrent
-              ? 'bg-primary text-white'
-              : 'bg-muted text-muted-foreground'
+              ? 'border-[#8C6CFF]/60 bg-[#8C6CFF]/[0.15] text-[#B7A6FF]'
+              : 'border-white/15 text-[#5C5C66]'
         }`}
       >
-        {isCompleted ? <Check className="h-4 w-4" /> : step}
-      </div>
+        {isCompleted ? <Check className="h-[13px] w-[13px]" strokeWidth={2.6} /> : step}
+      </span>
       <span
-        className={`text-sm font-medium ${isCurrent ? 'text-foreground-dark' : 'text-muted-foreground'}`}
+        className={`text-sm font-medium ${isCurrent ? 'text-[#F4F4F6]' : 'text-[#7E7E89]'}`}
       >
         {title}
       </span>
@@ -513,50 +603,70 @@ function CreateApiKeyModal({
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent>
+      <DialogContent className="dark border-white/10 bg-[#101014] font-geist text-[#F4F4F6] sm:rounded-[14px]">
         <DialogHeader>
-          <DialogTitle>{t('createDialog.title')}</DialogTitle>
-          <DialogDescription>{t('createDialog.description')}</DialogDescription>
+          <DialogTitle className="tracking-[-0.015em] text-[#F4F4F6]">
+            {t('createDialog.title')}
+          </DialogTitle>
+          <DialogDescription className="text-[13.5px] text-[#9C9CA8]">
+            {t('createDialog.description')}
+          </DialogDescription>
         </DialogHeader>
 
         {!newToken ? (
           <div className="space-y-4">
-            <Input
+            <input
+              type="text"
               placeholder={t('createDialog.namePlaceholder')}
               value={name}
               onChange={(e) => setName(e.target.value)}
+              className={fieldCls}
             />
-            <DialogFooter>
-              <Button variant="outline" onClick={() => onOpenChange(false)}>
+            <DialogFooter className="gap-2">
+              <button className={btnSecondaryCls} onClick={() => onOpenChange(false)}>
                 {common('cancel')}
-              </Button>
-              <Button onClick={handleCreate} isLoading={createToken.isPending}>
-                <Plus className="mr-2 h-4 w-4" />
+              </button>
+              <button
+                className={btnPrimaryCls}
+                onClick={handleCreate}
+                disabled={createToken.isPending}
+              >
+                {createToken.isPending ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Plus className="h-4 w-4" strokeWidth={2.2} />
+                )}
                 {t('createDialog.submit')}
-              </Button>
+              </button>
             </DialogFooter>
           </div>
         ) : (
           <div className="space-y-4">
-            <div className="rounded-lg bg-warning/10 p-4">
-              <p className="mb-2 text-sm font-medium text-warning-foreground">{t('warning')}</p>
+            <div className="rounded-[10px] border border-[#FEBC2E]/30 bg-[#FEBC2E]/[0.08] p-4">
+              <p className="mb-2 text-sm font-medium text-[#FFD479]">{t('warning')}</p>
               <div className="flex items-center gap-2">
-                <code className="flex-1 rounded bg-background p-2 font-mono text-sm">
+                <code className="flex-1 overflow-x-auto rounded-[9px] border border-white/10 bg-[#0A0A0C] p-2.5 font-geist-mono text-[12.5px] text-[#D6D6E0]">
                   {showToken ? newToken : '••••••••••••••••••••••••'}
                 </code>
-                <Button variant="ghost" size="icon" onClick={() => setShowToken(!showToken)}>
+                <button
+                  onClick={() => setShowToken(!showToken)}
+                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-[#9C9CA8] transition-colors hover:bg-white/[0.06] hover:text-[#F4F4F6]"
+                >
                   {showToken ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                </Button>
-                <Button variant="ghost" size="icon" onClick={() => copyToClipboard(newToken)}>
+                </button>
+                <button
+                  onClick={() => copyToClipboard(newToken)}
+                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-[#9C9CA8] transition-colors hover:bg-white/[0.06] hover:text-[#F4F4F6]"
+                >
                   <Copy className="h-4 w-4" />
-                </Button>
+                </button>
               </div>
             </div>
             <DialogFooter>
-              <Button onClick={handleClose}>
-                <Check className="mr-2 h-4 w-4" />
+              <button className={btnPrimaryCls} onClick={handleClose}>
+                <Check className="h-4 w-4" strokeWidth={2.2} />
                 Done
-              </Button>
+              </button>
             </DialogFooter>
           </div>
         )}
@@ -615,7 +725,6 @@ export default function IntegrationPage() {
   const [rawResponse, setRawResponse] = useState<string | null>(null)
 
   // Collapsible sections
-  const [showCodeSnippets, setShowCodeSnippets] = useState(false)
   const [showApiRef, setShowApiRef] = useState(false)
 
   // Hooks
@@ -655,20 +764,6 @@ export default function IntegrationPage() {
   const isStep2Valid = bodyMode === 'csv'
     ? (parsedCsvData && csvRowCount > 0 && !isCsvOverLimit)
     : jsonData.trim().length > 0
-  const isStep3Valid = true // Always valid (sync is default)
-
-  const canProceed = (step: number) => {
-    switch (step) {
-      case 1:
-        return isStep1Valid
-      case 2:
-        return isStep2Valid
-      case 3:
-        return isStep3Valid
-      default:
-        return true
-    }
-  }
 
   // Body mode handlers
   const handleModeChange = (newMode: BodyMode) => {
@@ -847,9 +942,9 @@ export default function IntegrationPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-foreground-dark">{t('title')}</h1>
-        <p className="mt-1 text-sm text-foreground-light">{t('subtitle')}</p>
+      <div className="mb-7">
+        <h1 className="mb-1.5 text-[26px] font-bold tracking-[-0.025em]">{t('header.title')}</h1>
+        <p className="text-[14.5px] text-[#9C9CA8]">{t('header.subtitle')}</p>
       </div>
 
       {isLoading ? (
@@ -859,9 +954,9 @@ export default function IntegrationPage() {
       ) : (
         <>
           {/* Step Indicators */}
-          <div className="flex flex-wrap items-center gap-4 border-b border-border pb-4">
+          <div className="flex flex-wrap items-center gap-4 border-b border-white/[0.08] pb-4">
             {steps.map((s, index) => (
-              <div key={s.step} className="flex items-center gap-2">
+              <div key={s.step} className="flex items-center gap-2.5">
                 <StepIndicator
                   step={s.step}
                   currentStep={currentStep}
@@ -869,7 +964,7 @@ export default function IntegrationPage() {
                   onClick={() => currentStep >= s.step && setCurrentStep(s.step)}
                 />
                 {index < steps.length - 1 && (
-                  <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                  <ChevronRight className="h-4 w-4 text-[#5C5C66]" />
                 )}
               </div>
             ))}
@@ -877,24 +972,22 @@ export default function IntegrationPage() {
 
           {/* Step 1: Configuration */}
           {currentStep === 1 && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <FileText className="h-5 w-5" />
-                  {t('steps.configuration')}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6">
+            <div className={cardCls}>
+              <div className="mb-5 flex items-center gap-2.5">
+                <FileText className="h-[17px] w-[17px] text-[#B7A6FF]" strokeWidth={1.9} />
+                <span className="text-[15px] font-semibold">{t('steps.configuration')}</span>
+              </div>
+              <div className="space-y-6">
                 <div className="grid gap-6 sm:grid-cols-2">
                   {/* Template Selector */}
                   <div className="space-y-2">
-                    <label className="text-sm font-medium text-foreground-dark">
+                    <label className="text-sm font-medium text-[#F4F4F6]">
                       {t('selectTemplate')}
                     </label>
                     <select
                       value={selectedTemplate}
                       onChange={(e) => setSelectedTemplate(e.target.value)}
-                      className="w-full rounded-md border border-border bg-background p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                      className={selectCls}
                     >
                       <option value="">{t('selectTemplatePlaceholder')}</option>
                       {templates?.map((template) => (
@@ -904,9 +997,9 @@ export default function IntegrationPage() {
                       ))}
                     </select>
                     {templates?.length === 0 && (
-                      <p className="text-xs text-muted-foreground">
+                      <p className="text-xs text-[#7E7E89]">
                         {t('noTemplates')}{' '}
-                        <Link href="/templates" className="text-primary hover:underline">
+                        <Link href="/templates" className="text-[#B7A6FF] hover:underline">
                           {t('createOne')}
                         </Link>
                       </p>
@@ -915,14 +1008,14 @@ export default function IntegrationPage() {
 
                   {/* Token Selector */}
                   <div className="space-y-2">
-                    <label className="text-sm font-medium text-foreground-dark">
+                    <label className="text-sm font-medium text-[#F4F4F6]">
                       {t('selectToken')}
                     </label>
                     <div className="flex gap-2">
                       <select
                         value={selectedToken}
                         onChange={(e) => setSelectedToken(e.target.value)}
-                        className="flex-1 rounded-md border border-border bg-background p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                        className={`flex-1 ${selectCls}`}
                       >
                         <option value="">{t('selectTokenPlaceholder')}</option>
                         {tokens?.map((token) => (
@@ -931,85 +1024,74 @@ export default function IntegrationPage() {
                           </option>
                         ))}
                       </select>
-                      <Button
-                        variant="outline"
-                        size="icon"
+                      <button
                         onClick={() => setShowCreateKeyModal(true)}
                         title={t('createApiKey')}
+                        className="flex h-[42px] w-[42px] shrink-0 items-center justify-center rounded-[9px] border border-white/10 bg-white/[0.05] text-[#9C9CA8] transition-colors hover:bg-white/[0.08] hover:text-[#F4F4F6]"
                       >
-                        <Plus className="h-4 w-4" />
-                      </Button>
+                        <Plus className="h-4 w-4" strokeWidth={2.2} />
+                      </button>
                     </div>
                     {tokens?.length === 0 && (
-                      <p className="text-xs text-muted-foreground">{t('noTokens')}</p>
+                      <p className="text-xs text-[#7E7E89]">{t('noTokens')}</p>
                     )}
                   </div>
                 </div>
 
                 <div className="flex justify-end">
-                  <Button onClick={() => setCurrentStep(2)} disabled={!isStep1Valid}>
+                  <button
+                    className={btnPrimaryCls}
+                    onClick={() => setCurrentStep(2)}
+                    disabled={!isStep1Valid}
+                  >
                     {t('next')}
-                    <ChevronRight className="ml-2 h-4 w-4" />
-                  </Button>
+                    <ChevronRight className="h-4 w-4" strokeWidth={2.2} />
+                  </button>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           )}
 
           {/* Step 2: Request Body */}
           {currentStep === 2 && (
-            <Card>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle className="flex items-center gap-2">
-                    <Braces className="h-5 w-5" />
-                    {t('body.title')}
-                  </CardTitle>
-                  <div className="flex gap-1 rounded-lg bg-muted p-1">
-                    <button
-                      onClick={() => handleModeChange('json')}
-                      className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
-                        bodyMode === 'json'
-                          ? 'bg-background text-foreground shadow-sm'
-                          : 'text-muted-foreground hover:text-foreground'
-                      }`}
-                    >
-                      <Braces className="h-3.5 w-3.5" />
-                      JSON
-                    </button>
-                    <button
-                      onClick={() => handleModeChange('keyvalue')}
-                      className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
-                        bodyMode === 'keyvalue'
-                          ? 'bg-background text-foreground shadow-sm'
-                          : 'text-muted-foreground hover:text-foreground'
-                      }`}
-                    >
-                      <List className="h-3.5 w-3.5" />
-                      {t('body.keyValue')}
-                    </button>
-                    <button
-                      onClick={() => handleModeChange('csv')}
-                      className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
-                        bodyMode === 'csv'
-                          ? 'bg-background text-foreground shadow-sm'
-                          : 'text-muted-foreground hover:text-foreground'
-                      }`}
-                    >
-                      <Table className="h-3.5 w-3.5" />
-                      CSV
-                    </button>
-                  </div>
+            <div className={cardCls}>
+              <div className="mb-2 flex flex-wrap items-center justify-between gap-3">
+                <div className="flex items-center gap-2.5">
+                  <Braces className="h-[17px] w-[17px] text-[#B7A6FF]" strokeWidth={1.9} />
+                  <span className="text-[15px] font-semibold">{t('body.title')}</span>
                 </div>
-                <p className="text-sm text-foreground-light">{t('body.description')}</p>
-              </CardHeader>
-              <CardContent className="space-y-6">
+                <div className="flex gap-1 rounded-[10px] border border-white/10 bg-white/[0.03] p-1">
+                  <button
+                    onClick={() => handleModeChange('json')}
+                    className={`${pillBaseCls} ${bodyMode === 'json' ? pillActiveCls : pillIdleCls}`}
+                  >
+                    <Braces className="h-3.5 w-3.5" />
+                    JSON
+                  </button>
+                  <button
+                    onClick={() => handleModeChange('keyvalue')}
+                    className={`${pillBaseCls} ${bodyMode === 'keyvalue' ? pillActiveCls : pillIdleCls}`}
+                  >
+                    <List className="h-3.5 w-3.5" />
+                    {t('body.keyValue')}
+                  </button>
+                  <button
+                    onClick={() => handleModeChange('csv')}
+                    className={`${pillBaseCls} ${bodyMode === 'csv' ? pillActiveCls : pillIdleCls}`}
+                  >
+                    <Table className="h-3.5 w-3.5" />
+                    CSV
+                  </button>
+                </div>
+              </div>
+              <p className="mb-5 text-[13.5px] text-[#9C9CA8]">{t('body.description')}</p>
+              <div className="space-y-6">
                 {bodyMode === 'json' && (
                   <textarea
                     value={jsonData}
                     onChange={(e) => handleJsonChange(e.target.value)}
                     rows={12}
-                    className="w-full rounded-md border border-input bg-background px-3 py-2 font-mono text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                    className={monoFieldCls}
                     placeholder={t('body.jsonPlaceholder')}
                   />
                 )}
@@ -1023,19 +1105,19 @@ export default function IntegrationPage() {
                           value={pair.key}
                           onChange={(e) => handleKeyValueChange(index, 'key', e.target.value)}
                           placeholder={t('body.keyPlaceholder')}
-                          className="w-1/3 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                          className={`w-1/3 ${monoFieldCls}`}
                         />
                         <input
                           type="text"
                           value={pair.value}
                           onChange={(e) => handleKeyValueChange(index, 'value', e.target.value)}
                           placeholder={t('body.valuePlaceholder')}
-                          className="flex-1 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                          className={`flex-1 ${monoFieldCls}`}
                         />
                         <button
                           onClick={() => removeKeyValuePair(index)}
                           disabled={keyValuePairs.length <= 1}
-                          className="rounded-md p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+                          className="rounded-lg p-2 text-[#7E7E89] transition-colors hover:bg-white/[0.06] hover:text-[#F4F4F6] disabled:cursor-not-allowed disabled:opacity-40"
                         >
                           <Trash2 className="h-4 w-4" />
                         </button>
@@ -1043,9 +1125,9 @@ export default function IntegrationPage() {
                     ))}
                     <button
                       onClick={addKeyValuePair}
-                      className="flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium text-primary transition-colors hover:bg-primary/10"
+                      className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-[#B7A6FF] transition-colors hover:bg-[#8C6CFF]/[0.12]"
                     >
-                      <Plus className="h-4 w-4" />
+                      <Plus className="h-4 w-4" strokeWidth={2.2} />
                       {t('body.addField')}
                     </button>
                   </div>
@@ -1054,25 +1136,17 @@ export default function IntegrationPage() {
                 {bodyMode === 'csv' && (
                   <div className="space-y-4">
                     {/* CSV Input Mode Toggle */}
-                    <div className="flex gap-2">
+                    <div className="flex gap-1 self-start rounded-[10px] border border-white/10 bg-white/[0.03] p-1">
                       <button
                         onClick={() => setCsvInputMode('inline')}
-                        className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
-                          csvInputMode === 'inline'
-                            ? 'bg-primary text-white'
-                            : 'bg-muted text-muted-foreground hover:text-foreground'
-                        }`}
+                        className={`${pillBaseCls} ${csvInputMode === 'inline' ? pillActiveCls : pillIdleCls}`}
                       >
                         <Braces className="h-3.5 w-3.5" />
                         {t('body.csvPasteType')}
                       </button>
                       <button
                         onClick={() => setCsvInputMode('upload')}
-                        className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
-                          csvInputMode === 'upload'
-                            ? 'bg-primary text-white'
-                            : 'bg-muted text-muted-foreground hover:text-foreground'
-                        }`}
+                        className={`${pillBaseCls} ${csvInputMode === 'upload' ? pillActiveCls : pillIdleCls}`}
                       >
                         <Upload className="h-3.5 w-3.5" />
                         {t('body.csvUploadFile')}
@@ -1085,7 +1159,7 @@ export default function IntegrationPage() {
                         value={csvText}
                         onChange={(e) => handleCsvTextChange(e.target.value)}
                         rows={10}
-                        className="w-full rounded-md border border-input bg-background px-3 py-2 font-mono text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                        className={monoFieldCls}
                         placeholder={t('body.csvPlaceholder')}
                       />
                     )}
@@ -1094,12 +1168,12 @@ export default function IntegrationPage() {
                     {csvInputMode === 'upload' && (
                       <div className="space-y-3">
                         {!csvFile ? (
-                          <label className="flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-border p-8 transition-colors hover:border-primary/50 hover:bg-muted/50">
-                            <Upload className="mb-2 h-8 w-8 text-muted-foreground" />
-                            <span className="text-sm font-medium text-foreground-dark">
+                          <label className="flex cursor-pointer flex-col items-center justify-center rounded-[12px] border-2 border-dashed border-white/15 p-8 transition-colors hover:border-[#8C6CFF]/50 hover:bg-white/[0.02]">
+                            <Upload className="mb-2 h-8 w-8 text-[#7E7E89]" strokeWidth={1.7} />
+                            <span className="text-sm font-medium text-[#F4F4F6]">
                               {t('body.csvDropzone')}
                             </span>
-                            <span className="mt-1 text-xs text-muted-foreground">.csv</span>
+                            <span className="mt-1 font-geist-mono text-xs text-[#5C5C66]">.csv</span>
                             <input
                               type="file"
                               accept=".csv"
@@ -1111,19 +1185,22 @@ export default function IntegrationPage() {
                             />
                           </label>
                         ) : (
-                          <div className="flex items-center justify-between rounded-lg border border-border bg-muted/50 p-4">
+                          <div className="flex items-center justify-between rounded-[12px] border border-white/[0.09] bg-white/[0.03] p-4">
                             <div className="flex items-center gap-3">
-                              <FileText className="h-8 w-8 text-primary" />
+                              <FileText className="h-8 w-8 text-[#B7A6FF]" strokeWidth={1.7} />
                               <div>
-                                <p className="font-medium text-foreground-dark">{csvFile.name}</p>
-                                <p className="text-xs text-muted-foreground">
+                                <p className="font-medium text-[#F4F4F6]">{csvFile.name}</p>
+                                <p className="font-geist-mono text-xs text-[#7E7E89]">
                                   {parsedCsvData ? `${parsedCsvData.data.length} rows` : 'Parsing...'}
                                 </p>
                               </div>
                             </div>
-                            <Button variant="ghost" size="sm" onClick={handleCsvFileRemove}>
+                            <button
+                              onClick={handleCsvFileRemove}
+                              className="rounded-lg p-2 text-[#7E7E89] transition-colors hover:bg-white/[0.06] hover:text-[#F4F4F6]"
+                            >
                               <Trash2 className="h-4 w-4" />
-                            </Button>
+                            </button>
                           </div>
                         )}
                       </div>
@@ -1133,17 +1210,20 @@ export default function IntegrationPage() {
                     {parsedCsvData && parsedCsvData.data.length > 0 && (
                       <div className="space-y-2">
                         <div className="flex items-center justify-between">
-                          <h4 className="text-sm font-medium text-foreground-dark">{t('body.csvPreview')}</h4>
-                          <span className="text-sm text-muted-foreground">
+                          <h4 className="text-sm font-medium text-[#F4F4F6]">{t('body.csvPreview')}</h4>
+                          <span className="font-geist-mono text-[12.5px] text-[#7E7E89]">
                             {t('body.csvRowCount', { count: parsedCsvData.data.length })}
                           </span>
                         </div>
-                        <div className="max-h-48 overflow-auto rounded-lg border border-border">
-                          <table className="w-full text-sm">
-                            <thead className="sticky top-0 bg-muted">
+                        <div className="max-h-48 overflow-auto rounded-[10px] border border-white/[0.09]">
+                          <table className="w-full text-[13px]">
+                            <thead className="sticky top-0 bg-[#101014]">
                               <tr>
                                 {parsedCsvData.headers.map((header) => (
-                                  <th key={header} className="border-b border-border px-3 py-2 text-left font-medium">
+                                  <th
+                                    key={header}
+                                    className="border-b border-white/[0.08] px-3 py-2 text-left font-geist-mono text-[11px] font-medium uppercase tracking-[0.08em] text-[#7E7E89]"
+                                  >
                                     {header}
                                   </th>
                                 ))}
@@ -1151,9 +1231,9 @@ export default function IntegrationPage() {
                             </thead>
                             <tbody>
                               {parsedCsvData.data.slice(0, 5).map((row, i) => (
-                                <tr key={i} className="border-b border-border last:border-0">
+                                <tr key={i} className="border-b border-white/[0.06] last:border-0">
                                   {parsedCsvData.headers.map((header) => (
-                                    <td key={header} className="px-3 py-2 text-foreground-light">
+                                    <td key={header} className="px-3 py-2 text-[#9C9CA8]">
                                       {String(row[header] ?? '')}
                                     </td>
                                   ))}
@@ -1161,7 +1241,10 @@ export default function IntegrationPage() {
                               ))}
                               {parsedCsvData.data.length > 5 && (
                                 <tr>
-                                  <td colSpan={parsedCsvData.headers.length} className="px-3 py-2 text-center text-muted-foreground">
+                                  <td
+                                    colSpan={parsedCsvData.headers.length}
+                                    className="px-3 py-2 text-center text-[#7E7E89]"
+                                  >
                                     ... {parsedCsvData.data.length - 5} more rows
                                   </td>
                                 </tr>
@@ -1170,20 +1253,20 @@ export default function IntegrationPage() {
                           </table>
                         </div>
                         {isCsvOverLimit && (
-                          <div className="flex items-start gap-2 rounded-lg bg-destructive/10 p-3">
-                            <AlertCircle className="mt-0.5 h-4 w-4 flex-shrink-0 text-destructive" />
+                          <div className="flex items-start gap-2 rounded-[10px] border border-[#FF6B6B]/30 bg-[#FF6B6B]/[0.08] p-3">
+                            <AlertCircle className="mt-0.5 h-4 w-4 flex-shrink-0 text-[#FF8C8C]" />
                             <div>
-                              <p className="text-sm font-medium text-destructive">{t('body.csvTooManyRows')}</p>
-                              <p className="mt-1 text-xs text-destructive">
+                              <p className="text-sm font-medium text-[#FF8C8C]">{t('body.csvTooManyRows')}</p>
+                              <p className="mt-1 text-xs text-[#FF8C8C]/80">
                                 {t('body.csvMaxRows', { count: MAX_CSV_ROWS, current: csvRowCount })}
                               </p>
                             </div>
                           </div>
                         )}
                         {parsedCsvData.errors.length > 0 && (
-                          <div className="rounded-lg bg-destructive/10 p-3">
-                            <p className="text-sm font-medium text-destructive">{t('body.csvInvalid')}</p>
-                            <ul className="mt-1 text-xs text-destructive">
+                          <div className="rounded-[10px] border border-[#FF6B6B]/30 bg-[#FF6B6B]/[0.08] p-3">
+                            <p className="text-sm font-medium text-[#FF8C8C]">{t('body.csvInvalid')}</p>
+                            <ul className="mt-1 text-xs text-[#FF8C8C]/80">
                               {parsedCsvData.errors.slice(0, 3).map((err, i) => (
                                 <li key={i}>{err}</li>
                               ))}
@@ -1196,46 +1279,48 @@ export default function IntegrationPage() {
                 )}
 
                 <div className="flex justify-between">
-                  <Button variant="outline" onClick={() => setCurrentStep(1)}>
-                    <ChevronLeft className="mr-2 h-4 w-4" />
+                  <button className={btnSecondaryCls} onClick={() => setCurrentStep(1)}>
+                    <ChevronLeft className="h-4 w-4" strokeWidth={2.2} />
                     {t('back')}
-                  </Button>
-                  <Button onClick={() => setCurrentStep(3)} disabled={!isStep2Valid}>
+                  </button>
+                  <button
+                    className={btnPrimaryCls}
+                    onClick={() => setCurrentStep(3)}
+                    disabled={!isStep2Valid}
+                  >
                     {t('next')}
-                    <ChevronRight className="ml-2 h-4 w-4" />
-                  </Button>
+                    <ChevronRight className="h-4 w-4" strokeWidth={2.2} />
+                  </button>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           )}
 
           {/* Step 3: Generation Method */}
           {currentStep === 3 && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Zap className="h-5 w-5" />
-                  {t('steps.method')}
-                </CardTitle>
-                <p className="text-sm text-foreground-light">{t('method.description')}</p>
-              </CardHeader>
-              <CardContent className="space-y-6">
+            <div className={cardCls}>
+              <div className="mb-2 flex items-center gap-2.5">
+                <Zap className="h-[17px] w-[17px] text-[#B7A6FF]" strokeWidth={1.9} />
+                <span className="text-[15px] font-semibold">{t('steps.method')}</span>
+              </div>
+              <p className="mb-5 text-[13.5px] text-[#9C9CA8]">{t('method.description')}</p>
+              <div className="space-y-6">
                 <div className="grid gap-4 sm:grid-cols-2">
                   {/* Sync Option */}
                   <button
                     onClick={() => setGenerationMode('sync')}
-                    className={`rounded-lg border-2 p-4 text-left transition-colors ${
+                    className={`rounded-[12px] border p-4 text-left transition-colors ${
                       generationMode === 'sync'
-                        ? 'border-primary bg-primary/5'
-                        : 'border-border hover:border-primary/50'
+                        ? 'border-[#8C6CFF]/60 bg-[#8C6CFF]/[0.08]'
+                        : 'border-white/[0.09] hover:border-[#8C6CFF]/40'
                     }`}
                   >
                     <div className="flex items-center gap-2">
-                      <Zap className="h-5 w-5 text-green-500" />
-                      <span className="font-medium">{t('sync.title')}</span>
+                      <Zap className="h-[17px] w-[17px] text-[#7CF0B0]" strokeWidth={1.9} />
+                      <span className="text-[15px] font-semibold text-[#F4F4F6]">{t('sync.title')}</span>
                     </div>
-                    <p className="mt-2 text-sm text-foreground-light">{t('sync.description')}</p>
-                    <div className="mt-3 flex items-center gap-2 text-xs text-amber-600">
+                    <p className="mt-2 text-[13.5px] leading-[1.6] text-[#9C9CA8]">{t('sync.description')}</p>
+                    <div className="mt-3 flex items-center gap-2 font-geist-mono text-[11.5px] text-[#FFD479]">
                       <AlertCircle className="h-3 w-3" />
                       {t('sync.timeout')}
                     </div>
@@ -1244,18 +1329,18 @@ export default function IntegrationPage() {
                   {/* Async Option */}
                   <button
                     onClick={() => setGenerationMode('async')}
-                    className={`rounded-lg border-2 p-4 text-left transition-colors ${
+                    className={`rounded-[12px] border p-4 text-left transition-colors ${
                       generationMode === 'async'
-                        ? 'border-primary bg-primary/5'
-                        : 'border-border hover:border-primary/50'
+                        ? 'border-[#8C6CFF]/60 bg-[#8C6CFF]/[0.08]'
+                        : 'border-white/[0.09] hover:border-[#8C6CFF]/40'
                     }`}
                   >
                     <div className="flex items-center gap-2">
-                      <Clock className="h-5 w-5 text-blue-500" />
-                      <span className="font-medium">{t('async.title')}</span>
+                      <Clock className="h-[17px] w-[17px] text-[#B7A6FF]" strokeWidth={1.9} />
+                      <span className="text-[15px] font-semibold text-[#F4F4F6]">{t('async.title')}</span>
                     </div>
-                    <p className="mt-2 text-sm text-foreground-light">{t('async.description')}</p>
-                    <div className="mt-3 flex items-center gap-2 text-xs text-blue-600">
+                    <p className="mt-2 text-[13.5px] leading-[1.6] text-[#9C9CA8]">{t('async.description')}</p>
+                    <div className="mt-3 flex items-center gap-2 font-geist-mono text-[11.5px] text-[#B7A6FF]">
                       <Webhook className="h-3 w-3" />
                       {t('async.webhookSupport')}
                     </div>
@@ -1265,74 +1350,76 @@ export default function IntegrationPage() {
                 {/* Webhook URL (only for async) */}
                 {generationMode === 'async' && (
                   <div className="space-y-2">
-                    <label className="flex items-center gap-2 text-sm font-medium text-foreground-dark">
-                      <Webhook className="h-4 w-4" />
+                    <label className="flex items-center gap-2 text-sm font-medium text-[#F4F4F6]">
+                      <Webhook className="h-4 w-4 text-[#B7A6FF]" strokeWidth={1.9} />
                       {t('async.webhookUrl')}
-                      <span className="text-muted-foreground">({t('optional')})</span>
+                      <span className="font-normal text-[#7E7E89]">({t('optional')})</span>
                     </label>
-                    <Input
+                    <input
+                      type="text"
                       value={webhookUrl}
                       onChange={(e) => setWebhookUrl(e.target.value)}
                       placeholder="https://your-server.com/webhook"
+                      className={monoFieldCls}
                     />
-                    <p className="text-xs text-muted-foreground">{t('async.webhookDescription')}</p>
+                    <p className="text-xs text-[#7E7E89]">{t('async.webhookDescription')}</p>
                   </div>
                 )}
 
                 <div className="flex justify-between">
-                  <Button variant="outline" onClick={() => setCurrentStep(2)}>
-                    <ChevronLeft className="mr-2 h-4 w-4" />
+                  <button className={btnSecondaryCls} onClick={() => setCurrentStep(2)}>
+                    <ChevronLeft className="h-4 w-4" strokeWidth={2.2} />
                     {t('back')}
-                  </Button>
-                  <Button onClick={() => setCurrentStep(4)}>
+                  </button>
+                  <button className={btnPrimaryCls} onClick={() => setCurrentStep(4)}>
                     {t('next')}
-                    <ChevronRight className="ml-2 h-4 w-4" />
-                  </Button>
+                    <ChevronRight className="h-4 w-4" strokeWidth={2.2} />
+                  </button>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           )}
 
           {/* Step 4: Test */}
           {currentStep === 4 && (
             <div className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Play className="h-5 w-5" />
-                    {t('steps.test')}
-                  </CardTitle>
-                  <p className="text-sm text-foreground-light">{t('test.description')}</p>
-                </CardHeader>
-                <CardContent className="space-y-4">
+              <div className={cardCls}>
+                <div className="mb-2 flex items-center gap-2.5">
+                  <Play className="h-[17px] w-[17px] text-[#B7A6FF]" strokeWidth={1.9} />
+                  <span className="text-[15px] font-semibold">{t('steps.test')}</span>
+                </div>
+                <p className="mb-5 text-[13.5px] text-[#9C9CA8]">{t('test.description')}</p>
+                <div className="space-y-4">
                   {/* Test button */}
-                  <div className="flex items-center gap-4">
-                    <Button
+                  <div className="flex flex-wrap items-center gap-4">
+                    <button
                       onClick={handleTestApi}
                       disabled={isTestLoading}
-                      className="flex-shrink-0"
+                      className={`flex-shrink-0 ${btnPrimaryCls}`}
                     >
                       {isTestLoading ? (
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        <Loader2 className="h-4 w-4 animate-spin" />
                       ) : (
-                        <Play className="mr-2 h-4 w-4" />
+                        <Play className="h-4 w-4" strokeWidth={2.2} />
                       )}
                       {t('test.tryIt')}
-                    </Button>
-                    <p className="text-sm text-muted-foreground">{t('test.note')}</p>
+                    </button>
+                    <p className="text-[13px] text-[#7E7E89]">{t('test.note')}</p>
                   </div>
 
                   {/* Test Result */}
                   {testResult && (
                     <div
-                      className={`rounded-lg p-4 ${
-                        testResult.type === 'success' ? 'bg-green-50' : 'bg-red-50'
+                      className={`rounded-[12px] border p-4 ${
+                        testResult.type === 'success'
+                          ? 'border-[#3FBF7F]/30 bg-[#3FBF7F]/[0.08]'
+                          : 'border-[#FF6B6B]/30 bg-[#FF6B6B]/[0.08]'
                       }`}
                     >
                       {testResult.type === 'success' ? (
                         <div className="space-y-3">
-                          <div className="flex items-center gap-2 text-green-700">
-                            <CheckCircle2 className="h-5 w-5" />
+                          <div className="flex items-center gap-2 text-[#7CF0B0]">
+                            <CheckCircle2 className="h-5 w-5" strokeWidth={1.9} />
                             <span className="font-medium">
                               {testResult.pdfUrl ? t('test.success') : t('test.asyncStarted')}
                             </span>
@@ -1340,21 +1427,21 @@ export default function IntegrationPage() {
 
                           {/* Sync result: PDF download */}
                           {testResult.pdfUrl && (
-                            <div className="flex items-center gap-2">
+                            <div className="flex flex-wrap items-center gap-3">
                               <a
                                 href={testResult.pdfUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="flex items-center gap-2 rounded-md bg-green-600 px-3 py-2 text-sm font-medium text-white hover:bg-green-700"
+                                className="flex items-center gap-2 rounded-[10px] border border-[#3FBF7F]/50 bg-[#3FBF7F]/[0.18] px-3.5 py-2 text-sm font-semibold text-[#7CF0B0] transition-colors hover:bg-[#3FBF7F]/[0.28]"
                               >
-                                <Download className="h-4 w-4" />
+                                <Download className="h-4 w-4" strokeWidth={2} />
                                 {t('test.downloadPdf')}
                               </a>
                               <a
                                 href={testResult.pdfUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="text-sm text-green-700 hover:underline"
+                                className="text-sm text-[#7CF0B0]/90 hover:underline"
                               >
                                 {t('test.openInNewTab')}
                               </a>
@@ -1364,16 +1451,19 @@ export default function IntegrationPage() {
                           {/* Async result: Job ID */}
                           {testResult.jobId && (
                             <div className="space-y-3">
-                              <p className="text-sm text-green-700">
-                                Job ID: <code className="rounded bg-green-100 px-1 font-mono">{testResult.jobId}</code>
+                              <p className="text-sm text-[#7CF0B0]">
+                                Job ID:{' '}
+                                <code className="rounded-[5px] bg-white/[0.06] px-1.5 py-0.5 font-geist-mono text-[12.5px] text-[#D6D6E0]">
+                                  {testResult.jobId}
+                                </code>
                               </p>
-                              <p className="text-sm text-foreground-light">{t('test.jobQueued')}</p>
+                              <p className="text-sm text-[#9C9CA8]">{t('test.jobQueued')}</p>
                             </div>
                           )}
                         </div>
                       ) : (
-                        <div className="flex items-center gap-2 text-red-700">
-                          <XCircle className="h-5 w-5" />
+                        <div className="flex items-center gap-2 text-[#FF8C8C]">
+                          <XCircle className="h-5 w-5" strokeWidth={1.9} />
                           <span>{testResult.message}</span>
                         </div>
                       )}
@@ -1383,8 +1473,10 @@ export default function IntegrationPage() {
                   {/* Raw API Response */}
                   {rawResponse && (
                     <div className="space-y-2">
-                      <h4 className="text-sm font-medium text-foreground-dark">{t('test.rawResponse')}</h4>
-                      <pre className="max-h-48 overflow-auto rounded-lg bg-muted p-4 text-xs font-mono">
+                      <h4 className="font-geist-mono text-[11.5px] uppercase tracking-[0.09em] text-[#7E7E89]">
+                        {t('test.rawResponse')}
+                      </h4>
+                      <pre className="max-h-48 overflow-auto rounded-[10px] border border-white/[0.08] bg-[#0A0A0C] p-4 font-geist-mono text-xs leading-[1.7] text-[#D6D6E0]">
                         {rawResponse}
                       </pre>
                     </div>
@@ -1392,188 +1484,169 @@ export default function IntegrationPage() {
 
                   {/* Job Status Checker (for async) */}
                   {activeJobId && (
-                    <div className="rounded-lg border-2 border-primary/50 bg-primary/5 p-4">
-                      <div className="flex items-center justify-between">
+                    <div className="rounded-[12px] border border-[#8C6CFF]/40 bg-[#8C6CFF]/[0.06] p-4">
+                      <div className="flex flex-wrap items-center justify-between gap-3">
                         <div>
-                          <h4 className="font-medium">{t('test.jobStatus')}</h4>
-                          <p className="text-sm text-muted-foreground">{t('test.checkStatusHint')}</p>
+                          <h4 className="font-semibold text-[#F4F4F6]">{t('test.jobStatus')}</h4>
+                          <p className="text-[13px] text-[#9C9CA8]">{t('test.checkStatusHint')}</p>
                         </div>
-                        <Button
+                        <button
+                          className={btnSecondaryCls}
                           onClick={() => refetchJobStatus()}
                           disabled={jobStatusLoading}
                         >
                           {jobStatusLoading ? (
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            <Loader2 className="h-4 w-4 animate-spin" />
                           ) : (
-                            <RefreshCw className="mr-2 h-4 w-4" />
+                            <RefreshCw className="h-4 w-4" strokeWidth={2} />
                           )}
                           {t('test.checkIfCompleted')}
-                        </Button>
+                        </button>
                       </div>
                       {jobStatus && (
                         <div className="mt-3 space-y-3">
                           <div className="flex items-center gap-2">
-                            <span className="text-sm text-muted-foreground">{t('test.status')}:</span>
+                            <span className="text-sm text-[#7E7E89]">{t('test.status')}:</span>
                             <span
-                              className={`rounded-full px-2 py-0.5 text-xs font-medium ${
+                              className={`rounded-[5px] px-2 py-0.5 font-geist-mono text-[11px] font-medium ${
                                 jobStatus.status === 'completed'
-                                  ? 'bg-green-100 text-green-700'
+                                  ? 'bg-[#3FBF7F]/[0.15] text-[#7CF0B0]'
                                   : jobStatus.status === 'failed'
-                                    ? 'bg-red-100 text-red-700'
-                                    : 'bg-blue-100 text-blue-700'
+                                    ? 'bg-[#FF6B6B]/[0.15] text-[#FF8C8C]'
+                                    : 'bg-[#8C6CFF]/[0.15] text-[#B7A6FF]'
                               }`}
                             >
                               {jobStatus.status}
                             </span>
                           </div>
                           {jobStatus.status === 'completed' && jobStatus.pdfUrl && (
-                            <div className="flex items-center gap-2">
+                            <div className="flex flex-wrap items-center gap-3">
                               <a
                                 href={jobStatus.pdfUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="inline-flex items-center gap-2 rounded-md bg-primary px-3 py-2 text-sm font-medium text-white hover:bg-primary/90"
+                                className={btnPrimaryCls}
                               >
-                                <Download className="h-4 w-4" />
+                                <Download className="h-4 w-4" strokeWidth={2} />
                                 {t('test.downloadPdf')}
                               </a>
                               <a
                                 href={jobStatus.pdfUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="text-sm text-primary hover:underline"
+                                className="text-sm text-[#B7A6FF] hover:underline"
                               >
                                 {t('test.openInNewTab')}
                               </a>
                             </div>
                           )}
                           {jobStatus.status === 'failed' && jobStatus.error && (
-                            <p className="text-sm text-red-600">{jobStatus.error}</p>
+                            <p className="text-sm text-[#FF8C8C]">{jobStatus.error}</p>
                           )}
                         </div>
                       )}
                     </div>
                   )}
+                </div>
+              </div>
 
-                </CardContent>
-              </Card>
+              {/* Code Snippets — tabbed terminal block */}
+              <div>
+                <div className={sectionLabelCls}>
+                  {generationMode === 'sync'
+                    ? t('codeSnippets.syncGeneration')
+                    : t('codeSnippets.asyncGeneration')}
+                </div>
+                <TabbedCodeBlock
+                  code={generateCodeSnippet(
+                    selectedLang,
+                    selectedTemplate,
+                    selectedToken,
+                    bodyMode === 'csv' && parsedCsvData
+                      ? JSON.stringify(parsedCsvData.data, null, 2)
+                      : jsonData,
+                    generationMode,
+                    webhookUrl
+                  )}
+                  selectedLang={selectedLang}
+                  onSelectLang={setSelectedLang}
+                  copyLabel={common('copy')}
+                  copiedLabel={common('copied')}
+                />
+              </div>
 
-              {/* Code Snippets (Collapsible) */}
-              <Card>
-                <CardHeader className="cursor-pointer" onClick={() => setShowCodeSnippets(!showCodeSnippets)}>
-                  <CardTitle className="flex items-center justify-between">
-                    <span className="flex items-center gap-2">
-                      <Code className="h-5 w-5" />
-                      {t('codeSnippets.title')}
-                    </span>
-                    {showCodeSnippets ? (
-                      <ChevronUp className="h-5 w-5 text-muted-foreground" />
-                    ) : (
-                      <ChevronDown className="h-5 w-5 text-muted-foreground" />
+              {/* Async-only: Check Status + Webhook payload */}
+              {generationMode === 'async' && (
+                <>
+                  <LabeledCodeBlock
+                    label={t('codeSnippets.checkStatus')}
+                    copyLabel={common('copy')}
+                    copiedLabel={common('copied')}
+                    code={generateCheckStatusSnippet(
+                      selectedLang,
+                      selectedToken,
+                      activeJobId || 'YOUR_JOB_ID'
                     )}
-                  </CardTitle>
-                </CardHeader>
-                {showCodeSnippets && (
-                  <CardContent className="space-y-6 border-t border-border pt-6">
-                    {/* Language selector */}
-                    <div className="flex flex-wrap gap-2 rounded-lg bg-muted p-1">
-                      {languages.map((lang) => (
-                        <button
-                          key={lang.id}
-                          onClick={() => setSelectedLang(lang.id)}
-                          className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
-                            selectedLang === lang.id
-                              ? 'bg-background text-foreground shadow-sm'
-                              : 'text-muted-foreground hover:text-foreground'
-                          }`}
-                        >
-                          {lang.label}
-                        </button>
-                      ))}
-                    </div>
+                  />
 
-                    {/* Generation Code */}
-                    <div>
-                      <h4 className="mb-2 font-medium text-foreground-dark">
-                        {generationMode === 'sync' ? t('codeSnippets.syncGeneration') : t('codeSnippets.asyncGeneration')}
-                      </h4>
-                      <CodeBlock
-                        code={generateCodeSnippet(
-                          selectedLang,
-                          selectedTemplate,
-                          selectedToken,
-                          bodyMode === 'csv' && parsedCsvData
-                            ? JSON.stringify(parsedCsvData.data, null, 2)
-                            : jsonData,
-                          generationMode,
-                          webhookUrl
-                        )}
-                      />
-                    </div>
-
-                    {/* Async-only: Check Status Code */}
-                    {generationMode === 'async' && (
-                      <>
-                        <div>
-                          <h4 className="mb-2 font-medium text-foreground-dark">{t('codeSnippets.checkStatus')}</h4>
-                          <CodeBlock
-                            code={generateCheckStatusSnippet(
-                              selectedLang,
-                              selectedToken,
-                              activeJobId || 'YOUR_JOB_ID'
-                            )}
-                          />
-                        </div>
-
-                        <div>
-                          <h4 className="mb-2 font-medium text-foreground-dark">{t('codeSnippets.webhookPayload')}</h4>
-                          <p className="mb-2 text-sm text-foreground-light">{t('codeSnippets.webhookDescription')}</p>
-                          <CodeBlock code={generateWebhookPayloadExample()} />
-                        </div>
-                      </>
-                    )}
-                  </CardContent>
-                )}
-              </Card>
+                  <div>
+                    <div className={sectionLabelCls}>{t('codeSnippets.webhookPayload')}</div>
+                    <p className="mb-3 text-[13.5px] text-[#9C9CA8]">
+                      {t('codeSnippets.webhookDescription')}
+                    </p>
+                    <LabeledCodeBlock
+                      label="POST → webhookUrl"
+                      copyLabel={common('copy')}
+                      copiedLabel={common('copied')}
+                      code={generateWebhookPayloadExample()}
+                    />
+                  </div>
+                </>
+              )}
 
               {/* API Reference (Collapsible) */}
-              <Card>
-                <CardHeader className="cursor-pointer" onClick={() => setShowApiRef(!showApiRef)}>
-                  <CardTitle className="flex items-center justify-between">
-                    <span className="flex items-center gap-2">
-                      <Code className="h-5 w-5" />
-                      {t('apiRef.title')}
-                    </span>
-                    {showApiRef ? (
-                      <ChevronUp className="h-5 w-5 text-muted-foreground" />
-                    ) : (
-                      <ChevronDown className="h-5 w-5 text-muted-foreground" />
-                    )}
-                  </CardTitle>
-                </CardHeader>
+              <div className="rounded-[14px] border border-white/[0.09] bg-[linear-gradient(180deg,rgba(255,255,255,0.025),rgba(255,255,255,0))]">
+                <button
+                  onClick={() => setShowApiRef(!showApiRef)}
+                  className="flex w-full items-center justify-between px-[22px] py-5 text-left"
+                >
+                  <span className="flex items-center gap-2.5">
+                    <Code className="h-[17px] w-[17px] text-[#B7A6FF]" strokeWidth={1.9} />
+                    <span className="text-[15px] font-semibold">{t('apiRef.title')}</span>
+                  </span>
+                  {showApiRef ? (
+                    <ChevronUp className="h-[18px] w-[18px] text-[#7E7E89]" />
+                  ) : (
+                    <ChevronDown className="h-[18px] w-[18px] text-[#7E7E89]" />
+                  )}
+                </button>
                 {showApiRef && (
-                  <CardContent className="space-y-6 border-t border-border pt-6">
+                  <div className="space-y-6 border-t border-white/[0.07] px-[22px] pb-6 pt-6">
                     {/* Authentication */}
                     <div>
-                      <h4 className="font-medium text-foreground-dark">{t('apiRef.auth.title')}</h4>
-                      <p className="mt-1 text-sm text-foreground-light">
+                      <h4 className="text-sm font-semibold text-[#F4F4F6]">{t('apiRef.auth.title')}</h4>
+                      <p className="mt-1 text-[13.5px] text-[#9C9CA8]">
                         {t('apiRef.auth.description')}
                       </p>
-                      <div className="mt-2 rounded-lg bg-muted p-3">
-                        <code className="text-sm">X-Api-Key: your_api_key</code>
+                      <div className="mt-2 rounded-[9px] border border-white/10 bg-white/[0.03] px-3 py-2.5">
+                        <code className="font-geist-mono text-[12.5px] text-[#D6D6E0]">
+                          X-Api-Key: your_api_key
+                        </code>
                       </div>
                     </div>
 
                     {/* Sync Endpoint */}
                     <div>
-                      <h4 className="font-medium text-foreground-dark">{t('apiRef.sync.title')}</h4>
+                      <h4 className="text-sm font-semibold text-[#F4F4F6]">{t('apiRef.sync.title')}</h4>
                       <div className="mt-2 space-y-3">
-                        <div className="rounded-lg bg-muted p-3">
-                          <code className="text-sm font-medium">POST /pdf/generate</code>
+                        <div className="rounded-[9px] border border-white/10 bg-white/[0.03] px-3 py-2.5 font-geist-mono text-[12.5px] text-[#D6D6E0]">
+                          <span className="text-[#7CF0B0]">POST</span> /pdf/generate
                         </div>
                         <div className="text-sm">
-                          <p className="font-medium text-foreground-dark">{t('apiRef.request')}</p>
-                          <pre className="mt-1 rounded-lg bg-zinc-950 p-3 text-xs text-zinc-100">
+                          <p className="font-geist-mono text-[11px] uppercase tracking-[0.08em] text-[#7E7E89]">
+                            {t('apiRef.request')}
+                          </p>
+                          <pre className="mt-1.5 rounded-[10px] border border-white/[0.08] bg-[#0A0A0C] p-3 font-geist-mono text-xs leading-[1.7] text-[#D6D6E0]">
                             {`{
   "templateId": "string (required)",
   "data": "object | array (required)"
@@ -1581,8 +1654,10 @@ export default function IntegrationPage() {
                           </pre>
                         </div>
                         <div className="text-sm">
-                          <p className="font-medium text-foreground-dark">{t('apiRef.response')}</p>
-                          <pre className="mt-1 rounded-lg bg-zinc-950 p-3 text-xs text-zinc-100">
+                          <p className="font-geist-mono text-[11px] uppercase tracking-[0.08em] text-[#7E7E89]">
+                            {t('apiRef.response')}
+                          </p>
+                          <pre className="mt-1.5 rounded-[10px] border border-white/[0.08] bg-[#0A0A0C] p-3 font-geist-mono text-xs leading-[1.7] text-[#D6D6E0]">
                             {`{
   "success": true,
   "pdfUrl": "https://...",
@@ -1597,14 +1672,16 @@ export default function IntegrationPage() {
 
                     {/* Async Endpoint */}
                     <div>
-                      <h4 className="font-medium text-foreground-dark">{t('apiRef.async.title')}</h4>
+                      <h4 className="text-sm font-semibold text-[#F4F4F6]">{t('apiRef.async.title')}</h4>
                       <div className="mt-2 space-y-3">
-                        <div className="rounded-lg bg-muted p-3">
-                          <code className="text-sm font-medium">POST /pdf/generate-async</code>
+                        <div className="rounded-[9px] border border-white/10 bg-white/[0.03] px-3 py-2.5 font-geist-mono text-[12.5px] text-[#D6D6E0]">
+                          <span className="text-[#7CF0B0]">POST</span> /pdf/generate-async
                         </div>
                         <div className="text-sm">
-                          <p className="font-medium text-foreground-dark">{t('apiRef.request')}</p>
-                          <pre className="mt-1 rounded-lg bg-zinc-950 p-3 text-xs text-zinc-100">
+                          <p className="font-geist-mono text-[11px] uppercase tracking-[0.08em] text-[#7E7E89]">
+                            {t('apiRef.request')}
+                          </p>
+                          <pre className="mt-1.5 rounded-[10px] border border-white/[0.08] bg-[#0A0A0C] p-3 font-geist-mono text-xs leading-[1.7] text-[#D6D6E0]">
                             {`{
   "templateId": "string (required)",
   "data": "object | array (required)",
@@ -1613,8 +1690,10 @@ export default function IntegrationPage() {
                           </pre>
                         </div>
                         <div className="text-sm">
-                          <p className="font-medium text-foreground-dark">{t('apiRef.response')}</p>
-                          <pre className="mt-1 rounded-lg bg-zinc-950 p-3 text-xs text-zinc-100">
+                          <p className="font-geist-mono text-[11px] uppercase tracking-[0.08em] text-[#7E7E89]">
+                            {t('apiRef.response')}
+                          </p>
+                          <pre className="mt-1.5 rounded-[10px] border border-white/[0.08] bg-[#0A0A0C] p-3 font-geist-mono text-xs leading-[1.7] text-[#D6D6E0]">
                             {`{
   "success": true,
   "jobId": "abc-123-def",
@@ -1627,16 +1706,18 @@ export default function IntegrationPage() {
 
                     {/* Job Status */}
                     <div>
-                      <h4 className="font-medium text-foreground-dark">
+                      <h4 className="text-sm font-semibold text-[#F4F4F6]">
                         {t('apiRef.jobStatus.title')}
                       </h4>
                       <div className="mt-2 space-y-3">
-                        <div className="rounded-lg bg-muted p-3">
-                          <code className="text-sm font-medium">GET /jobs/:jobId</code>
+                        <div className="rounded-[9px] border border-white/10 bg-white/[0.03] px-3 py-2.5 font-geist-mono text-[12.5px] text-[#D6D6E0]">
+                          <span className="text-[#7CF0B0]">GET</span> /jobs/:jobId
                         </div>
                         <div className="text-sm">
-                          <p className="font-medium text-foreground-dark">{t('apiRef.response')}</p>
-                          <pre className="mt-1 rounded-lg bg-zinc-950 p-3 text-xs text-zinc-100">
+                          <p className="font-geist-mono text-[11px] uppercase tracking-[0.08em] text-[#7E7E89]">
+                            {t('apiRef.response')}
+                          </p>
+                          <pre className="mt-1.5 rounded-[10px] border border-white/[0.08] bg-[#0A0A0C] p-3 font-geist-mono text-xs leading-[1.7] text-[#D6D6E0]">
                             {`{
   "jobId": "abc-123-def",
   "status": "pending | processing | completed | failed",
@@ -1651,11 +1732,50 @@ export default function IntegrationPage() {
                         </div>
                       </div>
                     </div>
-                  </CardContent>
+                  </div>
                 )}
-              </Card>
+              </div>
             </div>
           )}
+
+          {/* Webhooks + SDKs cards (design) */}
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            {/* Webhooks */}
+            <div className={cardCls}>
+              <div className="mb-2.5 flex items-center gap-2.5">
+                <Activity className="h-[17px] w-[17px] text-[#B7A6FF]" strokeWidth={1.9} />
+                <span className="text-[15px] font-semibold">{t('cards.webhooks.title')}</span>
+                <span className="ml-auto rounded-[5px] bg-white/[0.05] px-2 py-0.5 font-geist-mono text-[10.5px] text-[#7E7E89]">
+                  {t('cards.webhooks.chip')}
+                </span>
+              </div>
+              <p className="mb-3.5 text-[13.5px] leading-[1.6] text-[#9C9CA8]">
+                {t('cards.webhooks.body')}
+              </p>
+              <div className="flex h-9 items-center gap-2 overflow-x-auto whitespace-nowrap rounded-[9px] border border-white/10 bg-white/[0.03] px-3 font-geist-mono text-[12.5px] text-[#5C5C66]">
+                https://yourapp.com/hooks/mkpdfs
+              </div>
+            </div>
+
+            {/* Official SDKs */}
+            <div className={cardCls}>
+              <div className="mb-2.5 flex items-center gap-2.5">
+                <Package className="h-[17px] w-[17px] text-[#B7A6FF]" strokeWidth={1.9} />
+                <span className="text-[15px] font-semibold">{t('cards.sdks.title')}</span>
+              </div>
+              <p className="mb-3.5 text-[13.5px] leading-[1.6] text-[#9C9CA8]">
+                {t('cards.sdks.body')}
+              </p>
+              <div className="flex flex-col gap-2">
+                <div className="flex h-9 items-center gap-2 rounded-[9px] border border-white/10 bg-white/[0.03] px-3 font-geist-mono text-[12.5px] text-[#D6D6E0]">
+                  <span className="text-[#7CF0B0]">$</span> npm install mkpdfs
+                </div>
+                <div className="flex h-9 items-center gap-2 rounded-[9px] border border-white/10 bg-white/[0.03] px-3 font-geist-mono text-[12.5px] text-[#D6D6E0]">
+                  <span className="text-[#7CF0B0]">$</span> pip install mkpdfs
+                </div>
+              </div>
+            </div>
+          </div>
 
           {/* Create API Key Modal */}
           <CreateApiKeyModal

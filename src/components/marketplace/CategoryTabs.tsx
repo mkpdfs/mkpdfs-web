@@ -1,19 +1,9 @@
 'use client'
 
-import { Button } from '@/components/ui/Button'
-import { Briefcase, Award, Megaphone, User, LayoutGrid } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 
 const categoryIds = ['all', 'business', 'certificates', 'marketing', 'personal'] as const
 type CategoryId = (typeof categoryIds)[number]
-
-const categoryIcons: Record<CategoryId, typeof LayoutGrid> = {
-  all: LayoutGrid,
-  business: Briefcase,
-  certificates: Award,
-  marketing: Megaphone,
-  personal: User,
-}
 
 interface CategoryTabsProps {
   activeCategory: string
@@ -26,19 +16,20 @@ export function CategoryTabs({ activeCategory, onChange }: CategoryTabsProps) {
   return (
     <div className="flex flex-wrap gap-2">
       {categoryIds.map((catId) => {
-        const Icon = categoryIcons[catId]
         const isActive = activeCategory === catId
         return (
-          <Button
+          <button
             key={catId}
-            variant={isActive ? 'default' : 'outline'}
-            size="sm"
+            type="button"
             onClick={() => onChange(catId)}
-            className={isActive ? '' : 'hover:bg-muted'}
+            className={
+              isActive
+                ? 'rounded-full border border-[#8C6CFF]/30 bg-[#8C6CFF]/[0.13] px-3.5 py-1.5 text-[13px] font-semibold text-[#C9BBFF]'
+                : 'rounded-full border border-white/[0.09] bg-white/[0.03] px-3.5 py-1.5 text-[13px] font-medium text-[#9C9CA8] transition-colors hover:border-white/20 hover:text-[#F4F4F6]'
+            }
           >
-            <Icon className="mr-1.5 h-4 w-4" />
             {t(catId)}
-          </Button>
+          </button>
         )
       })}
     </div>

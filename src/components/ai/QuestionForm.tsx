@@ -1,8 +1,7 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useCallback } from 'react'
 import { useTranslations } from 'next-intl'
-import { Button } from '@/components/ui'
 import type { StructuredQuestion, QuestionAnswer, ImageAnalysis } from '@/lib/api'
 
 interface QuestionFormProps {
@@ -112,26 +111,26 @@ export function QuestionForm({
     <div className="flex flex-col h-full">
       {/* Image Analysis Summary */}
       {imageAnalysis && (
-        <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-          <h3 className="font-medium text-blue-900 dark:text-blue-100 mb-2 flex items-center gap-2">
+        <div className="mb-6 rounded-[14px] border border-[#8C6CFF]/30 bg-[#8C6CFF]/[0.08] p-4">
+          <h3 className="mb-2 flex items-center gap-2 text-sm font-semibold text-[#C9BBFF]">
             <span>🔍</span>
             {t('imageAnalysisTitle') || 'We detected the following from your image:'}
           </h3>
-          <ul className="text-sm text-blue-800 dark:text-blue-200 space-y-1">
+          <ul className="space-y-1 text-sm text-[#9C9CA8]">
             <li>
-              <strong>{t('documentType') || 'Document Type'}:</strong> {imageAnalysis.documentType}
+              <strong className="font-semibold text-[#B7A6FF]">{t('documentType') || 'Document Type'}:</strong> {imageAnalysis.documentType}
             </li>
             <li>
-              <strong>{t('suggestedLayout') || 'Layout'}:</strong> {imageAnalysis.suggestedLayout}
+              <strong className="font-semibold text-[#B7A6FF]">{t('suggestedLayout') || 'Layout'}:</strong> {imageAnalysis.suggestedLayout}
             </li>
             {imageAnalysis.detectedFields.length > 0 && (
               <li>
-                <strong>{t('detectedFields') || 'Fields'}:</strong>{' '}
+                <strong className="font-semibold text-[#B7A6FF]">{t('detectedFields') || 'Fields'}:</strong>{' '}
                 {imageAnalysis.detectedFields.join(', ')}
               </li>
             )}
           </ul>
-          <p className="text-xs text-blue-600 dark:text-blue-300 mt-2">
+          <p className="mt-2 text-xs text-[#7E7E89]">
             {t('imageAnalysisHint') ||
               'Please confirm or adjust your preferences below based on your needs.'}
           </p>
@@ -144,20 +143,20 @@ export function QuestionForm({
           const config = categoryConfig[category] || { label: category, icon: '❓' }
           return (
             <div key={category} className="space-y-4">
-              <h3 className="font-medium text-gray-900 dark:text-gray-100 flex items-center gap-2 border-b border-gray-200 dark:border-gray-700 pb-2">
+              <h3 className="flex items-center gap-2 border-b border-white/[0.07] pb-2 font-geist-mono text-[11.5px] uppercase tracking-[0.09em] text-[#9C9CA8]">
                 <span>{config.icon}</span>
                 {config.label}
               </h3>
 
               {categoryQuestions.map((question) => (
                 <div key={question.id} className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <label className="block text-sm font-medium text-[#F4F4F6]">
                     {question.question}
-                    {question.required && <span className="text-red-500 ml-1">*</span>}
+                    {question.required && <span className="ml-1 text-[#FF8B8B]">*</span>}
                   </label>
 
                   {question.helperText && (
-                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                    <p className="text-xs text-[#7E7E89]">
                       {question.helperText}
                     </p>
                   )}
@@ -168,7 +167,7 @@ export function QuestionForm({
                       {question.options.map((option) => (
                         <label
                           key={option}
-                          className="flex items-center gap-3 p-2 rounded-md hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer"
+                          className="flex cursor-pointer items-center gap-3 rounded-[9px] p-2 transition-colors hover:bg-white/[0.04]"
                         >
                           <input
                             type="radio"
@@ -178,9 +177,9 @@ export function QuestionForm({
                             onChange={(e) =>
                               handleSingleChoiceChange(question.id, e.target.value)
                             }
-                            className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+                            className="h-4 w-4 accent-[#8C6CFF]"
                           />
-                          <span className="text-sm text-gray-700 dark:text-gray-300">
+                          <span className="text-sm text-[#9C9CA8]">
                             {option}
                           </span>
                         </label>
@@ -194,7 +193,7 @@ export function QuestionForm({
                       {question.options.map((option) => (
                         <label
                           key={option}
-                          className="flex items-center gap-3 p-2 rounded-md hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer"
+                          className="flex cursor-pointer items-center gap-3 rounded-[9px] p-2 transition-colors hover:bg-white/[0.04]"
                         >
                           <input
                             type="checkbox"
@@ -206,9 +205,9 @@ export function QuestionForm({
                             onChange={(e) =>
                               handleMultipleChoiceChange(question.id, option, e.target.checked)
                             }
-                            className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                            className="h-4 w-4 rounded accent-[#8C6CFF]"
                           />
-                          <span className="text-sm text-gray-700 dark:text-gray-300">
+                          <span className="text-sm text-[#9C9CA8]">
                             {option}
                           </span>
                         </label>
@@ -228,8 +227,8 @@ export function QuestionForm({
                         }
                         className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
                           answers[question.id] === true
-                            ? 'bg-blue-600'
-                            : 'bg-gray-200 dark:bg-gray-700'
+                            ? 'bg-[#8C6CFF]'
+                            : 'bg-white/[0.12]'
                         }`}
                       >
                         <span
@@ -238,7 +237,7 @@ export function QuestionForm({
                           }`}
                         />
                       </button>
-                      <span className="text-sm text-gray-700 dark:text-gray-300">
+                      <span className="text-sm text-[#9C9CA8]">
                         {answers[question.id] === true
                           ? t('yes') || 'Yes'
                           : t('no') || 'No'}
@@ -252,7 +251,7 @@ export function QuestionForm({
                       type="text"
                       value={(answers[question.id] as string) || ''}
                       onChange={(e) => handleTextChange(question.id, e.target.value)}
-                      className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full rounded-[9px] border border-white/[0.09] bg-white/[0.04] px-3 py-2 text-sm text-[#F4F4F6] placeholder:text-[#5C5C66] transition-colors focus:border-[#8C6CFF]/50 focus:outline-none"
                       placeholder={t('enterYourAnswer') || 'Enter your answer...'}
                     />
                   )}
@@ -264,19 +263,23 @@ export function QuestionForm({
       </div>
 
       {/* Action Buttons */}
-      <div className="flex gap-3 pt-4 mt-4 border-t border-gray-200 dark:border-gray-700">
-        <Button variant="outline" onClick={onBack} disabled={isSubmitting} className="flex-1">
+      <div className="mt-4 flex gap-3 border-t border-white/[0.07] pt-4">
+        <button
+          onClick={onBack}
+          disabled={isSubmitting}
+          className="h-10 flex-1 rounded-[10px] border border-white/[0.12] bg-white/[0.04] text-sm font-semibold text-[#F4F4F6] transition-colors hover:bg-white/[0.08] disabled:opacity-50"
+        >
           {t('back') || 'Back'}
-        </Button>
-        <Button
+        </button>
+        <button
           onClick={handleSubmit}
           disabled={!isValid || isSubmitting}
-          className="flex-1"
+          className="h-10 flex-1 rounded-[10px] bg-[linear-gradient(140deg,#8C6CFF,#5B3FE0)] text-sm font-semibold text-white shadow-[0_6px_18px_rgba(124,92,255,0.4)] transition-all hover:-translate-y-px disabled:opacity-50 disabled:shadow-none disabled:hover:translate-y-0"
         >
           {isSubmitting
             ? t('generating') || 'Generating...'
             : t('generateTemplate') || 'Generate Template'}
-        </Button>
+        </button>
       </div>
     </div>
   )

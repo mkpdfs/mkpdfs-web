@@ -1,8 +1,7 @@
 'use client'
 
 import { useState, useCallback, useMemo, useEffect, useRef } from 'react'
-import { Sparkles, Save, ArrowLeft } from 'lucide-react'
-import { Button, Spinner, Card, CardContent, CardHeader, CardTitle } from '@/components/ui'
+import { Sparkles, Save, ArrowLeft, Paperclip, X, Loader2 } from 'lucide-react'
 import { UpgradePrompt } from '@/components/UpgradePrompt'
 import { FloatingChatWidget, type ChatMessage, QuestionForm } from '@/components/ai'
 import { FullScreenPreview } from '@/components/ai'
@@ -24,6 +23,9 @@ interface GeneratedTemplate {
 
 // Flow steps for two-step generation
 type FlowStep = 'prompt' | 'analyzing' | 'questions' | 'generating' | 'complete'
+
+// Example chips shown under the composer (i18n keys under ai.examples.*)
+const EXAMPLE_KEYS = ['invoice', 'deliveryNote', 'monthlyReport', 'certificate', 'rentalContract'] as const
 
 export function AIGenerateSection({ onSaveComplete }: AIGenerateSectionProps) {
   const t = useTranslations('templates')
@@ -74,6 +76,11 @@ export function AIGenerateSection({ onSaveComplete }: AIGenerateSectionProps) {
   // Preview state
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const [isPreviewLoading, setIsPreviewLoading] = useState(false)
+
+  // Composer (initial prompt) UI state
+  const [promptValue, setPromptValue] = useState('')
+  const [composerImage, setComposerImage] = useState<{ base64: string; mediaType: string; preview: string } | null>(null)
+  const composerFileRef = useRef<HTMLInputElement>(null)
 
   // Credits checks (mirrors the backend AI gate: enterprise or balance > 0)
   const plan = profile?.subscription?.plan || 'credits'
@@ -403,6 +410,49 @@ export function AIGenerateSection({ onSaveComplete }: AIGenerateSectionProps) {
     MAX_BASE64_SIZE,
   ])
 
+  // Composer image selection (same validation as the chat widget: png/jpeg/webp, max 5MB)
+  const handleComposerImageSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    const allowedTypes = ['image/png', 'image/jpeg', 'image/webp']
+    if (!allowedTypes.includes(file.type)) return
+    if (file.size > 5 * 1024 * 1024) return
+
+    const reader = new FileReader()
+    reader.onload = (event) => {
+      const result = event.target?.result as string
+      const base64 = result.split(',')[1]
+      setComposerImage({
+        base64,
+        mediaType: file.type,
+        preview: result,
+      })
+    }
+    reader.readAsDataURL(file)
+
+    if (composerFileRef.current) {
+      composerFileRef.current.value = ''
+    }
+  }, [])
+
+  // Composer submit — routes into the existing chat/job flow
+  const handleComposerSubmit = useCallback(() => {
+    if (!promptValue.trim() && !composerImage) return
+    if (submitAIGeneration.isPending || currentJobId) return
+
+    handleSendMessage(promptValue.trim(), composerImage?.base64, composerImage?.mediaType)
+    setPromptValue('')
+    setComposerImage(null)
+  }, [promptValue, composerImage, submitAIGeneration.isPending, currentJobId, handleSendMessage])
+
+  const handleComposerKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault()
+      handleComposerSubmit()
+    }
+  }, [handleComposerSubmit])
+
   // Handle question form submission
   const handleQuestionSubmit = useCallback(async (answers: QuestionAnswer[]) => {
     if (!analysisJobId || !conversationContext.originalPrompt) return
@@ -521,66 +571,67 @@ export function AIGenerateSection({ onSaveComplete }: AIGenerateSectionProps) {
 
   const isGenerating = submitAIGeneration.isPending || !!currentJobId
 
+  // Initial centered composer (design handoff) vs working preview/chat states
+  const showComposer = flowStep === 'prompt' && !generatedTemplate
+
   return (
-    <div className="relative h-[calc(100vh-10rem)]">
+    <div className={showComposer ? 'relative' : 'relative h-[calc(100vh-10rem)]'}>
       {/* Header with usage indicator and save button */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="mb-6 flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <span className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Sparkles className="h-4 w-4" />
-            {ai('remainingGenerations')}: {displayRemaining}
+          <span className="flex items-center gap-2 font-geist-mono text-[11.5px] uppercase tracking-[0.09em] text-[#7E7E89]">
+            <Sparkles className="h-3.5 w-3.5 text-[#B7A6FF]" strokeWidth={1.9} />
+            {ai('remainingGenerations')}: <span className="text-[#9C9CA8]">{displayRemaining}</span>
           </span>
           {!isUnlimited && remainingGenerations <= 2 && remainingGenerations > 0 && (
-            <span className="text-sm text-warning font-medium">
+            <span className="font-geist-mono text-[11.5px] uppercase tracking-[0.09em] text-[#F0C987]">
               {ai('limitWarning')}
             </span>
           )}
           {!isUnlimited && remainingGenerations <= 0 && (
-            <span className="text-sm text-destructive font-medium">
+            <span className="font-geist-mono text-[11.5px] uppercase tracking-[0.09em] text-[#FF8B8B]">
               {ai('limitReached')}
             </span>
           )}
         </div>
 
         {generatedTemplate && (
-          <Button
+          <button
             onClick={handleSave}
             disabled={uploadTemplate.isPending}
+            className="flex h-9 items-center gap-2 rounded-[9px] bg-[linear-gradient(140deg,#8C6CFF,#5B3FE0)] px-[18px] text-sm font-semibold text-white shadow-[0_6px_18px_rgba(124,92,255,0.4)] transition-all hover:-translate-y-px disabled:opacity-60 disabled:shadow-none disabled:hover:translate-y-0"
           >
             {uploadTemplate.isPending ? (
               <>
-                <Spinner size="sm" className="mr-2" />
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
                 {common('loading')}
               </>
             ) : (
               <>
-                <Save className="mr-2 h-4 w-4" />
+                <Save className="h-3.5 w-3.5" strokeWidth={2} />
                 {ai('chat.saveTemplate')}
               </>
             )}
-          </Button>
+          </button>
         )}
       </div>
 
       {/* Question Form (shown during 'questions' step) */}
       {flowStep === 'questions' && analysisResult && (
-        <Card className="h-full">
-          <CardHeader className="pb-4">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-lg">
-                {ai('questionsTitle') || 'Help us understand your template needs'}
-              </CardTitle>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleBackToPrompt}
-              >
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                {ai('startOver') || 'Start Over'}
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent className="h-[calc(100%-5rem)] overflow-hidden">
+        <div className="flex h-full flex-col overflow-hidden rounded-[14px] border border-white/[0.09] bg-[#0C0C0F]">
+          <div className="flex items-center justify-between border-b border-white/[0.07] px-6 py-4">
+            <h2 className="text-lg font-semibold tracking-[-0.015em] text-[#F4F4F6]">
+              {ai('questionsTitle') || 'Help us understand your template needs'}
+            </h2>
+            <button
+              onClick={handleBackToPrompt}
+              className="flex items-center gap-2 rounded-[9px] px-3 py-1.5 text-[13px] font-medium text-[#9C9CA8] transition-colors hover:bg-white/[0.06] hover:text-[#F4F4F6]"
+            >
+              <ArrowLeft className="h-3.5 w-3.5" />
+              {ai('startOver') || 'Start Over'}
+            </button>
+          </div>
+          <div className="min-h-0 flex-1 overflow-hidden p-6">
             <QuestionForm
               questions={analysisResult.questions}
               imageAnalysis={analysisResult.imageAnalysis}
@@ -588,12 +639,109 @@ export function AIGenerateSection({ onSaveComplete }: AIGenerateSectionProps) {
               onBack={handleBackToPrompt}
               isSubmitting={isGenerating}
             />
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       )}
 
-      {/* Full-screen preview (shown when not in questions step) */}
-      {flowStep !== 'questions' && (
+      {/* Centered composer (initial prompt state) */}
+      {showComposer && (
+        <div className="mx-auto max-w-[760px]">
+          {/* Centered hero */}
+          <div className="pb-[30px] pt-4 text-center">
+            <div className="mx-auto mb-4 flex h-[52px] w-[52px] items-center justify-center rounded-[14px] border border-[#8C6CFF]/30 bg-[#8C6CFF]/[0.14] text-[#B7A6FF]">
+              <Sparkles className="h-6 w-6" strokeWidth={1.7} />
+            </div>
+            <h1 className="mb-2 text-[26px] font-bold tracking-[-0.025em] text-[#F4F4F6]">
+              {ai('hero.title')}
+            </h1>
+            <p className="text-[14.5px] text-[#9C9CA8]">{ai('hero.subtitle')}</p>
+          </div>
+
+          {/* Prompt card */}
+          <div className="mb-4 overflow-hidden rounded-2xl border border-[#8C6CFF]/30 bg-[#0C0C0F] shadow-[0_0_0_4px_rgba(124,92,255,0.06)] transition-colors focus-within:border-[#8C6CFF]/50">
+            <textarea
+              value={promptValue}
+              onChange={(e) => setPromptValue(e.target.value)}
+              onKeyDown={handleComposerKeyDown}
+              placeholder={ai('hero.placeholder')}
+              disabled={isGenerating}
+              rows={4}
+              className="block min-h-[110px] w-full resize-none border-0 bg-transparent px-5 py-[18px] text-[15px] leading-[1.6] text-[#F4F4F6] placeholder:text-[#5C5C66] focus:outline-none focus:ring-0 disabled:opacity-60"
+            />
+
+            {/* Selected brand-asset preview */}
+            {composerImage && (
+              <div className="px-5 pb-3">
+                <div className="relative inline-block">
+                  <img
+                    src={composerImage.preview}
+                    alt={ai('hero.attach')}
+                    className="h-16 w-16 rounded-[9px] border border-white/[0.09] object-cover"
+                  />
+                  <button
+                    onClick={() => setComposerImage(null)}
+                    aria-label={ai('hero.removeImage')}
+                    className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full border border-white/[0.12] bg-[#1A1A20] text-[#9C9CA8] transition-colors hover:text-[#F4F4F6]"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Card footer: attach + generate */}
+            <div className="flex items-center justify-between border-t border-white/[0.07] px-3.5 py-3">
+              <input
+                ref={composerFileRef}
+                type="file"
+                accept="image/png,image/jpeg,image/webp"
+                onChange={handleComposerImageSelect}
+                className="hidden"
+              />
+              <button
+                type="button"
+                onClick={() => composerFileRef.current?.click()}
+                disabled={isGenerating}
+                className="flex items-center gap-[7px] rounded-lg px-2 py-1.5 text-[13px] text-[#7E7E89] transition-colors hover:text-[#9C9CA8] disabled:opacity-50"
+              >
+                <Paperclip className="h-3.5 w-3.5" strokeWidth={2} />
+                {ai('hero.attach')}
+              </button>
+              <button
+                type="button"
+                onClick={handleComposerSubmit}
+                disabled={(!promptValue.trim() && !composerImage) || isGenerating}
+                className="flex h-9 items-center gap-2 rounded-[9px] bg-[linear-gradient(140deg,#8C6CFF,#5B3FE0)] px-[18px] text-sm font-semibold text-white shadow-[0_6px_18px_rgba(124,92,255,0.4)] transition-all hover:-translate-y-px disabled:opacity-50 disabled:shadow-none disabled:hover:translate-y-0"
+              >
+                {isGenerating ? (
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                ) : (
+                  <Sparkles className="h-3.5 w-3.5" strokeWidth={2} />
+                )}
+                {ai('hero.generate')}
+              </button>
+            </div>
+          </div>
+
+          {/* Example chips */}
+          <div className="flex flex-wrap justify-center gap-2">
+            {EXAMPLE_KEYS.map((key) => (
+              <button
+                key={key}
+                type="button"
+                onClick={() => setPromptValue(ai(`examples.${key}.prompt`))}
+                disabled={isGenerating}
+                className="rounded-full border border-white/[0.09] bg-white/[0.03] px-3.5 py-[7px] text-[13px] text-[#9C9CA8] transition-colors hover:border-[#8C6CFF]/40 hover:text-[#C9BBFF] disabled:opacity-50"
+              >
+                {ai(`examples.${key}.label`)}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Full-screen preview (shown when generating or after completion) */}
+      {flowStep !== 'questions' && !showComposer && (
         <>
           <FullScreenPreview
             templateContent={editedTemplate}

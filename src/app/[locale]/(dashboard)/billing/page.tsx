@@ -1,17 +1,21 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Card, CardHeader, CardTitle, CardContent, Button } from '@/components/ui'
-import { CreditCard, Zap, Loader2, ExternalLink, AlertTriangle, History } from 'lucide-react'
-import { useProfile } from '@/hooks/useApi'
+import { Loader2, ExternalLink, AlertTriangle } from 'lucide-react'
+import { useProfile, useUsage } from '@/hooks/useApi'
 import { createCheckoutSession, createPortalSession, updateAutoRecharge, getCreditLedger } from '@/lib/api'
+import { formatNumber } from '@/lib/utils'
 import type { LedgerEntry } from '@/types'
 import { useTranslations } from 'next-intl'
 import { useQueryClient, useQuery } from '@tanstack/react-query'
 
+const PACK_CREDITS = 1000 // $10 pack
+const PRICE_PER_PAGE = 0.01
+
 export default function BillingPage() {
   const queryClient = useQueryClient()
   const { data: profile, isLoading, refetch } = useProfile()
+  const { data: usage } = useUsage()
   const [loadingBuy, setLoadingBuy] = useState(false)
   const [loadingPortal, setLoadingPortal] = useState(false)
   const [savingAutoRecharge, setSavingAutoRecharge] = useState(false)
@@ -30,6 +34,11 @@ export default function BillingPage() {
   const autoRechargeOn = !!sub?.autoRecharge
   const effectiveThreshold = threshold ?? sub?.rechargeThreshold ?? 100
   const hasCard = !!sub?.stripePaymentMethodId
+
+  const monthPages = usage?.usage?.pagesGenerated ?? 0
+  const monthSpend = monthPages * PRICE_PER_PAGE
+  const balanceUsd = balance * PRICE_PER_PAGE
+  const packPct = Math.min((balance / PACK_CREDITS) * 100, 100)
 
   // Poll after returning from Stripe checkout so the webhook-credited
   // balance shows up without a manual refresh
@@ -85,147 +94,239 @@ export default function BillingPage() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <Loader2 className="h-8 w-8 animate-spin text-[#8C6CFF]" />
       </div>
     )
   }
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-foreground-dark">{t('title')}</h1>
-        <p className="mt-1 text-sm text-foreground-light">{t('subtitle')}</p>
+    <div>
+      {/* Header */}
+      <div className="mb-7">
+        <h1 className="mb-1.5 text-[26px] font-bold tracking-[-0.025em]">{t('title')}</h1>
+        <p className="text-[14.5px] text-[#9C9CA8]">{t('tagline')}</p>
       </div>
 
+      {/* Auto-recharge failure banner */}
       {sub?.autoRechargeError && (
-        <div className="flex items-start gap-3 rounded-md border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900">
-          <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0" />
+        <div className="mb-4 flex items-start gap-3 rounded-[12px] border border-[#FF8A9B]/30 bg-[#FF8A9B]/[0.07] px-4 py-3.5 text-[13.5px] text-[#FF8A9B]">
+          <AlertTriangle className="mt-0.5 h-[18px] w-[18px] shrink-0" strokeWidth={1.9} />
           <span>{t('autoRecharge.failedBanner', { reason: sub.autoRechargeError })}</span>
         </div>
       )}
 
-      {/* Balance */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-lg">
-            <CreditCard className="h-5 w-5" />
+      {/* Top grid: balance + this month */}
+      <div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-[1.4fr_1fr]">
+        {/* Credit balance */}
+        <div className="rounded-2xl border border-[#8C6CFF]/30 bg-[linear-gradient(140deg,rgba(124,92,255,0.08),rgba(255,255,255,0.01))] px-7 py-[26px]">
+          <div className="mb-3 font-geist-mono text-[11.5px] uppercase tracking-[0.09em] text-[#9C9CA8]">
             {t('balance.title')}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <div>
-              <p className="text-4xl font-bold text-foreground-dark">
-                {isEnterprise ? t('balance.enterprise') : t('balance.credits', { count: balance })}
-              </p>
-              {!isEnterprise && (
-                <p className="mt-1 text-sm text-foreground-light">{t('balance.hint')}</p>
-              )}
+          </div>
+
+          {isEnterprise ? (
+            <div className="text-[34px] font-bold leading-none tracking-[-0.03em]">
+              {t('balance.enterprise')}
             </div>
-            {!isEnterprise && (
-              <div className="flex gap-2">
+          ) : (
+            <>
+              <div className="flex items-baseline gap-2.5">
+                <span className="text-[42px] font-bold leading-none tracking-[-0.03em]">
+                  ${balanceUsd.toFixed(2)}
+                </span>
+                <span className="font-geist-mono text-[14px] text-[#7CF0B0]">
+                  {t('balance.pages', { count: balance })}
+                </span>
+              </div>
+
+              <div className="mb-2 mt-[18px] h-[5px] overflow-hidden rounded-[3px] bg-white/[0.08]">
+                <div
+                  className="h-full rounded-[3px] bg-[linear-gradient(90deg,#8C6CFF,#B7A6FF)] transition-all"
+                  style={{ width: `${packPct}%` }}
+                />
+              </div>
+              <div className="mb-5 text-[12.5px] text-[#7E7E89]">{t('balance.hint')}</div>
+
+              {/* Top up */}
+              <div className="flex flex-wrap items-center gap-2.5">
+                <span className="mr-0.5 text-[13.5px] text-[#9C9CA8]">{t('balance.topUp')}</span>
+                <button
+                  onClick={handleBuy}
+                  disabled={loadingBuy}
+                  aria-label={t('balance.buy')}
+                  className="inline-flex h-[34px] items-center gap-2 rounded-[9px] border border-[#8C6CFF]/40 bg-[#8C6CFF]/[0.13] px-4 font-geist-mono text-[13px] font-semibold text-[#C9BBFF] transition-colors hover:bg-[#8C6CFF]/[0.22] disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {loadingBuy && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+                  $10
+                </button>
+                <span className="text-[12.5px] text-[#7E7E89]">{t('balance.packNote')}</span>
                 {hasCard && (
-                  <Button variant="outline" onClick={handlePortal} disabled={loadingPortal}>
+                  <button
+                    onClick={handlePortal}
+                    disabled={loadingPortal}
+                    className="ml-auto inline-flex h-[34px] items-center gap-2 rounded-[9px] border border-white/[0.12] bg-white/[0.04] px-3.5 text-[13px] font-medium text-[#F4F4F6] transition-colors hover:border-white/25 disabled:cursor-not-allowed disabled:opacity-60"
+                  >
                     {loadingPortal ? (
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
                     ) : (
-                      <ExternalLink className="mr-2 h-4 w-4" />
+                      <ExternalLink className="h-3.5 w-3.5 text-[#9C9CA8]" strokeWidth={1.9} />
                     )}
                     {t('balance.updateCard')}
-                  </Button>
+                  </button>
                 )}
-                <Button onClick={handleBuy} disabled={loadingBuy}>
-                  {loadingBuy ? (
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  ) : (
-                    <Zap className="mr-2 h-4 w-4" />
-                  )}
-                  {t('balance.buy')}
-                </Button>
               </div>
-            )}
+            </>
+          )}
+        </div>
+
+        {/* This month */}
+        <div className="rounded-2xl border border-white/[0.09] bg-[linear-gradient(180deg,rgba(255,255,255,0.025),rgba(255,255,255,0))] px-7 py-[26px]">
+          <div className="mb-3 font-geist-mono text-[11.5px] uppercase tracking-[0.09em] text-[#9C9CA8]">
+            {t('thisMonth.title')}
           </div>
-        </CardContent>
-      </Card>
+          <div className="flex flex-col gap-3.5">
+            <div className="flex items-center justify-between">
+              <span className="text-[14px] text-[#9C9CA8]">{t('thisMonth.pages')}</span>
+              <span className="font-geist-mono text-[14px] font-semibold">
+                {formatNumber(monthPages)}
+              </span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-[14px] text-[#9C9CA8]">{t('thisMonth.spend')}</span>
+              <span className="font-geist-mono text-[14px] font-semibold">
+                ${monthSpend.toFixed(2)}
+              </span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-[14px] text-[#9C9CA8]">{t('thisMonth.avg')}</span>
+              <span className="font-geist-mono text-[14px] font-semibold">
+                ${PRICE_PER_PAGE.toFixed(2)}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
 
       {/* Auto-recharge */}
       {!isEnterprise && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">{t('autoRecharge.title')}</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <p className="text-sm text-foreground-light">{t('autoRecharge.description')}</p>
-            {!hasCard ? (
-              <p className="text-sm text-foreground-light">{t('autoRecharge.needsPurchase')}</p>
-            ) : (
-              <div className="flex flex-wrap items-center gap-4">
-                <label className="flex items-center gap-2 text-sm text-foreground-dark">
-                  {t('autoRecharge.threshold')}
-                  <input
-                    type="number"
-                    min={1}
-                    max={1000}
-                    className="w-24 rounded-md border border-input bg-background px-2 py-1"
-                    value={effectiveThreshold}
-                    disabled={autoRechargeOn}
-                    onChange={(e) => {
-                      const v = parseInt(e.target.value || '1', 10)
-                      setThreshold(Math.min(1000, Math.max(1, v)))
-                    }}
-                  />
-                </label>
-                <Button
-                  variant={autoRechargeOn ? 'outline' : 'default'}
-                  onClick={() => handleAutoRechargeToggle(!autoRechargeOn)}
-                  disabled={savingAutoRecharge}
+        <div className="mb-4 rounded-2xl border border-white/[0.09] bg-[linear-gradient(180deg,rgba(255,255,255,0.025),rgba(255,255,255,0))] px-7 py-[26px]">
+          <div className="mb-3 font-geist-mono text-[11.5px] uppercase tracking-[0.09em] text-[#9C9CA8]">
+            {t('autoRecharge.title')}
+          </div>
+          <p className="mb-5 max-w-[560px] text-[13.5px] text-[#9C9CA8]">
+            {t('autoRecharge.description')}
+          </p>
+          {!hasCard ? (
+            <p className="text-[13.5px] text-[#7E7E89]">{t('autoRecharge.needsPurchase')}</p>
+          ) : (
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-4">
+              <button
+                role="switch"
+                aria-checked={autoRechargeOn}
+                aria-label={autoRechargeOn ? t('autoRecharge.disable') : t('autoRecharge.enable')}
+                onClick={() => handleAutoRechargeToggle(!autoRechargeOn)}
+                disabled={savingAutoRecharge}
+                className="inline-flex items-center gap-3 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                <span
+                  className={`relative inline-flex h-[22px] w-[40px] shrink-0 rounded-full border transition-colors ${
+                    autoRechargeOn
+                      ? 'border-[#8C6CFF]/60 bg-[linear-gradient(140deg,#8C6CFF,#5B3FE0)]'
+                      : 'border-white/[0.14] bg-white/[0.06]'
+                  }`}
                 >
-                  {savingAutoRecharge && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  {autoRechargeOn ? t('autoRecharge.disable') : t('autoRecharge.enable')}
-                </Button>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+                  <span
+                    className={`absolute top-[2px] h-4 w-4 rounded-full bg-white transition-all ${
+                      autoRechargeOn ? 'left-[20px]' : 'left-[2px] opacity-70'
+                    }`}
+                  />
+                </span>
+                <span className="text-[13.5px] font-medium text-[#F4F4F6]">
+                  {savingAutoRecharge ? (
+                    <Loader2 className="h-4 w-4 animate-spin text-[#9C9CA8]" />
+                  ) : autoRechargeOn ? (
+                    t('autoRecharge.disable')
+                  ) : (
+                    t('autoRecharge.enable')
+                  )}
+                </span>
+              </button>
+              <label className="flex items-center gap-2.5 text-[13.5px] text-[#9C9CA8]">
+                {t('autoRecharge.threshold')}
+                <input
+                  type="number"
+                  min={1}
+                  max={1000}
+                  className="h-[34px] w-24 rounded-[9px] border border-white/10 bg-white/[0.03] px-2.5 font-geist-mono text-[13px] text-[#F4F4F6] outline-none transition-colors focus:border-[#8C6CFF]/50 disabled:opacity-50"
+                  value={effectiveThreshold}
+                  disabled={autoRechargeOn}
+                  onChange={(e) => {
+                    const v = parseInt(e.target.value || '1', 10)
+                    setThreshold(Math.min(1000, Math.max(1, v)))
+                  }}
+                />
+              </label>
+            </div>
+          )}
+        </div>
       )}
 
       {/* History */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-lg">
-            <History className="h-5 w-5" />
-            {t('history.title')}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          {!ledger?.entries?.length ? (
-            <p className="text-sm text-foreground-light">{t('history.empty')}</p>
-          ) : (
-            <ul className="divide-y divide-border">
-              {ledger.entries.map((entry: LedgerEntry) => (
-                <li key={entry.entryId} className="flex items-center justify-between py-2 text-sm">
-                  <div>
-                    <p className="text-foreground-dark">{t(`history.${entry.type}`)}</p>
-                    <p className="text-xs text-foreground-light">
+      <div className="rounded-2xl border border-white/[0.09] bg-[linear-gradient(180deg,rgba(255,255,255,0.025),rgba(255,255,255,0))]">
+        <div className="border-b border-white/[0.07] px-6 py-[18px] text-[15px] font-semibold">
+          {t('history.title')}
+        </div>
+        {!ledger?.entries?.length ? (
+          <div className="px-6 py-9 text-center text-[14px] text-[#7E7E89]">
+            {t('history.empty')}
+          </div>
+        ) : (
+          <div className="divide-y divide-white/[0.06]">
+            {ledger.entries.map((entry: LedgerEntry) => {
+              const isCredit = entry.amount > 0
+              return (
+                <div
+                  key={entry.entryId}
+                  className="flex items-center justify-between gap-4 px-6 py-3.5"
+                >
+                  <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1">
+                    <span
+                      className={`rounded-full border px-2.5 py-[3px] font-geist-mono text-[11.5px] ${
+                        isCredit
+                          ? 'border-[#3FBF7F]/35 bg-[#3FBF7F]/10 text-[#7CF0B0]'
+                          : 'border-white/10 bg-white/[0.05] text-[#9C9CA8]'
+                      }`}
+                    >
+                      {t(`history.${entry.type}`)}
+                    </span>
+                    {entry.description && (
+                      <span className="truncate text-[13.5px] text-[#9C9CA8]">
+                        {entry.description}
+                      </span>
+                    )}
+                    <span className="text-[13px] text-[#7E7E89]">
                       {new Date(entry.createdAt).toLocaleString()}
-                    </p>
+                    </span>
                   </div>
-                  <div className="text-right">
-                    <p className={entry.amount > 0 ? 'font-medium text-success' : 'text-foreground-dark'}>
-                      {entry.amount > 0 ? `+${entry.amount}` : entry.amount}
-                    </p>
+                  <div className="shrink-0 text-right">
+                    <div
+                      className={`font-geist-mono text-[14px] font-semibold ${
+                        isCredit ? 'text-[#7CF0B0]' : 'text-[#F4F4F6]'
+                      }`}
+                    >
+                      {isCredit ? `+${formatNumber(entry.amount)}` : formatNumber(entry.amount)}
+                    </div>
                     {entry.balanceAfter != null && (
-                      <p className="text-xs text-foreground-light">
+                      <div className="font-geist-mono text-[12px] text-[#7E7E89]">
                         {t('history.balanceAfter', { count: entry.balanceAfter })}
-                      </p>
+                      </div>
                     )}
                   </div>
-                </li>
-              ))}
-            </ul>
-          )}
-        </CardContent>
-      </Card>
+                </div>
+              )
+            })}
+          </div>
+        )}
+      </div>
     </div>
   )
 }

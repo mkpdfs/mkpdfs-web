@@ -2,16 +2,16 @@
 
 import { useState, useMemo } from 'react'
 import { useMarketplaceTemplates, useCopyMarketplaceTemplate, useTemplates } from '@/hooks/useApi'
-import { Card, CardContent, Spinner, Input } from '@/components/ui'
+import { Spinner } from '@/components/ui'
 import { CategoryTabs, TemplateCard, TemplatePreviewModal } from '@/components/marketplace'
+import { ContactLink } from '@/components/landing'
 import { toast } from '@/hooks/useToast'
-import { Search, Store } from 'lucide-react'
+import { Search, Plus } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import type { MarketplaceTemplate } from '@/types'
 
 export default function MarketplacePage() {
   const t = useTranslations('marketplace')
-  const common = useTranslations('common')
   const errors = useTranslations('errors')
 
   const [category, setCategory] = useState('all')
@@ -72,50 +72,47 @@ export default function MarketplacePage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="flex items-center gap-2 text-2xl font-bold text-foreground-dark">
-          <Store className="h-6 w-6" />
-          {t('title')}
-        </h1>
-        <p className="mt-1 text-sm text-foreground-light">{t('subtitle')}</p>
+      <div className="flex flex-wrap items-end justify-between gap-5">
+        <div>
+          <h1 className="mb-1.5 text-[26px] font-bold tracking-[-0.025em]">{t('pageTitle')}</h1>
+          <p className="text-[14.5px] text-[#9C9CA8]">{t('pageSubtitle')}</p>
+        </div>
+        <div className="relative w-full min-w-[260px] sm:w-auto">
+          <Search
+            className="pointer-events-none absolute left-3.5 top-1/2 h-[15px] w-[15px] -translate-y-1/2 text-[#7E7E89]"
+            strokeWidth={2}
+          />
+          <input
+            type="text"
+            placeholder={t('searchPlaceholder')}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="h-[38px] w-full rounded-[10px] border border-white/10 bg-white/[0.03] pl-9 pr-3.5 text-[13.5px] text-[#F4F4F6] outline-none transition-colors placeholder:text-[#5C5C66] focus:border-[#8C6CFF]/50 sm:w-[280px]"
+          />
+        </div>
       </div>
 
-      {/* Category Tabs */}
+      {/* Category chips */}
       <CategoryTabs activeCategory={category} onChange={setCategory} />
-
-      {/* Search */}
-      <div className="relative max-w-sm">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-        <Input
-          placeholder={t('searchPlaceholder')}
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="pl-10"
-        />
-      </div>
 
       {/* Content */}
       {isLoading ? (
         <div className="flex items-center justify-center py-12">
-          <Spinner size="lg" />
+          <Spinner size="lg" className="text-[#8C6CFF]" />
         </div>
       ) : error ? (
-        <Card>
-          <CardContent className="py-12 text-center">
-            <p className="text-destructive">{errors('generic')}</p>
-          </CardContent>
-        </Card>
+        <div className="rounded-[14px] border border-white/[0.09] bg-[#0C0C0F] py-12 text-center">
+          <p className="text-[14px] text-[#9C9CA8]">{errors('generic')}</p>
+        </div>
       ) : filteredTemplates?.length === 0 ? (
-        <Card className="border-dashed">
-          <CardContent className="py-12 text-center">
-            <h3 className="text-lg font-medium text-foreground-dark">{t('empty')}</h3>
-            <p className="mt-2 text-sm text-foreground-light">
-              {searchQuery ? t('emptySearch') : t('emptyDefault')}
-            </p>
-          </CardContent>
-        </Card>
+        <div className="rounded-[14px] border border-dashed border-white/[0.12] py-12 text-center">
+          <h3 className="text-[15px] font-semibold text-[#F4F4F6]">{t('empty')}</h3>
+          <p className="mt-2 text-[13.5px] text-[#9C9CA8]">
+            {searchQuery ? t('emptySearch') : t('emptyDefault')}
+          </p>
+        </div>
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {filteredTemplates?.map((template) => (
             <TemplateCard
               key={template.templateId}
@@ -126,6 +123,15 @@ export default function MarketplacePage() {
               isAdded={addedMarketplaceIds.has(template.templateId)}
             />
           ))}
+
+          {/* Request a custom template */}
+          <ContactLink className="flex min-h-[248px] flex-col items-center justify-center gap-2.5 rounded-[14px] border border-dashed border-[#8C6CFF]/40 p-7 text-center transition-colors hover:bg-[#8C6CFF]/5">
+            <span className="flex h-10 w-10 items-center justify-center rounded-[11px] border border-[#8C6CFF]/30 bg-[#8C6CFF]/[0.14] text-[#B7A6FF]">
+              <Plus className="h-5 w-5" strokeWidth={2} />
+            </span>
+            <span className="text-[14.5px] font-semibold text-[#F4F4F6]">{t('request.title')}</span>
+            <span className="text-[13px] text-[#7E7E89]">{t('request.subtitle')}</span>
+          </ContactLink>
         </div>
       )}
 

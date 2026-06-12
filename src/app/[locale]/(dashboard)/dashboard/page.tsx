@@ -5,21 +5,71 @@ import { useTranslations } from 'next-intl'
 import { Link } from '@/i18n/routing'
 import { useAuth } from '@/providers'
 import { useUsage, useProfile } from '@/hooks/useApi'
-import { Card, CardHeader, CardTitle, CardContent, Button, Spinner } from '@/components/ui'
+import { Spinner } from '@/components/ui'
 import { formatNumber } from '@/lib/utils'
 import {
-  CreditCard,
   FileText,
-  Sparkles,
+  LayoutDashboard,
   Key,
-  ArrowRight,
+  Zap,
   Upload,
-  Wand2,
+  Sparkles,
   Check,
   X,
+  type LucideIcon,
 } from 'lucide-react'
 
 const ONBOARDING_DISMISSED_KEY = 'mkpdfs_onboarding_dismissed'
+
+function StatCard({
+  label,
+  value,
+  limit,
+  unlimitedLabel,
+  icon: Icon,
+  isLoading,
+}: {
+  label: string
+  value: number
+  limit: number | null
+  unlimitedLabel: string
+  icon: LucideIcon
+  isLoading: boolean
+}) {
+  const isUnlimited = limit === -1
+  const pct = limit == null || isUnlimited ? 0 : Math.min((value / limit) * 100, 100)
+
+  return (
+    <div className="rounded-[14px] border border-white/[0.09] bg-[linear-gradient(180deg,rgba(255,255,255,0.025),rgba(255,255,255,0))] px-[22px] py-5">
+      <div className="mb-3.5 flex items-center justify-between">
+        <span className="font-geist-mono text-[11.5px] uppercase tracking-[0.09em] text-[#9C9CA8]">
+          {label}
+        </span>
+        <Icon className="h-4 w-4 text-[#B7A6FF]" strokeWidth={1.9} />
+      </div>
+      {isLoading ? (
+        <Spinner size="sm" />
+      ) : (
+        <div className="flex items-baseline gap-1.5">
+          <span className="text-[30px] font-bold leading-none tracking-[-0.03em]">
+            {formatNumber(value)}
+          </span>
+          {limit != null && (
+            <span className="font-geist-mono text-[13px] text-[#7E7E89]">
+              / {isUnlimited ? unlimitedLabel : formatNumber(limit)}
+            </span>
+          )}
+        </div>
+      )}
+      <div className="mt-3.5 h-1 overflow-hidden rounded-sm bg-white/[0.07]">
+        <div
+          className="h-full rounded-sm bg-[linear-gradient(90deg,#8C6CFF,#B7A6FF)] transition-all"
+          style={{ width: `${pct}%` }}
+        />
+      </div>
+    </div>
+  )
+}
 
 export default function DashboardPage() {
   const { user } = useAuth()
@@ -42,39 +92,28 @@ export default function DashboardPage() {
 
   const usageData = usage?.usage
   const limits = profile?.subscriptionLimits
+
   const stats = [
     {
-      key: 'credits',
-      name: t('stats.credits'),
-      value: profile?.subscription?.creditBalance ?? 0,
-      limit: null as number | null, // balance, not a quota — no bar
-      icon: CreditCard,
-      href: '/billing',
-      color: 'text-primary',
-      bgColor: 'bg-primary-50',
-      barColor: 'bg-primary',
+      key: 'pages',
+      label: t('stats.pages'),
+      value: usageData?.pagesGenerated ?? 0,
+      limit: null as number | null,
+      icon: FileText,
     },
     {
       key: 'templates',
-      name: t('stats.templates'),
+      label: t('stats.templates'),
       value: usageData?.templatesUploaded ?? 0,
       limit: limits?.templatesAllowed ?? 5,
-      icon: FileText,
-      href: '/templates',
-      color: 'text-secondary',
-      bgColor: 'bg-secondary-50',
-      barColor: 'bg-secondary',
+      icon: LayoutDashboard,
     },
     {
       key: 'apiKeys',
-      name: t('stats.apiKeys'),
+      label: t('stats.apiKeys'),
       value: usageData?.tokensCreated ?? 0,
       limit: limits?.apiTokensAllowed ?? 3,
       icon: Key,
-      href: '/api-keys',
-      color: 'text-info',
-      bgColor: 'bg-blue-50',
-      barColor: 'bg-info',
     },
   ]
 
@@ -82,180 +121,157 @@ export default function DashboardPage() {
     {
       name: t('quickActions.generatePdf.name'),
       description: t('quickActions.generatePdf.description'),
-      icon: Sparkles,
+      icon: Zap,
       href: '/integration',
-      color: 'from-primary to-secondary',
     },
     {
       name: t('quickActions.uploadTemplate.name'),
       description: t('quickActions.uploadTemplate.description'),
       icon: Upload,
       href: '/templates',
-      color: 'from-secondary to-primary',
     },
     {
       name: t('quickActions.aiGenerate.name'),
       description: t('quickActions.aiGenerate.description'),
-      icon: Wand2,
+      icon: Sparkles,
       href: '/ai-generate',
-      color: 'from-purple-500 to-pink-500',
     },
   ]
+
+  const steps = [
+    {
+      done: (usageData?.templatesUploaded ?? 0) > 0,
+      href: '/templates',
+      label: t('gettingStarted.step1'),
+      suffix: null as string | null,
+    },
+    {
+      done: (usageData?.tokensCreated ?? 0) > 0,
+      href: '/api-keys',
+      label: t('gettingStarted.step2'),
+      suffix: t('gettingStarted.step2Suffix'),
+    },
+    {
+      done: (usageData?.pagesGenerated ?? 0) > 0,
+      href: '/integration',
+      label: t('gettingStarted.step3'),
+      suffix: null,
+    },
+  ]
+  const doneCount = steps.filter((s) => s.done).length
 
   const firstName = user?.name?.split(' ')[0]
 
   return (
-    <div className="space-y-6">
-      {/* Welcome Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-foreground-dark">
+    <div>
+      {/* Welcome */}
+      <div className="mb-7">
+        <h1 className="mb-1.5 text-[26px] font-bold tracking-[-0.025em]">
           {firstName ? t('welcome', { name: firstName }) : t('welcomeDefault')}
         </h1>
-        <p className="mt-1 text-sm text-foreground-light">
-          {t('subtitle')}
-        </p>
+        <p className="text-[14.5px] text-[#9C9CA8]">{t('subtitle')}</p>
       </div>
 
-      {/* Stats Grid */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {stats.map((stat) => {
-          const hasLimit = stat.limit != null
-          const isUnlimited = stat.limit === -1
-          const percentage = !hasLimit || isUnlimited ? 0 : (stat.value / stat.limit!) * 100
-          const cardContent = (
-            <Card className={stat.href ? 'transition-shadow hover:shadow-md' : ''}>
-              <CardContent className="p-6">
-                <div className="flex items-center gap-4">
-                  <div className={`rounded-lg p-3 ${stat.bgColor}`}>
-                    <stat.icon className={`h-6 w-6 ${stat.color}`} />
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-foreground-light">{stat.name}</p>
-                    {isLoading ? (
-                      <Spinner size="sm" className="mt-1" />
-                    ) : (
-                      <p className="text-2xl font-semibold text-foreground-dark">
-                        {formatNumber(stat.value)}
-                        {hasLimit && (
-                          <span className="text-sm font-normal text-foreground-light">
-                            {isUnlimited ? ` / ${t('unlimited')}` : ` / ${formatNumber(stat.limit!)}`}
-                          </span>
-                        )}
-                      </p>
-                    )}
-                  </div>
-                </div>
-                {!isLoading && hasLimit && (
-                  <div className="mt-4">
-                    <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
-                      <div
-                        className={`h-full rounded-full ${stat.barColor} transition-all`}
-                        style={{ width: `${Math.min(percentage, 100)}%` }}
-                      />
-                    </div>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          )
-          return stat.href ? (
-            <Link key={stat.key} href={stat.href}>
-              {cardContent}
-            </Link>
-          ) : (
-            <div key={stat.key}>{cardContent}</div>
-          )
-        })}
+      {/* Stats */}
+      <div className="mb-9 grid grid-cols-1 gap-4 sm:grid-cols-3">
+        {stats.map((stat) => (
+          <StatCard
+            key={stat.key}
+            label={stat.label}
+            value={stat.value}
+            limit={stat.limit}
+            unlimitedLabel={t('unlimited')}
+            icon={stat.icon}
+            isLoading={isLoading}
+          />
+        ))}
       </div>
 
-      {/* Quick Actions */}
-      <div>
-        <h2 className="mb-4 text-lg font-semibold text-foreground-dark">{t('quickActions.title')}</h2>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {quickActions.map((action) => (
-            <Link key={action.href} href={action.href}>
-              <Card className="group overflow-hidden transition-shadow hover:shadow-md">
-                <div className={`h-1 bg-gradient-to-r ${action.color}`} />
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className={`rounded-lg bg-gradient-to-br p-2.5 ${action.color}`}>
-                        <action.icon className="h-5 w-5 text-white" />
-                      </div>
-                      <div>
-                        <p className="font-medium text-foreground-dark">{action.name}</p>
-                        <p className="text-sm text-foreground-light">{action.description}</p>
-                      </div>
-                    </div>
-                    <ArrowRight className="h-5 w-5 text-foreground-light transition-transform group-hover:translate-x-1" />
-                  </div>
-                </CardContent>
-              </Card>
-            </Link>
-          ))}
-        </div>
+      {/* Quick actions */}
+      <div className="mb-3 font-geist-mono text-[11.5px] uppercase tracking-[0.1em] text-[#7E7E89]">
+        {t('quickActions.title')}
       </div>
-
-      {/* Getting Started */}
-      {!onboardingDismissed && (
-        <Card className="border-dashed">
-          <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="text-lg">{t('gettingStarted.title')}</CardTitle>
-            <button
-              onClick={dismissOnboarding}
-              className="text-foreground-light hover:text-foreground transition-colors"
-              aria-label={t('gettingStarted.dismiss')}
-            >
-              <X className="h-5 w-5" />
-            </button>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <p className="text-sm text-foreground-light">
-                {t('gettingStarted.intro')}
-              </p>
-              <ol className="space-y-3 text-sm text-foreground-light">
-                <li className="flex items-center gap-3">
-                  <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full ${(usageData?.templatesUploaded ?? 0) > 0 ? 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400' : 'bg-muted text-muted-foreground'}`}>
-                    {(usageData?.templatesUploaded ?? 0) > 0 ? <Check className="h-4 w-4" /> : '1'}
-                  </span>
-                  <Link href="/templates" className={`hover:underline ${(usageData?.templatesUploaded ?? 0) > 0 ? 'text-green-600 dark:text-green-400' : 'text-primary'}`}>
-                    {t('gettingStarted.step1')}
-                  </Link>
-                </li>
-                <li className="flex items-center gap-3">
-                  <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full ${(usageData?.tokensCreated ?? 0) > 0 ? 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400' : 'bg-muted text-muted-foreground'}`}>
-                    {(usageData?.tokensCreated ?? 0) > 0 ? <Check className="h-4 w-4" /> : '2'}
-                  </span>
-                  <span>
-                    <Link href="/api-keys" className={`hover:underline ${(usageData?.tokensCreated ?? 0) > 0 ? 'text-green-600 dark:text-green-400' : 'text-primary'}`}>
-                      {t('gettingStarted.step2')}
-                    </Link>{' '}
-                    {t('gettingStarted.step2Suffix')}
-                  </span>
-                </li>
-                <li className="flex items-center gap-3">
-                  <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full ${(usageData?.pagesGenerated ?? 0) > 0 ? 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400' : 'bg-muted text-muted-foreground'}`}>
-                    {(usageData?.pagesGenerated ?? 0) > 0 ? <Check className="h-4 w-4" /> : '3'}
-                  </span>
-                  <Link href="/integration" className={`hover:underline ${(usageData?.pagesGenerated ?? 0) > 0 ? 'text-green-600 dark:text-green-400' : 'text-primary'}`}>
-                    {t('gettingStarted.step3')}
-                  </Link>
-                </li>
-              </ol>
-              {(usageData?.templatesUploaded ?? 0) === 0 && (
-                <div className="pt-2">
-                  <Link href="/templates">
-                    <Button>
-                      <Upload className="mr-2 h-4 w-4" />
-                      {t('gettingStarted.uploadFirstTemplate')}
-                    </Button>
-                  </Link>
-                </div>
-              )}
+      <div className="mb-9 grid grid-cols-1 gap-4 sm:grid-cols-3">
+        {quickActions.map((action) => (
+          <Link
+            key={action.href}
+            href={action.href}
+            className="flex items-center gap-3.5 rounded-[14px] border border-white/[0.09] bg-[#0C0C0F] px-5 py-[18px] transition-all hover:-translate-y-0.5 hover:border-[#8C6CFF]/45 hover:bg-[#0E0E12]"
+          >
+            <div className="flex h-[42px] w-[42px] shrink-0 items-center justify-center rounded-[11px] border border-[#8C6CFF]/30 bg-[#8C6CFF]/[0.14] text-[#B7A6FF]">
+              <action.icon className="h-[19px] w-[19px]" strokeWidth={1.9} />
             </div>
-          </CardContent>
-        </Card>
+            <div className="min-w-0 flex-1">
+              <div className="mb-[3px] text-[15px] font-semibold">{action.name}</div>
+              <div className="truncate text-[13px] text-[#7E7E89]">{action.description}</div>
+            </div>
+            <span className="text-base text-[#5C5C66]">→</span>
+          </Link>
+        ))}
+      </div>
+
+      {/* Get started */}
+      {!onboardingDismissed && (
+        <div className="relative rounded-2xl border border-[#8C6CFF]/[0.28] bg-[linear-gradient(140deg,rgba(124,92,255,0.07),rgba(255,255,255,0.01))] px-7 py-[26px]">
+          <button
+            onClick={dismissOnboarding}
+            aria-label={t('gettingStarted.dismiss')}
+            className="absolute right-4 top-4 flex h-[30px] w-[30px] items-center justify-center rounded-lg text-[#7E7E89] transition-colors hover:bg-white/[0.06] hover:text-[#F4F4F6]"
+          >
+            <X className="h-[15px] w-[15px]" />
+          </button>
+          <div className="mb-1.5 flex flex-wrap items-center gap-3">
+            <h2 className="text-lg font-semibold tracking-[-0.015em]">
+              {t('gettingStarted.title')}
+            </h2>
+            <span className="rounded-full border border-[#8C6CFF]/30 bg-[#8C6CFF]/[0.13] px-2.5 py-[3px] font-geist-mono text-[11.5px] text-[#B7A6FF]">
+              {t('gettingStarted.progress', { done: doneCount })}
+            </span>
+          </div>
+          <p className="mb-5 text-[13.5px] text-[#9C9CA8]">{t('gettingStarted.intro')}</p>
+
+          <div className="flex max-w-[560px] flex-col gap-1">
+            {steps.map((step, i) =>
+              step.done ? (
+                <div key={i} className="-mx-3.5 flex items-center gap-3.5 px-3.5 py-[11px]">
+                  <span className="flex h-[26px] w-[26px] shrink-0 items-center justify-center rounded-full border-[1.5px] border-[#3FBF7F]/50 bg-[#3FBF7F]/[0.15]">
+                    <Check className="h-[13px] w-[13px] text-[#7CF0B0]" strokeWidth={2.6} />
+                  </span>
+                  <span className="flex-1 text-[14.5px] font-medium text-[#7E7E89] line-through decoration-white/25">
+                    {step.label}
+                  </span>
+                </div>
+              ) : (
+                <Link
+                  key={i}
+                  href={step.href}
+                  className="-mx-3.5 flex items-center gap-3.5 rounded-[11px] px-3.5 py-[11px] transition-colors hover:bg-white/[0.04]"
+                >
+                  <span className="flex h-[26px] w-[26px] shrink-0 items-center justify-center rounded-full border-[1.5px] border-[#8C6CFF]/50 font-geist-mono text-xs font-semibold text-[#B7A6FF]">
+                    {i + 1}
+                  </span>
+                  <span className="flex-1 text-[14.5px] font-medium text-[#F4F4F6]">
+                    {step.label}
+                    {step.suffix && (
+                      <span className="font-normal text-[#7E7E89]"> {step.suffix}</span>
+                    )}
+                  </span>
+                  <span className="text-[#5C5C66]">→</span>
+                </Link>
+              )
+            )}
+          </div>
+
+          {(usageData?.templatesUploaded ?? 0) === 0 && (
+            <Link
+              href="/templates"
+              className="mt-[18px] inline-flex items-center gap-2 rounded-[10px] bg-[linear-gradient(140deg,#8C6CFF,#5B3FE0)] px-5 py-[11px] text-sm font-semibold text-white shadow-[0_6px_20px_rgba(124,92,255,0.35),inset_0_1px_0_rgba(255,255,255,0.2)] transition-all hover:-translate-y-px hover:shadow-[0_10px_28px_rgba(124,92,255,0.5)]"
+            >
+              <Upload className="h-[15px] w-[15px]" strokeWidth={2} />
+              {t('gettingStarted.uploadFirstTemplate')}
+            </Link>
+          )}
+        </div>
       )}
     </div>
   )

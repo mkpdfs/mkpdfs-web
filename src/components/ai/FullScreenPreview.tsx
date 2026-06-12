@@ -2,9 +2,8 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Handlebars from 'handlebars'
-import { FileText, Code2, RefreshCw, AlertCircle, Sparkles } from 'lucide-react'
+import { FileText, Code2, RefreshCw, AlertCircle, Sparkles, Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { Button, Spinner } from '@/components/ui'
 import { useTranslations } from 'next-intl'
 
 type PreviewMode = 'html' | 'pdf'
@@ -131,16 +130,16 @@ export function FullScreenPreview({
   const hasContent = templateContent.trim().length > 0
 
   return (
-    <div className={cn('flex flex-col h-full rounded-lg border border-border overflow-hidden bg-muted/30', className)}>
+    <div className={cn('flex flex-col h-full rounded-[14px] border border-white/[0.09] overflow-hidden bg-[linear-gradient(180deg,#101014,#0C0C0F)]', className)}>
       {/* Mode Toggle - Top Left */}
-      <div className="absolute top-8 left-4 z-10 flex items-center gap-1 bg-background/95 backdrop-blur rounded-lg border border-border shadow-sm p-1">
+      <div className="absolute left-4 top-8 z-10 flex items-center gap-1 rounded-[11px] border border-white/[0.09] bg-[#0C0C0F]/95 p-1 shadow-[0_8px_24px_rgba(0,0,0,0.5)] backdrop-blur">
         <button
           onClick={() => handleModeChange('html')}
           className={cn(
-            'flex items-center gap-2 rounded-md px-3 py-1.5 text-sm font-medium transition-colors',
+            'flex items-center gap-2 rounded-[8px] px-3 py-1.5 font-geist-mono text-[12.5px] font-medium uppercase tracking-[0.06em] transition-colors',
             mode === 'html'
-              ? 'bg-primary text-primary-foreground'
-              : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+              ? 'bg-[#8C6CFF] text-white'
+              : 'text-[#7E7E89] hover:bg-white/[0.06] hover:text-[#F4F4F6]'
           )}
         >
           <Code2 className="h-4 w-4" />
@@ -149,10 +148,10 @@ export function FullScreenPreview({
         <button
           onClick={() => handleModeChange('pdf')}
           className={cn(
-            'flex items-center gap-2 rounded-md px-3 py-1.5 text-sm font-medium transition-colors',
+            'flex items-center gap-2 rounded-[8px] px-3 py-1.5 font-geist-mono text-[12.5px] font-medium uppercase tracking-[0.06em] transition-colors',
             mode === 'pdf'
-              ? 'bg-primary text-primary-foreground'
-              : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+              ? 'bg-[#8C6CFF] text-white'
+              : 'text-[#7E7E89] hover:bg-white/[0.06] hover:text-[#F4F4F6]'
           )}
         >
           <FileText className="h-4 w-4" />
@@ -160,15 +159,13 @@ export function FullScreenPreview({
         </button>
 
         {mode === 'pdf' && onRequestPdf && hasContent && (
-          <Button
-            variant="ghost"
-            size="sm"
+          <button
             onClick={handleRefreshPdf}
             disabled={isPdfLoading}
-            className="ml-1"
+            className="ml-1 flex h-8 w-8 items-center justify-center rounded-[8px] text-[#7E7E89] transition-colors hover:bg-white/[0.06] hover:text-[#F4F4F6] disabled:opacity-50"
           >
             <RefreshCw className={cn('h-4 w-4', isPdfLoading && 'animate-spin')} />
-          </Button>
+          </button>
         )}
       </div>
 
@@ -176,24 +173,24 @@ export function FullScreenPreview({
       <div className="flex-1 min-h-0 relative">
         {!hasContent ? (
           // Empty State
-          <div className="absolute inset-0 flex flex-col items-center justify-center text-muted-foreground">
-            <div className="flex flex-col items-center max-w-md text-center p-8">
-              <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mb-6">
-                <Sparkles className="h-10 w-10 text-primary" />
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-[linear-gradient(180deg,#101014,#0C0C0F)]">
+            <div className="flex max-w-md flex-col items-center p-8 text-center">
+              <div className="mb-6 flex h-[52px] w-[52px] items-center justify-center rounded-[14px] border border-[#8C6CFF]/30 bg-[#8C6CFF]/[0.14] text-[#B7A6FF]">
+                <Sparkles className="h-6 w-6" strokeWidth={1.7} />
               </div>
-              <h3 className="text-xl font-semibold text-foreground mb-2">
+              <h3 className="mb-2 text-xl font-semibold tracking-[-0.015em] text-[#F4F4F6]">
                 {t('fullscreen.emptyTitle')}
               </h3>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-[#9C9CA8]">
                 {t('fullscreen.emptyDescription')}
               </p>
             </div>
           </div>
         ) : error ? (
-          <div className="absolute inset-0 flex flex-col items-center justify-center p-4 text-destructive">
-            <AlertCircle className="mb-2 h-12 w-12" />
-            <p className="text-lg font-medium">{t('preview.renderError')}</p>
-            <p className="mt-2 text-sm text-center max-w-md opacity-80">{error}</p>
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-[linear-gradient(180deg,#101014,#0C0C0F)] p-4">
+            <AlertCircle className="mb-2 h-12 w-12 text-[#FF8B8B]" strokeWidth={1.5} />
+            <p className="text-lg font-medium text-[#FF8B8B]">{t('preview.renderError')}</p>
+            <p className="mt-2 max-w-md text-center font-geist-mono text-[13px] text-[#9C9CA8]">{error}</p>
           </div>
         ) : mode === 'html' ? (
           <iframe
@@ -203,10 +200,10 @@ export function FullScreenPreview({
             sandbox="allow-same-origin"
           />
         ) : isPdfLoading ? (
-          <div className="absolute inset-0 flex items-center justify-center bg-white">
-            <div className="text-center">
-              <Spinner size="lg" className="mb-4" />
-              <p className="text-muted-foreground">{t('preview.generatingPdf')}</p>
+          <div className="absolute inset-0 flex items-center justify-center bg-[linear-gradient(180deg,#101014,#0C0C0F)]">
+            <div className="flex flex-col items-center text-center">
+              <Loader2 className="mb-4 h-8 w-8 animate-spin text-[#B7A6FF]" strokeWidth={1.7} />
+              <p className="font-geist-mono text-[13px] text-[#9C9CA8]">{t('preview.generatingPdf')}</p>
             </div>
           </div>
         ) : pdfUrl ? (
@@ -216,17 +213,17 @@ export function FullScreenPreview({
             className="absolute inset-0 h-full w-full border-0"
           />
         ) : (
-          <div className="absolute inset-0 flex items-center justify-center bg-white">
+          <div className="absolute inset-0 flex items-center justify-center bg-[linear-gradient(180deg,#101014,#0C0C0F)]">
             <div className="text-center">
-              <FileText className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
-              <p className="text-muted-foreground mb-4">{t('preview.clickToGenerate')}</p>
+              <FileText className="mx-auto mb-4 h-12 w-12 text-[#5C5C66]" strokeWidth={1.5} />
+              <p className="mb-4 font-geist-mono text-[13px] text-[#9C9CA8]">{t('preview.clickToGenerate')}</p>
               {onRequestPdf && (
-                <Button
-                  variant="outline"
+                <button
                   onClick={handleRefreshPdf}
+                  className="h-9 rounded-[9px] border border-white/[0.12] bg-white/[0.04] px-[18px] text-sm font-semibold text-[#F4F4F6] transition-colors hover:bg-white/[0.08]"
                 >
                   {t('preview.generatePdf')}
-                </Button>
+                </button>
               )}
             </div>
           </div>

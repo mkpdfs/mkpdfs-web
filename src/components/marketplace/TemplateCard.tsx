@@ -1,11 +1,9 @@
 'use client'
 
 import Image from 'next/image'
-import { Card, CardContent } from '@/components/ui/Card'
-import { Button } from '@/components/ui/Button'
-import { FileText, Eye, Plus, Download, Check } from 'lucide-react'
+import { Spinner } from '@/components/ui/Spinner'
+import { Check } from 'lucide-react'
 import type { MarketplaceTemplate } from '@/types'
-import { getCategoryLabel } from './CategoryTabs'
 import { useTranslations } from 'next-intl'
 
 interface TemplateCardProps {
@@ -18,7 +16,6 @@ interface TemplateCardProps {
 
 export function TemplateCard({ template, onPreview, onUse, isLoading, isAdded }: TemplateCardProps) {
   const t = useTranslations('marketplace')
-  const categoryT = useTranslations('marketplace.categories')
   const templatesT = useTranslations('marketplace.templates')
 
   // Get localized name and description, falling back to backend values
@@ -30,79 +27,69 @@ export function TemplateCard({ template, onPreview, onUse, isLoading, isAdded }:
     : template.description
 
   return (
-    <Card className="group transition-all hover:shadow-md">
-      <CardContent className="p-4">
-        {/* Thumbnail or placeholder */}
-        <div className="relative mb-3 aspect-video overflow-hidden rounded-lg bg-muted">
-          {template.thumbnailUrl ? (
-            <Image
-              src={template.thumbnailUrl}
-              alt={template.name}
-              fill
-              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-              className="object-cover"
-              loading="lazy"
-            />
-          ) : (
-            <div className="flex h-full w-full items-center justify-center">
-              <FileText className="h-12 w-12 text-muted-foreground" />
-            </div>
-          )}
-        </div>
+    <div className="group flex flex-col overflow-hidden rounded-[14px] border border-white/[0.09] bg-[#0C0C0F] transition-all hover:-translate-y-0.5 hover:border-[#8C6CFF]/45">
+      {/* Preview area */}
+      <div className="relative flex h-32 shrink-0 items-center justify-center border-b border-white/[0.06] bg-[linear-gradient(160deg,#17171D,#0C0C0F)]">
+        {template.thumbnailUrl ? (
+          <Image
+            src={template.thumbnailUrl}
+            alt={template.name}
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            className="object-cover"
+            loading="lazy"
+          />
+        ) : (
+          <div className="flex h-[92px] w-[72px] flex-col gap-1 rounded-[5px] bg-white p-2.5 shadow-[0_8px_22px_rgba(0,0,0,0.4)]">
+            <div className="h-1.5 w-[54%] rounded-[2px] bg-[#8C6CFF]" />
+            <div className="mt-0.5 h-[3px] w-[80%] rounded-[2px] bg-[#E2E2E8]" />
+            <div className="h-[3px] w-[64%] rounded-[2px] bg-[#E2E2E8]" />
+            <div className="mt-auto h-[3px] w-[74%] rounded-[2px] bg-[#ECECF0]" />
+          </div>
+        )}
+      </div>
 
-        {/* Template Info */}
-        <h3 className="font-medium text-foreground">{templateName}</h3>
-        <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">
-          {templateDescription}
-        </p>
-
-        {/* Category Badge */}
-        <div className="mt-3">
-          <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
-            {getCategoryLabel(template.category, categoryT)}
+      {/* Body */}
+      <div className="flex flex-1 flex-col px-4 pb-4 pt-3.5">
+        <div className="mb-[5px] flex items-center justify-between gap-2">
+          <span className="truncate text-[15px] font-semibold text-[#F4F4F6]">{templateName}</span>
+          <span className="max-w-[45%] shrink-0 truncate rounded-[5px] bg-white/[0.05] px-[7px] py-0.5 font-geist-mono text-[10.5px] text-[#6B6B76]">
+            {template.templateId}
           </span>
-          {template.popularity > 0 && (
-            <span className="ml-2 inline-flex items-center text-xs text-muted-foreground">
-              <Download className="mr-1 h-3 w-3" />
-              {template.popularity}
-            </span>
-          )}
         </div>
+        <p className="mb-3.5 line-clamp-2 text-[13px] text-[#7E7E89]">{templateDescription}</p>
 
         {/* Actions */}
-        <div className="mt-4 flex gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            className="flex-1"
-            onClick={() => onPreview(template)}
-          >
-            <Eye className="mr-1.5 h-4 w-4" />
-            {t('card.preview')}
-          </Button>
+        <div className="mt-auto flex gap-2">
           {isAdded ? (
-            <Button
-              size="sm"
-              variant="success"
-              className="flex-1"
+            <button
+              type="button"
               disabled
+              className="flex h-8 flex-1 items-center justify-center gap-1.5 rounded-lg border border-[#3FBF7F]/40 bg-[#3FBF7F]/[0.12] text-[13px] font-semibold text-[#7CF0B0]"
             >
-              <Check className="mr-1.5 h-4 w-4" />
+              <Check className="h-3.5 w-3.5" strokeWidth={2.4} />
               {t('card.used')}
-            </Button>
+            </button>
           ) : (
-            <Button
-              size="sm"
-              className="flex-1"
+            <button
+              type="button"
               onClick={() => onUse(template)}
               disabled={isLoading}
+              className="flex h-8 flex-1 items-center justify-center gap-1.5 rounded-lg border border-[#8C6CFF]/35 bg-[#8C6CFF]/[0.13] text-[13px] font-semibold text-[#C9BBFF] transition-colors hover:bg-[#8C6CFF]/[0.22] disabled:cursor-not-allowed disabled:opacity-60"
             >
-              <Plus className="mr-1.5 h-4 w-4" />
-              {t('card.use')}
-            </Button>
+              {isLoading && <Spinner size="sm" className="text-[#C9BBFF]" />}
+              {t('card.useTemplate')}
+            </button>
           )}
+          <button
+            type="button"
+            onClick={() => onPreview(template)}
+            className="h-8 rounded-lg border border-white/10 px-3 text-[13px] font-medium text-[#9C9CA8] transition-colors hover:bg-white/[0.05] hover:text-[#F4F4F6]"
+          >
+            {t('card.preview')}
+          </button>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   )
 }

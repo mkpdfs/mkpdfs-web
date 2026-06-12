@@ -1,8 +1,6 @@
 'use client'
 
-import { useState } from 'react'
 import Image from 'next/image'
-import { Button } from '@/components/ui/Button'
 import { Spinner } from '@/components/ui/Spinner'
 import { X, FileText, Trash2, Code } from 'lucide-react'
 import type { Template } from '@/types'
@@ -31,26 +29,28 @@ export function UserTemplatePreviewModal({
   if (!template) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="relative max-h-[90vh] w-full max-w-4xl overflow-hidden rounded-xl bg-card shadow-2xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
+      <div className="relative max-h-[90vh] w-full max-w-4xl overflow-hidden rounded-2xl border border-white/10 bg-[#101014] shadow-[0_24px_60px_rgba(0,0,0,0.6)]">
         {/* Header */}
-        <div className="flex items-center justify-between border-b px-6 py-4">
+        <div className="flex items-center justify-between border-b border-white/[0.08] px-6 py-4">
           <div className="min-w-0 flex-1">
-            <h2 className="truncate text-xl font-semibold text-foreground">{template.name}</h2>
-            <p className="mt-1 text-sm text-muted-foreground">
+            <h2 className="truncate text-xl font-semibold tracking-[-0.015em] text-[#F4F4F6]">
+              {template.name}
+            </h2>
+            <p className="mt-1 font-geist-mono text-[12.5px] text-[#7E7E89]">
               {formatDate(template.createdAt)}
             </p>
           </div>
           <button
             onClick={onClose}
-            className="ml-4 rounded-lg p-2 text-muted-foreground hover:bg-muted hover:text-foreground"
+            className="ml-4 flex h-[34px] w-[34px] shrink-0 items-center justify-center rounded-lg text-[#7E7E89] transition-colors hover:bg-white/[0.06] hover:text-[#F4F4F6]"
           >
             <X className="h-5 w-5" />
           </button>
         </div>
 
         {/* Thumbnail Preview */}
-        <div className="border-b bg-muted px-6 py-4">
+        <div className="border-b border-white/[0.08] bg-white/[0.02] px-6 py-4">
           <div className="relative mx-auto h-64 w-full max-w-xl">
             {template.thumbnailUrl ? (
               <Image
@@ -58,12 +58,12 @@ export function UserTemplatePreviewModal({
                 alt={template.name}
                 fill
                 sizes="(max-width: 768px) 100vw, 600px"
-                className="rounded-lg object-contain shadow-sm"
+                className="rounded-[10px] object-contain"
                 priority
               />
             ) : (
-              <div className="flex h-full w-full items-center justify-center rounded-lg bg-gradient-to-br from-primary/20 to-primary/5">
-                <FileText className="h-16 w-16 text-primary/40" />
+              <div className="flex h-full w-full items-center justify-center rounded-[10px] bg-[linear-gradient(140deg,rgba(124,92,255,0.12),rgba(124,92,255,0.02))]">
+                <FileText className="h-16 w-16 text-[#B7A6FF]/40" strokeWidth={1.5} />
               </div>
             )}
           </div>
@@ -71,18 +71,20 @@ export function UserTemplatePreviewModal({
 
         {/* Template Code Section */}
         <div className="px-6 py-4">
-          <div className="flex items-center gap-2 mb-3">
-            <Code className="h-4 w-4 text-muted-foreground" />
-            <span className="text-sm font-medium text-foreground">{t('preview.templateCode')}</span>
+          <div className="mb-3 flex items-center gap-2">
+            <Code className="h-4 w-4 text-[#B7A6FF]" strokeWidth={1.8} />
+            <span className="font-geist-mono text-[11.5px] uppercase tracking-[0.09em] text-[#9C9CA8]">
+              {t('preview.templateCode')}
+            </span>
           </div>
 
           {isLoading ? (
-            <div className="flex h-48 items-center justify-center rounded-lg border bg-muted">
-              <Spinner size="lg" />
+            <div className="flex h-48 items-center justify-center rounded-[10px] border border-white/[0.08] bg-[#0C0C0F]">
+              <Spinner size="lg" className="text-[#8C6CFF]" />
             </div>
           ) : (
-            <div className="rounded-lg border bg-muted p-4">
-              <pre className="max-h-64 overflow-auto text-sm">
+            <div className="rounded-[10px] border border-white/[0.08] bg-[#0C0C0F] p-4">
+              <pre className="max-h-64 overflow-auto font-geist-mono text-[12.5px] leading-relaxed text-[#9C9CA8]">
                 <code>{templateWithContent?.content || t('preview.loadingTemplate')}</code>
               </pre>
             </div>
@@ -91,28 +93,31 @@ export function UserTemplatePreviewModal({
 
         {/* Description */}
         {template.description && (
-          <div className="border-t bg-muted px-6 py-4">
-            <p className="text-sm text-muted-foreground">{template.description}</p>
+          <div className="border-t border-white/[0.08] bg-white/[0.02] px-6 py-4">
+            <p className="text-sm text-[#9C9CA8]">{template.description}</p>
           </div>
         )}
 
         {/* Footer */}
-        <div className="flex items-center justify-between gap-3 border-t px-6 py-4">
-          <Button
-            variant="destructive"
+        <div className="flex items-center justify-between gap-3 border-t border-white/[0.08] px-6 py-4">
+          <button
             onClick={() => onDelete(template)}
             disabled={isDeleteLoading}
+            className="inline-flex h-[38px] items-center justify-center gap-2 rounded-[10px] border border-[rgba(255,108,140,0.35)] bg-[rgba(255,108,140,0.1)] px-[18px] text-sm font-semibold text-[#FF8A9B] transition-colors hover:bg-[rgba(255,108,140,0.16)] disabled:cursor-not-allowed disabled:opacity-50"
           >
             {isDeleteLoading ? (
-              <Spinner size="sm" className="mr-2" />
+              <Spinner size="sm" className="text-[#FF8A9B]" />
             ) : (
-              <Trash2 className="mr-1.5 h-4 w-4" />
+              <Trash2 className="h-4 w-4" />
             )}
             {t('card.delete')}
-          </Button>
-          <Button variant="outline" onClick={onClose}>
+          </button>
+          <button
+            onClick={onClose}
+            className="inline-flex h-[38px] items-center justify-center rounded-[10px] border border-white/[0.12] bg-white/[0.04] px-[18px] text-sm font-semibold text-[#F4F4F6] transition-colors hover:bg-white/[0.08]"
+          >
             {common('close')}
-          </Button>
+          </button>
         </div>
       </div>
     </div>

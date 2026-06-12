@@ -336,7 +336,8 @@
     "stats": {
       "templates": "Plantillas",
       "apiKeys": "Claves API",
-      "credits": "Créditos Restantes"
+      "credits": "Créditos Restantes",
+      "pages": "Páginas generadas"
     },
     "quickActions": {
       "title": "Acciones Rápidas",
@@ -365,7 +366,8 @@
       "step2Suffix": "para acceso programático",
       "step3": "Genera tu primer PDF",
       "uploadFirstTemplate": "Sube Tu Primera Plantilla",
-      "dismiss": "Cerrar guía"
+      "dismiss": "Cerrar guía",
+      "progress": "{done} de 3 listos"
     }
   },
   "templates": {
@@ -378,7 +380,9 @@
       "description": "Crea tu primera plantilla para empezar a generar PDFs.",
       "action": "Crear Plantilla",
       "noResults": "No se encontraron plantillas",
-      "tryAgain": "Intenta con otro término de búsqueda."
+      "tryAgain": "Intenta con otro término de búsqueda.",
+      "dragDescription": "Arrastra aquí un archivo HTML + Handlebars, o parte de una plantilla lista del marketplace.",
+      "browseMarketplace": "Explorar marketplace"
     },
     "card": {
       "uploaded": "Subido {date}",
@@ -403,7 +407,8 @@
     "preview": {
       "templateCode": "Código de Plantilla",
       "loadingTemplate": "Cargando plantilla..."
-    }
+    },
+    "headerSubtitle": "Tus plantillas subidas y clonadas."
   },
   "create": {
     "title": "Crear Plantilla",
@@ -440,7 +445,9 @@
     "empty": {
       "title": "Sin claves API aún",
       "description": "Sin claves API aún. Crea una arriba.",
-      "action": "Crear Clave API"
+      "action": "Crear Clave API",
+      "body": "Crea una clave para generar PDFs desde tu backend. Las claves se muestran una sola vez, se guardan cifradas y puedes revocarlas cuando quieras.",
+      "cta": "Crea tu primera clave"
     },
     "card": {
       "created": "Creada {date}",
@@ -461,7 +468,15 @@
       "success": "Clave API Creada",
       "error": "Error al crear clave API"
     },
-    "warning": "¡Guarda esta clave ahora - no se mostrará de nuevo!"
+    "warning": "¡Guarda esta clave ahora - no se mostrará de nuevo!",
+    "subtitleScoped": "Tokens revocables y con permisos acotados para acceso servidor a servidor.",
+    "createKey": "Crear clave",
+    "table": {
+      "name": "Nombre",
+      "key": "ID de clave",
+      "created": "Creada",
+      "lastUsed": "Último uso"
+    }
   },
   "usage": {
     "title": "Uso",
@@ -492,7 +507,29 @@
     },
     "upgrade": "Mejorar Plan",
     "recentActivity": "Actividad Reciente",
-    "noActivity": "Sin actividad reciente"
+    "noActivity": "Sin actividad reciente",
+    "requests": {
+      "title": "Uso",
+      "subtitle": "Cada solicitud de generación — <pages></pages> · <spend></spend> este mes.",
+      "pagesValue": "{pages} páginas",
+      "columns": {
+        "document": "Documento",
+        "template": "Plantilla",
+        "source": "Origen",
+        "status": "Estado",
+        "pages": "Páginas",
+        "duration": "Duración",
+        "when": "Cuándo"
+      },
+      "empty": {
+        "title": "Aún no hay solicitudes",
+        "body": "Genera tu primer PDF y cada solicitud aparecerá aquí con su estado, páginas y origen."
+      },
+      "footer": {
+        "count": "Mostrando {count} solicitudes",
+        "retention": "retención de 90 días"
+      }
+    }
   },
   "settings": {
     "title": "Configuración",
@@ -547,7 +584,10 @@
       "hint": "1 crédito = 1 página PDF. Los créditos nunca expiran.",
       "buy": "Comprar 1,000 PDFs — $10",
       "enterprise": "Enterprise — ilimitado",
-      "updateCard": "Actualizar tarjeta"
+      "updateCard": "Actualizar tarjeta",
+      "pages": "≈ {count} páginas",
+      "topUp": "Recargar:",
+      "packNote": "· $10 = 1,000 páginas"
     },
     "autoRecharge": {
       "title": "Auto-recarga",
@@ -566,6 +606,13 @@
       "auto_recharge": "Auto-recarga",
       "debit": "Generación de PDF",
       "balanceAfter": "Saldo: {count}"
+    },
+    "tagline": "Paga por páginas, no por servidores. Los créditos nunca expiran.",
+    "thisMonth": {
+      "title": "Este mes",
+      "pages": "Páginas generadas",
+      "spend": "Gasto",
+      "avg": "Promedio por página"
     }
   },
   "languageSelector": {
@@ -693,6 +740,21 @@
       },
       "request": "Cuerpo de Petición",
       "response": "Respuesta"
+    },
+    "header": {
+      "title": "Integración",
+      "subtitle": "Una petición POST desde cualquier lenguaje. Copia, pega, genera."
+    },
+    "cards": {
+      "webhooks": {
+        "title": "Webhooks",
+        "chip": "jobs asíncronos",
+        "body": "Recibe un callback cuando terminan las generaciones por lotes — sin hacer polling."
+      },
+      "sdks": {
+        "title": "SDKs oficiales",
+        "body": "Clientes tipados con reintentos e idempotencia integrados."
+      }
     }
   },
   "ai": {
@@ -787,6 +849,36 @@
     "fullscreen": {
       "emptyTitle": "Crea Tu Plantilla",
       "emptyDescription": "Inicia una conversación con el asistente IA para generar una plantilla PDF profesional."
+    },
+    "hero": {
+      "title": "Describe tu documento",
+      "subtitle": "La IA redacta una plantilla Handlebars que puedes editar antes de guardar. Generar es gratis: solo pagas por las páginas.",
+      "placeholder": "Una factura a dos columnas con mi logo arriba a la izquierda, una tabla de conceptos con cantidad y precio unitario, resumen de impuestos y un pie con condiciones de pago…",
+      "attach": "Adjuntar recursos de marca",
+      "generate": "Generar",
+      "removeImage": "Quitar imagen"
+    },
+    "examples": {
+      "invoice": {
+        "label": "Factura con logo",
+        "prompt": "Una factura con el logo de mi empresa arriba a la izquierda, datos de facturación del cliente, una tabla de conceptos con cantidad, descripción, precio unitario y total, resumen de impuestos y un pie con condiciones de pago."
+      },
+      "deliveryNote": {
+        "label": "Albarán de entrega",
+        "prompt": "Un albarán de entrega con direcciones de remitente y destinatario, número de pedido y fecha, una tabla de artículos con cantidad y peso, un recuadro de firma para el receptor e instrucciones de entrega al final."
+      },
+      "monthlyReport": {
+        "label": "Informe mensual",
+        "prompt": "Un informe mensual de resultados con una cabecera de portada, un resumen de métricas clave, una tabla de resultados desglosada por semana y una sección final de notas con próximos pasos."
+      },
+      "certificate": {
+        "label": "Certificado de curso",
+        "prompt": "Un certificado de curso en horizontal con un borde elegante, el nombre del alumno en letra grande, el título del curso, la fecha de finalización y líneas de firma para el instructor y el director."
+      },
+      "rentalContract": {
+        "label": "Contrato de alquiler",
+        "prompt": "Un contrato de alquiler con los datos de las partes, la descripción del inmueble, los importes de renta mensual y fianza, cláusulas numeradas con condiciones y obligaciones, y bloques de firma para ambas partes."
+      }
     }
   },
   "marketplace": {
@@ -806,7 +898,8 @@
     "card": {
       "preview": "Vista Previa",
       "use": "Usar",
-      "used": "¡Agregada!"
+      "used": "¡Agregada!",
+      "useTemplate": "Usar plantilla"
     },
     "preview": {
       "title": "Vista Previa de Plantilla",
@@ -873,6 +966,12 @@
         "name": "Carta de Presentación",
         "description": "Plantilla profesional de carta de presentación para solicitudes de empleo. Diseño moderno con secciones para logros clave y por qué eres el candidato ideal."
       }
+    },
+    "pageTitle": "Marketplace",
+    "pageSubtitle": "Plantillas listas para producción. Clona una y hazla tuya.",
+    "request": {
+      "title": "Pide una plantilla a medida",
+      "subtitle": "Cuéntanos qué necesitas y la diseñamos para ti."
     }
   },
   "cli": {
@@ -900,5 +999,10 @@
     "successMessage": "¡Gracias! Nuestro equipo te contactará en las próximas 24 horas.",
     "errorMessage": "Algo salió mal. Por favor intenta de nuevo o escríbenos directamente.",
     "rateLimitMessage": "Demasiadas solicitudes. Por favor intenta más tarde."
+  },
+  "portal": {
+    "credits": "Créditos",
+    "pagesLeft": "≈ {pages} páginas restantes",
+    "topUp": "Recargar"
   }
 }

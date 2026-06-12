@@ -1,24 +1,41 @@
 'use client'
 
 import { useState } from 'react'
-import { useTokens, useCreateToken, useDeleteToken } from '@/hooks/useApi'
-import { Card, CardHeader, CardTitle, CardContent, Button, Input, Spinner } from '@/components/ui'
+import * as DialogPrimitive from '@radix-ui/react-dialog'
+import { useTokens, useCreateToken, useDeleteToken, useProfile } from '@/hooks/useApi'
+import { Spinner } from '@/components/ui'
 import { formatDate } from '@/lib/utils'
 import { toast } from '@/hooks/useToast'
-import { Key, Plus, Trash2, Copy, Eye, EyeOff } from 'lucide-react'
+import { Key, Plus, Trash2, Copy, Eye, EyeOff, X } from 'lucide-react'
 import { useTranslations } from 'next-intl'
+
+const gradientButtonClass =
+  'inline-flex h-[38px] items-center justify-center gap-2 rounded-[10px] bg-[linear-gradient(140deg,#8C6CFF,#5B3FE0)] px-[18px] text-sm font-semibold text-white shadow-[0_6px_20px_rgba(124,92,255,0.35)] transition-all hover:-translate-y-px hover:shadow-[0_10px_28px_rgba(124,92,255,0.5)] disabled:pointer-events-none disabled:opacity-60'
+
+const ghostIconButtonClass =
+  'flex h-9 w-9 shrink-0 items-center justify-center rounded-[9px] border border-white/[0.12] bg-white/[0.04] text-[#9C9CA8] transition-colors hover:bg-white/[0.08] hover:text-[#F4F4F6]'
+
+function maskTokenId(tokenId: string) {
+  if (tokenId.length <= 10) return tokenId
+  return `${tokenId.slice(0, 6)}…${tokenId.slice(-4)}`
+}
 
 export default function ApiKeysPage() {
   const { data: tokens, isLoading } = useTokens()
+  const { data: profile } = useProfile()
   const createToken = useCreateToken()
   const deleteToken = useDeleteToken()
   const t = useTranslations('apiKeys')
   const common = useTranslations('common')
   const errors = useTranslations('errors')
 
+  const [dialogOpen, setDialogOpen] = useState(false)
   const [newTokenName, setNewTokenName] = useState('')
   const [newToken, setNewToken] = useState<string | null>(null)
   const [showToken, setShowToken] = useState(false)
+
+  const keyCount = tokens?.length ?? 0
+  const keyLimit = profile?.subscriptionLimits?.apiTokensAllowed ?? 3
 
   const handleCreate = async () => {
     if (!newTokenName.trim()) {
@@ -33,7 +50,9 @@ export default function ApiKeysPage() {
     try {
       const result = await createToken.mutateAsync({ name: newTokenName.trim() })
       setNewToken(result.token)
+      setShowToken(false)
       setNewTokenName('')
+      setDialogOpen(false)
       toast({
         title: t('createDialog.success'),
         description: t('warning'),
@@ -73,103 +92,195 @@ export default function ApiKeysPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-foreground-dark">{t('title')}</h1>
-        <p className="mt-1 text-sm text-foreground-light">
-          {t('subtitle')}
-        </p>
+    <div>
+      {/* Header */}
+      <div className="mb-7 flex flex-wrap items-end justify-between gap-5">
+        <div>
+          <h1 className="mb-1.5 text-[26px] font-bold tracking-[-0.025em]">{t('title')}</h1>
+          <p className="text-[14.5px] text-[#9C9CA8]">
+            {t('subtitleScoped')}{' '}
+            <span className="font-geist-mono text-[#7E7E89]">
+              {keyCount} / {keyLimit === -1 ? '∞' : keyLimit}
+            </span>
+          </p>
+        </div>
+        <button onClick={() => setDialogOpen(true)} className={gradientButtonClass}>
+          <Plus className="h-[15px] w-[15px]" strokeWidth={2.2} />
+          {t('createKey')}
+        </button>
       </div>
 
-      {/* Create New Key */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">{t('create')}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex gap-4">
-            <div className="flex-1">
-              <Input
+      {/* New key reveal — shown once */}
+      {newToken && (
+        <div className="mb-6 rounded-[14px] border border-[#8C6CFF]/30 bg-[#8C6CFF]/[0.08] p-5">
+          <p className="mb-3 text-sm font-medium text-[#C9BBFF]">{t('warning')}</p>
+          <div className="flex items-center gap-2">
+            <code className="min-w-0 flex-1 truncate rounded-[9px] border border-white/10 bg-white/[0.05] px-3.5 py-2.5 font-geist-mono text-[13px] text-[#F4F4F6]">
+              {showToken ? newToken : '••••••••••••••••••••••••'}
+            </code>
+            <button
+              type="button"
+              onClick={() => setShowToken(!showToken)}
+              className={ghostIconButtonClass}
+              aria-label={showToken ? 'Hide' : 'Show'}
+            >
+              {showToken ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            </button>
+            <button
+              type="button"
+              onClick={() => copyToClipboard(newToken)}
+              className={ghostIconButtonClass}
+              aria-label={t('card.copy')}
+            >
+              <Copy className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Keys */}
+      {isLoading ? (
+        <div className="flex justify-center py-16 text-[#9C9CA8]">
+          <Spinner />
+        </div>
+      ) : keyCount === 0 ? (
+        <div className="flex flex-col items-center rounded-2xl border border-dashed border-white/[0.15] px-8 py-16 text-center">
+          <div className="mb-[18px] flex h-14 w-14 items-center justify-center rounded-[15px] border border-[#8C6CFF]/25 bg-[#8C6CFF]/10 text-[#B7A6FF]">
+            <Key className="h-[26px] w-[26px]" strokeWidth={1.7} />
+          </div>
+          <h2 className="mb-2 text-lg font-semibold">{t('empty.title')}</h2>
+          <p className="mb-6 max-w-[400px] text-[14.5px] text-[#9C9CA8]">{t('empty.body')}</p>
+          <button onClick={() => setDialogOpen(true)} className={gradientButtonClass}>
+            {t('empty.cta')}
+          </button>
+        </div>
+      ) : (
+        <div className="overflow-hidden rounded-[14px] border border-white/[0.09] bg-[#0B0B0E]">
+          {/* Column headers */}
+          <div className="hidden grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)_minmax(0,0.9fr)_minmax(0,0.9fr)_88px] items-center gap-4 border-b border-white/[0.08] bg-white/[0.02] px-[18px] py-[11px] sm:grid">
+            <span className="font-geist-mono text-[11px] uppercase tracking-[0.08em] text-[#7E7E89]">
+              {t('table.name')}
+            </span>
+            <span className="font-geist-mono text-[11px] uppercase tracking-[0.08em] text-[#7E7E89]">
+              {t('table.key')}
+            </span>
+            <span className="font-geist-mono text-[11px] uppercase tracking-[0.08em] text-[#7E7E89]">
+              {t('table.created')}
+            </span>
+            <span className="font-geist-mono text-[11px] uppercase tracking-[0.08em] text-[#7E7E89]">
+              {t('table.lastUsed')}
+            </span>
+            <span />
+          </div>
+
+          {tokens?.map((token) => (
+            <div
+              key={token.tokenId}
+              className="grid grid-cols-1 items-center gap-2 border-b border-white/[0.05] px-[18px] py-[13px] transition-colors last:border-b-0 hover:bg-white/[0.025] sm:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)_minmax(0,0.9fr)_minmax(0,0.9fr)_88px] sm:gap-4"
+            >
+              <div className="flex min-w-0 items-center gap-3">
+                <Key className="h-4 w-4 shrink-0 text-[#B7A6FF]" strokeWidth={1.9} />
+                <span className="truncate text-[14px] font-medium text-[#F4F4F6]">
+                  {token.name}
+                </span>
+              </div>
+              <div>
+                <span className="inline-flex max-w-full items-center truncate rounded-md border border-white/[0.08] bg-white/[0.05] px-[9px] py-[3px] font-geist-mono text-[11.5px] text-[#9C9CA8]">
+                  {maskTokenId(token.tokenId)}
+                </span>
+              </div>
+              <div className="text-[13px] text-[#7E7E89]">
+                <span className="sm:hidden">{t('card.created', { date: formatDate(token.createdAt) })}</span>
+                <span className="hidden sm:inline">{formatDate(token.createdAt)}</span>
+              </div>
+              <div className="text-[13px] text-[#7E7E89]">
+                {token.lastUsed ? (
+                  <>
+                    <span className="sm:hidden">{t('card.lastUsed', { date: formatDate(token.lastUsed) })}</span>
+                    <span className="hidden sm:inline">{formatDate(token.lastUsed)}</span>
+                  </>
+                ) : (
+                  t('card.neverUsed')
+                )}
+              </div>
+              <div className="sm:justify-self-end">
+                <button
+                  type="button"
+                  onClick={() => handleDelete(token.tokenId, token.name)}
+                  className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-[rgba(255,108,140,0.35)] bg-[rgba(255,108,140,0.1)] px-3 text-[12.5px] font-medium text-[#FF8A9B] transition-colors hover:bg-[rgba(255,108,140,0.18)]"
+                >
+                  <Trash2 className="h-[13px] w-[13px]" strokeWidth={2} />
+                  {t('card.revoke')}
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Create key dialog */}
+      <DialogPrimitive.Root open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogPrimitive.Portal>
+          <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=closed]:animate-out data-[state=closed]:fade-out-0" />
+          <DialogPrimitive.Content className="fixed left-1/2 top-1/2 z-50 w-[calc(100%-32px)] max-w-[440px] -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-white/10 bg-[#101014] p-6 text-[#F4F4F6] shadow-[0_24px_60px_rgba(0,0,0,0.55)] duration-200 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95">
+            <DialogPrimitive.Title className="text-[17px] font-semibold tracking-[-0.015em]">
+              {t('createDialog.title')}
+            </DialogPrimitive.Title>
+            <DialogPrimitive.Description className="mt-1.5 text-[13.5px] text-[#9C9CA8]">
+              {t('createDialog.description')}
+            </DialogPrimitive.Description>
+
+            <form
+              onSubmit={(e) => {
+                e.preventDefault()
+                handleCreate()
+              }}
+              className="mt-5"
+            >
+              <label
+                htmlFor="api-key-name"
+                className="mb-2 block font-geist-mono text-[11px] uppercase tracking-[0.08em] text-[#7E7E89]"
+              >
+                {t('createDialog.name')}
+              </label>
+              <input
+                id="api-key-name"
+                autoFocus
                 placeholder={t('createDialog.namePlaceholder')}
                 value={newTokenName}
                 onChange={(e) => setNewTokenName(e.target.value)}
+                className="w-full rounded-[9px] border border-white/10 bg-white/[0.03] px-3.5 py-2.5 text-sm text-[#F4F4F6] outline-none transition-colors placeholder:text-[#5C5C66] focus:border-[rgba(124,92,255,0.5)]"
               />
-            </div>
-            <Button onClick={handleCreate} isLoading={createToken.isPending}>
-              <Plus className="mr-2 h-4 w-4" />
-              {t('createDialog.submit')}
-            </Button>
-          </div>
+              <p className="mt-2 text-[12.5px] text-[#7E7E89]">{t('createDialog.nameHint')}</p>
 
-          {newToken && (
-            <div className="mt-4 rounded-lg bg-warning/10 p-4">
-              <p className="mb-2 text-sm font-medium text-warning-foreground">
-                {t('warning')}
-              </p>
-              <div className="flex items-center gap-2">
-                <code className="flex-1 rounded bg-background p-2 font-mono text-sm">
-                  {showToken ? newToken : '••••••••••••••••••••••••'}
-                </code>
-                <Button variant="ghost" size="icon" onClick={() => setShowToken(!showToken)}>
-                  {showToken ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                </Button>
-                <Button variant="ghost" size="icon" onClick={() => copyToClipboard(newToken)}>
-                  <Copy className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Existing Keys */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">{t('yourKeys')}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {isLoading ? (
-            <div className="flex justify-center py-8">
-              <Spinner />
-            </div>
-          ) : tokens?.length === 0 ? (
-            <div className="py-8 text-center text-foreground-light">
-              <Key className="mx-auto h-12 w-12 text-muted-foreground" />
-              <p className="mt-4">{t('empty.description')}</p>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {tokens?.map((token) => (
-                <div
-                  key={token.tokenId}
-                  className="flex items-center justify-between rounded-lg border border-border p-4"
+              <div className="mt-6 flex justify-end gap-2.5">
+                <button
+                  type="button"
+                  onClick={() => setDialogOpen(false)}
+                  className="inline-flex h-[38px] items-center rounded-[10px] border border-white/[0.12] bg-white/[0.04] px-4 text-sm font-medium text-[#9C9CA8] transition-colors hover:bg-white/[0.08] hover:text-[#F4F4F6]"
                 >
-                  <div className="flex items-center gap-3">
-                    <div className="rounded-lg bg-primary-50 p-2">
-                      <Key className="h-4 w-4 text-primary" />
-                    </div>
-                    <div>
-                      <p className="font-medium text-foreground-dark">{token.name}</p>
-                      <p className="text-sm text-foreground-light">
-                        {t('card.created', { date: formatDate(token.createdAt) })}
-                        {token.lastUsed && ` • ${t('card.lastUsed', { date: formatDate(token.lastUsed) })}`}
-                      </p>
-                    </div>
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => handleDelete(token.tokenId, token.name)}
-                    className="text-foreground-light hover:text-destructive"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
-              ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
+                  {common('cancel')}
+                </button>
+                <button
+                  type="submit"
+                  disabled={createToken.isPending}
+                  className={gradientButtonClass}
+                >
+                  {createToken.isPending && <Spinner size="sm" className="text-white" />}
+                  {t('createDialog.submit')}
+                </button>
+              </div>
+            </form>
+
+            <DialogPrimitive.Close
+              aria-label={common('close')}
+              className="absolute right-4 top-4 flex h-[30px] w-[30px] items-center justify-center rounded-lg text-[#7E7E89] transition-colors hover:bg-white/[0.06] hover:text-[#F4F4F6]"
+            >
+              <X className="h-[15px] w-[15px]" />
+            </DialogPrimitive.Close>
+          </DialogPrimitive.Content>
+        </DialogPrimitive.Portal>
+      </DialogPrimitive.Root>
     </div>
   )
 }

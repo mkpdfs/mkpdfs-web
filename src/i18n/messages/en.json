@@ -336,7 +336,8 @@
     "stats": {
       "templates": "Templates",
       "apiKeys": "API Keys",
-      "credits": "Credits Remaining"
+      "credits": "Credits Remaining",
+      "pages": "Pages generated"
     },
     "quickActions": {
       "title": "Quick Actions",
@@ -365,7 +366,8 @@
       "step2Suffix": "for programmatic access",
       "step3": "Generate your first PDF",
       "uploadFirstTemplate": "Upload Your First Template",
-      "dismiss": "Dismiss guide"
+      "dismiss": "Dismiss guide",
+      "progress": "{done} of 3 done"
     }
   },
   "templates": {
@@ -378,7 +380,9 @@
       "description": "Create your first template to start generating PDFs.",
       "action": "Create Template",
       "noResults": "No templates found",
-      "tryAgain": "Try a different search term."
+      "tryAgain": "Try a different search term.",
+      "dragDescription": "Drag an HTML + Handlebars file here, or start from a ready-made template in the marketplace.",
+      "browseMarketplace": "Browse marketplace"
     },
     "card": {
       "uploaded": "Uploaded {date}",
@@ -403,7 +407,8 @@
     "preview": {
       "templateCode": "Template Code",
       "loadingTemplate": "Loading template..."
-    }
+    },
+    "headerSubtitle": "Your uploaded and cloned templates."
   },
   "create": {
     "title": "Create Template",
@@ -440,7 +445,9 @@
     "empty": {
       "title": "No API keys yet",
       "description": "No API keys yet. Create one above.",
-      "action": "Create API Key"
+      "action": "Create API Key",
+      "body": "Create a key to generate PDFs from your backend. Keys are shown once, stored encrypted, and can be revoked anytime.",
+      "cta": "Create your first key"
     },
     "card": {
       "created": "Created {date}",
@@ -461,7 +468,15 @@
       "success": "API Key Created",
       "error": "Failed to create API key"
     },
-    "warning": "Save this key now - it won't be shown again!"
+    "warning": "Save this key now - it won't be shown again!",
+    "subtitleScoped": "Scoped, revocable tokens for server-to-server access.",
+    "createKey": "Create key",
+    "table": {
+      "name": "Name",
+      "key": "Key ID",
+      "created": "Created",
+      "lastUsed": "Last used"
+    }
   },
   "usage": {
     "title": "Usage",
@@ -492,7 +507,29 @@
     },
     "upgrade": "Upgrade Plan",
     "recentActivity": "Recent Activity",
-    "noActivity": "No recent activity"
+    "noActivity": "No recent activity",
+    "requests": {
+      "title": "Usage",
+      "subtitle": "Every generation request — <pages></pages> · <spend></spend> this month.",
+      "pagesValue": "{pages} pages",
+      "columns": {
+        "document": "Document",
+        "template": "Template",
+        "source": "Source",
+        "status": "Status",
+        "pages": "Pages",
+        "duration": "Duration",
+        "when": "When"
+      },
+      "empty": {
+        "title": "No requests yet",
+        "body": "Generate your first PDF and every request will show up here with its status, pages and source."
+      },
+      "footer": {
+        "count": "Showing {count} requests",
+        "retention": "retained 90 days"
+      }
+    }
   },
   "settings": {
     "title": "Settings",
@@ -547,7 +584,10 @@
       "hint": "1 credit = 1 PDF page. Credits never expire.",
       "buy": "Buy 1,000 PDFs — $10",
       "enterprise": "Enterprise — unlimited",
-      "updateCard": "Update card"
+      "updateCard": "Update card",
+      "pages": "≈ {count} pages",
+      "topUp": "Top up:",
+      "packNote": "· $10 = 1,000 pages"
     },
     "autoRecharge": {
       "title": "Auto-recharge",
@@ -566,6 +606,13 @@
       "auto_recharge": "Auto-recharge",
       "debit": "PDF generation",
       "balanceAfter": "Balance: {count}"
+    },
+    "tagline": "Pay for pages, not servers. Credits never expire.",
+    "thisMonth": {
+      "title": "This month",
+      "pages": "Pages generated",
+      "spend": "Spend",
+      "avg": "Avg. per page"
     }
   },
   "languageSelector": {
@@ -693,6 +740,21 @@
       },
       "request": "Request Body",
       "response": "Response"
+    },
+    "header": {
+      "title": "Integration",
+      "subtitle": "One POST request from any language. Copy, paste, generate."
+    },
+    "cards": {
+      "webhooks": {
+        "title": "Webhooks",
+        "chip": "async jobs",
+        "body": "Get a callback when batch generations finish — no polling."
+      },
+      "sdks": {
+        "title": "Official SDKs",
+        "body": "Typed clients with retries and idempotency built in."
+      }
     }
   },
   "ai": {
@@ -787,6 +849,36 @@
     "fullscreen": {
       "emptyTitle": "Create Your Template",
       "emptyDescription": "Start a conversation with the AI assistant to generate a professional PDF template."
+    },
+    "hero": {
+      "title": "Describe your document",
+      "subtitle": "AI drafts a Handlebars template you can edit before saving. Generation is free — you only pay for pages.",
+      "placeholder": "A two-column invoice with my logo top-left, a line-items table with quantity and unit price, tax summary, and a payment-terms footer…",
+      "attach": "Attach brand assets",
+      "generate": "Generate",
+      "removeImage": "Remove image"
+    },
+    "examples": {
+      "invoice": {
+        "label": "Invoice with logo",
+        "prompt": "An invoice with my company logo top-left, client billing details, a line-items table with quantity, description, unit price and total, a tax summary, and a payment-terms footer."
+      },
+      "deliveryNote": {
+        "label": "Delivery note",
+        "prompt": "A delivery note with sender and recipient addresses, order number and date, a table of items with quantity and weight, a signature box for the receiver, and delivery instructions at the bottom."
+      },
+      "monthlyReport": {
+        "label": "Monthly report",
+        "prompt": "A monthly performance report with a cover header, a summary of key metrics, a results table broken down by week, and a closing notes section with next steps."
+      },
+      "certificate": {
+        "label": "Course certificate",
+        "prompt": "A landscape course certificate with an elegant border, the student's name in large type, the course title, completion date, and signature lines for the instructor and director."
+      },
+      "rentalContract": {
+        "label": "Rental contract",
+        "prompt": "A rental contract with the parties' details, property description, monthly rent and deposit amounts, numbered clauses for terms and obligations, and signature blocks for both parties."
+      }
     }
   },
   "marketplace": {
@@ -806,7 +898,8 @@
     "card": {
       "preview": "Preview",
       "use": "Use",
-      "used": "Added!"
+      "used": "Added!",
+      "useTemplate": "Use template"
     },
     "preview": {
       "title": "Template Preview",
@@ -873,6 +966,12 @@
         "name": "Cover Letter",
         "description": "Professional cover letter template for job applications. Modern design with sections for key achievements and why you're the perfect fit."
       }
+    },
+    "pageTitle": "Marketplace",
+    "pageSubtitle": "Production-ready templates. Clone one and make it yours.",
+    "request": {
+      "title": "Request a custom template",
+      "subtitle": "Tell us what you need — we'll design it for you."
     }
   },
   "cli": {
@@ -900,5 +999,10 @@
     "successMessage": "Thank you! Our team will contact you within 24 hours.",
     "errorMessage": "Something went wrong. Please try again or email us directly.",
     "rateLimitMessage": "Too many requests. Please try again later."
+  },
+  "portal": {
+    "credits": "Credits",
+    "pagesLeft": "≈ {pages} pages left",
+    "topUp": "Top up"
   }
 }

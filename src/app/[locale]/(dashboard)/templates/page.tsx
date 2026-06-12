@@ -1,9 +1,10 @@
 'use client'
 
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import Image from 'next/image'
-import { useTemplates, useDeleteTemplate, useUploadTemplate } from '@/hooks/useApi'
-import { Card, CardContent, Button, Spinner, Input, Label, DropZone, Dialog, DialogContent, DialogHeader, DialogFooter, DialogTitle, DialogDescription } from '@/components/ui'
+import { Link } from '@/i18n/routing'
+import { useTemplates, useDeleteTemplate, useUploadTemplate, useProfile } from '@/hooks/useApi'
+import { Spinner, Dialog, DialogContent, DialogHeader, DialogFooter, DialogTitle, DialogDescription } from '@/components/ui'
 import { formatDate } from '@/lib/utils'
 import { toast } from '@/hooks/useToast'
 import { FileText, Trash2, Search, Upload, X, Eye } from 'lucide-react'
@@ -11,8 +12,94 @@ import { useTranslations } from 'next-intl'
 import { UserTemplatePreviewModal } from '@/components/templates/UserTemplatePreviewModal'
 import type { Template } from '@/types'
 
+const ghostButtonClasses =
+  'inline-flex h-[38px] items-center justify-center gap-2 rounded-[10px] border border-white/[0.12] bg-white/[0.04] px-[18px] text-sm font-semibold text-[#F4F4F6] transition-colors hover:bg-white/[0.08] disabled:cursor-not-allowed disabled:opacity-50'
+
+const gradientButtonClasses =
+  'inline-flex h-[38px] items-center justify-center gap-2 rounded-[10px] bg-[linear-gradient(140deg,#8C6CFF,#5B3FE0)] px-[18px] text-sm font-semibold text-white shadow-[0_6px_20px_rgba(124,92,255,0.35)] transition-all hover:-translate-y-px hover:shadow-[0_10px_28px_rgba(124,92,255,0.5)] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0 disabled:hover:shadow-[0_6px_20px_rgba(124,92,255,0.35)]'
+
+const inputClasses =
+  'h-10 w-full rounded-[10px] border border-white/10 bg-white/[0.03] px-3.5 text-sm text-[#F4F4F6] placeholder:text-[#5C5C66] transition-colors focus:border-[rgba(124,92,255,0.5)] focus:outline-none focus:ring-[3px] focus:ring-[rgba(124,92,255,0.15)] disabled:cursor-not-allowed disabled:opacity-50'
+
+function UploadDropZone({
+  onFileSelect,
+  disabled,
+  selectFileLabel,
+  dragDropLabel,
+  fileTypesLabel,
+}: {
+  onFileSelect: (file: File) => void
+  disabled?: boolean
+  selectFileLabel: string
+  dragDropLabel: string
+  fileTypesLabel: string
+}) {
+  const [isDragging, setIsDragging] = useState(false)
+
+  const handleDragOver = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault()
+      if (!disabled) setIsDragging(true)
+    },
+    [disabled]
+  )
+
+  const handleDragLeave = useCallback((e: React.DragEvent) => {
+    e.preventDefault()
+    setIsDragging(false)
+  }, [])
+
+  const handleDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault()
+      setIsDragging(false)
+      if (disabled) return
+      const file = e.dataTransfer.files[0]
+      if (file) onFileSelect(file)
+    },
+    [disabled, onFileSelect]
+  )
+
+  const handleFileChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0]
+      if (file) onFileSelect(file)
+    },
+    [onFileSelect]
+  )
+
+  return (
+    <label
+      className={`flex cursor-pointer flex-col items-center justify-center rounded-xl border border-dashed p-8 text-center transition-colors ${
+        isDragging
+          ? 'border-[rgba(124,92,255,0.6)] bg-[rgba(124,92,255,0.08)]'
+          : 'border-white/[0.15] hover:border-[rgba(124,92,255,0.45)] hover:bg-white/[0.02]'
+      } ${disabled ? 'cursor-not-allowed opacity-50' : ''}`}
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
+    >
+      <div className="mb-3.5 flex h-11 w-11 items-center justify-center rounded-xl border border-[rgba(124,92,255,0.25)] bg-[rgba(124,92,255,0.1)] text-[#B7A6FF]">
+        <Upload className="h-5 w-5" strokeWidth={1.8} />
+      </div>
+      <p className="mb-1 text-sm font-medium text-[#F4F4F6]">
+        {selectFileLabel} <span className="font-normal text-[#9C9CA8]">{dragDropLabel}</span>
+      </p>
+      <p className="font-geist-mono text-xs text-[#5C5C66]">{fileTypesLabel}</p>
+      <input
+        type="file"
+        accept=".hbs,.handlebars,.html"
+        onChange={handleFileChange}
+        disabled={disabled}
+        className="hidden"
+      />
+    </label>
+  )
+}
+
 export default function TemplatesPage() {
   const { data: templates, isLoading, error } = useTemplates()
+  const { data: profile } = useProfile()
   const deleteTemplate = useDeleteTemplate()
   const uploadTemplate = useUploadTemplate()
   const t = useTranslations('templates')
@@ -103,71 +190,83 @@ export default function TemplatesPage() {
     setTemplateToDelete(template)
   }
 
+  const templateCount = templates?.length ?? 0
+  const templateLimit = profile?.subscriptionLimits?.templatesAllowed
+
   return (
-    <div className="space-y-6">
+    <div>
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="mb-7 flex flex-wrap items-end justify-between gap-5">
         <div>
-          <h1 className="text-2xl font-bold text-foreground-dark">{t('title')}</h1>
-          <p className="mt-1 text-sm text-foreground-light">
-            {t('subtitle')}
+          <h1 className="mb-1.5 text-[26px] font-bold tracking-[-0.025em]">{t('title')}</h1>
+          <p className="text-[14.5px] text-[#9C9CA8]">
+            {t('headerSubtitle')}{' '}
+            {templateLimit != null && (
+              <span className="font-geist-mono text-[#7E7E89]">
+                {templateCount} / {templateLimit === -1 ? '∞' : templateLimit}
+              </span>
+            )}
           </p>
         </div>
-        <Button onClick={() => setIsUploadModalOpen(true)}>
-          <Upload className="mr-2 h-4 w-4" />
+        <button onClick={() => setIsUploadModalOpen(true)} className={gradientButtonClasses}>
+          <Upload className="h-[15px] w-[15px]" strokeWidth={2} />
           {t('uploadTemplate')}
-        </Button>
+        </button>
       </div>
 
       {/* Search */}
-      <div className="relative max-w-sm">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-        <Input
+      <div className="relative mb-6 max-w-sm">
+        <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#5C5C66]" />
+        <input
           placeholder={common('search')}
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="pl-10"
+          className={`${inputClasses} pl-10`}
         />
       </div>
 
       {/* Content */}
       {isLoading ? (
-        <div className="flex items-center justify-center py-12">
-          <Spinner size="lg" />
+        <div className="flex items-center justify-center py-16">
+          <Spinner size="lg" className="text-[#8C6CFF]" />
         </div>
       ) : error ? (
-        <Card>
-          <CardContent className="py-12 text-center">
-            <p className="text-destructive">{errors('generic')}</p>
-          </CardContent>
-        </Card>
+        <div className="rounded-[14px] border border-white/[0.09] bg-[#0C0C0F] py-12 text-center">
+          <p className="text-[14.5px] text-[#9C9CA8]">{errors('generic')}</p>
+        </div>
       ) : filteredTemplates?.length === 0 ? (
-        <Card className="border-dashed">
-          <CardContent className="py-12 text-center">
-            <h3 className="text-lg font-medium text-foreground-dark">
-              {searchQuery ? t('empty.noResults') : t('empty.title')}
-            </h3>
-            <p className="mt-2 text-sm text-foreground-light">
-              {searchQuery ? t('empty.tryAgain') : t('empty.description')}
-            </p>
-            {!searchQuery && (
-              <Button onClick={() => setIsUploadModalOpen(true)} className="mt-4">
-                <Upload className="mr-2 h-4 w-4" />
+        <div className="flex flex-col items-center rounded-2xl border border-dashed border-white/[0.15] px-8 py-16 text-center">
+          <div className="mb-[18px] flex h-14 w-14 items-center justify-center rounded-[15px] border border-[rgba(124,92,255,0.25)] bg-[rgba(124,92,255,0.1)] text-[#B7A6FF]">
+            <FileText className="h-[26px] w-[26px]" strokeWidth={1.7} />
+          </div>
+          <h2 className="mb-2 text-lg font-semibold text-[#F4F4F6]">
+            {searchQuery ? t('empty.noResults') : t('empty.title')}
+          </h2>
+          <p className="mb-6 max-w-[380px] text-[14.5px] text-[#9C9CA8]">
+            {searchQuery ? t('empty.tryAgain') : t('empty.dragDescription')}
+          </p>
+          {!searchQuery && (
+            <div className="flex flex-wrap justify-center gap-3">
+              <button onClick={() => setIsUploadModalOpen(true)} className={gradientButtonClasses}>
+                <Upload className="h-[15px] w-[15px]" strokeWidth={2} />
                 {t('uploadTemplate')}
-              </Button>
-            )}
-          </CardContent>
-        </Card>
+              </button>
+              <Link href="/marketplace" className={ghostButtonClasses}>
+                {t('empty.browseMarketplace')}
+              </Link>
+            </div>
+          )}
+        </div>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {filteredTemplates?.map((template) => (
-            <Card
+            <div
               key={template.id}
-              className="group cursor-pointer overflow-hidden transition-shadow hover:shadow-md"
+              className="group cursor-pointer overflow-hidden rounded-[14px] border border-white/[0.09] bg-[#0C0C0F] transition-colors hover:border-[rgba(124,92,255,0.45)]"
               onClick={() => setPreviewTemplate(template)}
             >
               {/* Thumbnail Area */}
-              <div className="relative aspect-video w-full overflow-hidden bg-muted">
+              <div className="relative aspect-video w-full overflow-hidden border-b border-white/[0.06] bg-white/[0.02]">
                 {template.thumbnailUrl ? (
                   <Image
                     src={template.thumbnailUrl}
@@ -177,45 +276,44 @@ export default function TemplatesPage() {
                     className="object-cover transition-transform group-hover:scale-105"
                   />
                 ) : (
-                  <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-primary/20 to-primary/5">
-                    <FileText className="h-12 w-12 text-primary/40" />
+                  <div className="flex h-full w-full items-center justify-center bg-[linear-gradient(140deg,rgba(124,92,255,0.12),rgba(124,92,255,0.02))]">
+                    <FileText className="h-12 w-12 text-[#B7A6FF]/40" strokeWidth={1.5} />
                   </div>
                 )}
                 {/* Hover overlay with preview button */}
-                <div className="absolute inset-0 flex items-center justify-center bg-black/0 opacity-0 transition-all group-hover:bg-black/20 group-hover:opacity-100">
-                  <div className="rounded-full bg-white/90 p-2 shadow-lg">
-                    <Eye className="h-5 w-5 text-foreground-dark" />
+                <div className="absolute inset-0 flex items-center justify-center bg-black/0 opacity-0 transition-all group-hover:bg-black/40 group-hover:opacity-100">
+                  <div className="rounded-full border border-white/10 bg-[#101014]/90 p-2 shadow-lg">
+                    <Eye className="h-5 w-5 text-[#F4F4F6]" strokeWidth={1.8} />
                   </div>
                 </div>
               </div>
 
-              <CardContent className="p-4">
+              <div className="p-4">
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0 flex-1">
-                    <h3 className="truncate font-medium text-foreground-dark">
+                    <h3 className="truncate text-[15px] font-semibold text-[#F4F4F6]">
                       {template.name}
                     </h3>
-                    <p className="text-sm text-foreground-light">
+                    <p className="mt-0.5 font-geist-mono text-[12.5px] text-[#7E7E89]">
                       {formatDate(template.createdAt)}
                     </p>
                   </div>
-                  <Button
-                    variant="ghost"
-                    size="icon"
+                  <button
                     onClick={(e) => handleDeleteClick(template, e)}
                     disabled={deleteTemplate.isPending}
-                    className="shrink-0 text-foreground-light hover:text-destructive"
+                    aria-label={t('card.delete')}
+                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-[#7E7E89] transition-colors hover:bg-[rgba(255,108,140,0.1)] hover:text-[#FF8A9B] disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     <Trash2 className="h-4 w-4" />
-                  </Button>
+                  </button>
                 </div>
                 {template.description && (
-                  <p className="mt-2 text-sm text-foreground-light line-clamp-2">
+                  <p className="mt-2 text-[13px] text-[#9C9CA8] line-clamp-2">
                     {template.description}
                   </p>
                 )}
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           ))}
         </div>
       )}
@@ -225,66 +323,85 @@ export default function TemplatesPage() {
         <div className="fixed inset-0 z-50">
           {/* Background overlay */}
           <div
-            className="fixed inset-0 bg-foreground-dark/50 backdrop-blur-sm"
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm"
             onClick={handleCloseModal}
           />
 
           {/* Modal panel */}
           <div className="fixed inset-0 flex items-center justify-center p-4">
-            <div className="relative w-full max-w-lg rounded-lg bg-card p-6 shadow-xl">
+            <div className="relative w-full max-w-lg rounded-2xl border border-white/10 bg-[#101014] p-6 shadow-[0_24px_60px_rgba(0,0,0,0.6)]">
               {/* Header */}
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-semibold text-foreground-dark">
+              <div className="mb-5 flex items-center justify-between">
+                <h2 className="text-lg font-semibold tracking-[-0.015em] text-[#F4F4F6]">
                   {t('uploadDialog.title')}
                 </h2>
                 <button
                   onClick={handleCloseModal}
-                  className="rounded-md p-1 text-foreground-light hover:bg-muted hover:text-foreground"
+                  className="flex h-[30px] w-[30px] items-center justify-center rounded-lg text-[#7E7E89] transition-colors hover:bg-white/[0.06] hover:text-[#F4F4F6]"
                 >
-                  <X className="h-5 w-5" />
+                  <X className="h-[15px] w-[15px]" />
                 </button>
               </div>
 
               {/* Content */}
               <div className="space-y-4">
                 {!selectedFile ? (
-                  <DropZone onFileSelect={handleFileSelect} disabled={uploadTemplate.isPending} />
+                  <UploadDropZone
+                    onFileSelect={handleFileSelect}
+                    disabled={uploadTemplate.isPending}
+                    selectFileLabel={t('uploadDialog.selectFile')}
+                    dragDropLabel={t('uploadDialog.dragDrop')}
+                    fileTypesLabel={t('uploadDialog.fileTypes')}
+                  />
                 ) : (
                   <>
-                    <div className="flex items-center justify-between rounded-lg bg-muted/50 p-3">
-                      <div className="flex items-center gap-3">
-                        <FileText className="h-5 w-5 text-primary" />
-                        <span className="text-sm font-medium">{selectedFile.name}</span>
+                    <div className="flex items-center justify-between rounded-[10px] border border-white/10 bg-white/[0.04] p-3">
+                      <div className="flex min-w-0 items-center gap-3">
+                        <FileText className="h-5 w-5 shrink-0 text-[#B7A6FF]" strokeWidth={1.8} />
+                        <span className="truncate text-sm font-medium text-[#F4F4F6]">
+                          {selectedFile.name}
+                        </span>
                       </div>
-                      <Button
-                        variant="ghost"
-                        size="icon"
+                      <button
                         onClick={handleClearFile}
                         disabled={uploadTemplate.isPending}
+                        className="flex h-[30px] w-[30px] shrink-0 items-center justify-center rounded-lg text-[#7E7E89] transition-colors hover:bg-white/[0.06] hover:text-[#F4F4F6] disabled:cursor-not-allowed disabled:opacity-50"
                       >
                         <X className="h-4 w-4" />
-                      </Button>
+                      </button>
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="templateName">{t('uploadDialog.name')} *</Label>
-                      <Input
+                      <label
+                        htmlFor="templateName"
+                        className="block font-geist-mono text-[11.5px] uppercase tracking-[0.09em] text-[#9C9CA8]"
+                      >
+                        {t('uploadDialog.name')} *
+                      </label>
+                      <input
                         id="templateName"
                         value={templateName}
                         onChange={(e) => setTemplateName(e.target.value)}
                         placeholder={t('uploadDialog.namePlaceholder')}
                         disabled={uploadTemplate.isPending}
+                        className={inputClasses}
                       />
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="description">{t('uploadDialog.description')}</Label>
-                      <Input
+                      <label
+                        htmlFor="description"
+                        className="block font-geist-mono text-[11.5px] uppercase tracking-[0.09em] text-[#9C9CA8]"
+                      >
+                        {t('uploadDialog.description')}
+                      </label>
+                      <input
                         id="description"
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
                         placeholder={t('uploadDialog.descriptionPlaceholder')}
                         disabled={uploadTemplate.isPending}
+                        className={inputClasses}
                       />
                     </div>
                   </>
@@ -293,25 +410,30 @@ export default function TemplatesPage() {
 
               {/* Footer */}
               <div className="mt-6 flex justify-end gap-3">
-                <Button variant="outline" onClick={handleCloseModal} disabled={uploadTemplate.isPending}>
+                <button
+                  onClick={handleCloseModal}
+                  disabled={uploadTemplate.isPending}
+                  className={ghostButtonClasses}
+                >
                   {common('cancel')}
-                </Button>
-                <Button
+                </button>
+                <button
                   onClick={handleUpload}
                   disabled={!selectedFile || !templateName.trim() || uploadTemplate.isPending}
+                  className={gradientButtonClasses}
                 >
                   {uploadTemplate.isPending ? (
                     <>
-                      <Spinner size="sm" className="mr-2" />
+                      <Spinner size="sm" className="text-white" />
                       {common('loading')}
                     </>
                   ) : (
                     <>
-                      <Upload className="mr-2 h-4 w-4" />
+                      <Upload className="h-[15px] w-[15px]" strokeWidth={2} />
                       {t('uploadDialog.submit')}
                     </>
                   )}
-                </Button>
+                </button>
               </div>
             </div>
           </div>
@@ -328,46 +450,46 @@ export default function TemplatesPage() {
 
       {/* Delete Confirmation Modal */}
       <Dialog open={!!templateToDelete} onOpenChange={(open) => !open && setTemplateToDelete(null)}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="border-white/10 bg-[#101014] text-[#F4F4F6] sm:max-w-md sm:rounded-2xl">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-destructive">
+            <DialogTitle className="flex items-center gap-2 text-[#FF8A9B]">
               <Trash2 className="h-5 w-5" />
               {t('card.delete')}
             </DialogTitle>
-            <DialogDescription className="pt-2">
+            <DialogDescription className="pt-2 text-[#9C9CA8]">
               {t('card.deleteConfirm')}
               {templateToDelete && (
-                <span className="mt-2 block font-medium text-foreground">
+                <span className="mt-2 block font-medium text-[#F4F4F6]">
                   &quot;{templateToDelete.name}&quot;
                 </span>
               )}
             </DialogDescription>
           </DialogHeader>
-          <DialogFooter className="gap-2 sm:gap-0">
-            <Button
-              variant="outline"
+          <DialogFooter className="gap-2 sm:gap-3 sm:space-x-0">
+            <button
               onClick={() => setTemplateToDelete(null)}
               disabled={deleteTemplate.isPending}
+              className={ghostButtonClasses}
             >
               {common('cancel')}
-            </Button>
-            <Button
-              variant="destructive"
+            </button>
+            <button
               onClick={handleConfirmDelete}
               disabled={deleteTemplate.isPending}
+              className="inline-flex h-[38px] items-center justify-center gap-2 rounded-[10px] border border-[rgba(255,108,140,0.35)] bg-[rgba(255,108,140,0.1)] px-[18px] text-sm font-semibold text-[#FF8A9B] transition-colors hover:bg-[rgba(255,108,140,0.16)] disabled:cursor-not-allowed disabled:opacity-50"
             >
               {deleteTemplate.isPending ? (
                 <>
-                  <Spinner size="sm" className="mr-2" />
+                  <Spinner size="sm" className="text-[#FF8A9B]" />
                   {common('loading')}
                 </>
               ) : (
                 <>
-                  <Trash2 className="mr-2 h-4 w-4" />
+                  <Trash2 className="h-4 w-4" />
                   {common('delete')}
                 </>
               )}
-            </Button>
+            </button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

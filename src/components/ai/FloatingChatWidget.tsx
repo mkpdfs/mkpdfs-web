@@ -1,9 +1,8 @@
 'use client'
 
 import { useState, useRef, useEffect, useCallback } from 'react'
-import { MessageSquare, X, Minimize2, Maximize2, Paperclip, Send, Code2, Loader2 } from 'lucide-react'
+import { MessageSquare, X, Minimize2, Paperclip, Send, Code2, Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui'
 import { useTranslations } from 'next-intl'
 
 export interface ChatMessage {
@@ -116,15 +115,15 @@ export function FloatingChatWidget({
         onClick={() => setIsExpanded(true)}
         className={cn(
           'fixed bottom-4 right-4 z-50',
-          'flex items-center gap-2 rounded-full bg-primary px-4 py-3 text-primary-foreground shadow-lg',
-          'hover:bg-primary/90 transition-colors',
+          'flex items-center gap-2 rounded-full bg-[linear-gradient(140deg,#8C6CFF,#5B3FE0)] px-4 py-3 text-sm font-semibold text-white shadow-[0_6px_18px_rgba(124,92,255,0.4)]',
+          'transition-all hover:-translate-y-px',
           className
         )}
       >
-        <MessageSquare className="h-5 w-5" />
-        <span className="font-medium">{t('chat.open')}</span>
+        <MessageSquare className="h-5 w-5" strokeWidth={1.9} />
+        <span className="font-semibold">{t('chat.open')}</span>
         {messages.length > 0 && (
-          <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white text-xs font-bold text-primary">
+          <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white font-geist-mono text-xs font-bold text-[#5B3FE0]">
             {messages.length}
           </span>
         )}
@@ -136,45 +135,41 @@ export function FloatingChatWidget({
     <div
       className={cn(
         'fixed bottom-4 right-4 z-50',
-        'flex flex-col w-[380px] max-h-[500px] rounded-lg border border-border bg-background shadow-xl',
+        'flex flex-col w-[380px] max-h-[500px] rounded-[14px] border border-white/[0.09] bg-[#0C0C0F] shadow-[0_24px_60px_rgba(0,0,0,0.6)]',
         className
       )}
     >
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-border px-4 py-3">
+      <div className="flex items-center justify-between border-b border-white/[0.07] px-4 py-3">
         <div className="flex items-center gap-2">
-          <MessageSquare className="h-5 w-5 text-primary" />
-          <span className="font-semibold">{t('chat.title')}</span>
+          <MessageSquare className="h-[18px] w-[18px] text-[#B7A6FF]" strokeWidth={1.9} />
+          <span className="text-sm font-semibold text-[#F4F4F6]">{t('chat.title')}</span>
         </div>
         <div className="flex items-center gap-1">
           {showCodeEditorToggle && (
-            <Button
-              variant="ghost"
-              size="sm"
+            <button
               onClick={onToggleCodeEditor}
-              className="h-8 w-8 p-0"
+              className="flex h-8 w-8 items-center justify-center rounded-lg text-[#7E7E89] transition-colors hover:bg-white/[0.06] hover:text-[#F4F4F6]"
               title={t('chat.toggleCode')}
             >
               <Code2 className="h-4 w-4" />
-            </Button>
+            </button>
           )}
-          <Button
-            variant="ghost"
-            size="sm"
+          <button
             onClick={() => setIsExpanded(false)}
-            className="h-8 w-8 p-0"
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-[#7E7E89] transition-colors hover:bg-white/[0.06] hover:text-[#F4F4F6]"
           >
             <Minimize2 className="h-4 w-4" />
-          </Button>
+          </button>
         </div>
       </div>
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4 min-h-[200px]">
         {messages.length === 0 ? (
-          <div className="text-center text-muted-foreground py-8">
-            <MessageSquare className="h-12 w-12 mx-auto mb-3 opacity-50" />
-            <p className="text-sm">{t('chat.welcome')}</p>
+          <div className="py-8 text-center">
+            <MessageSquare className="mx-auto mb-3 h-12 w-12 text-[#5C5C66]" strokeWidth={1.5} />
+            <p className="text-sm text-[#9C9CA8]">{t('chat.welcome')}</p>
           </div>
         ) : (
           messages.map((message) => (
@@ -187,10 +182,10 @@ export function FloatingChatWidget({
             >
               <div
                 className={cn(
-                  'max-w-[85%] rounded-lg px-3 py-2',
+                  'max-w-[85%] rounded-[11px] px-3 py-2',
                   message.role === 'user'
-                    ? 'bg-primary text-primary-foreground'
-                    : 'bg-muted'
+                    ? 'bg-[linear-gradient(140deg,#8C6CFF,#5B3FE0)] text-white'
+                    : 'border border-white/[0.07] bg-white/[0.04] text-[#C9C9D2]'
                 )}
               >
                 {message.imageUrl && (
@@ -202,8 +197,8 @@ export function FloatingChatWidget({
                 )}
                 {message.isLoading ? (
                   <div className="flex items-center gap-2">
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    <span className="text-sm">{t('chat.thinking')}</span>
+                    <Loader2 className="h-4 w-4 animate-spin text-[#B7A6FF]" />
+                    <span className="font-geist-mono text-[12.5px] text-[#9C9CA8]">{t('chat.thinking')}</span>
                   </div>
                 ) : (
                   <p className="text-sm whitespace-pre-wrap">{message.content}</p>
@@ -222,11 +217,11 @@ export function FloatingChatWidget({
             <img
               src={selectedImage.preview}
               alt="Selected"
-              className="h-16 w-16 object-cover rounded border border-border"
+              className="h-16 w-16 rounded-[9px] border border-white/[0.09] object-cover"
             />
             <button
               onClick={removeImage}
-              className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-destructive text-destructive-foreground"
+              className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full border border-white/[0.12] bg-[#1A1A20] text-[#9C9CA8] transition-colors hover:text-[#F4F4F6]"
             >
               <X className="h-3 w-3" />
             </button>
@@ -235,7 +230,7 @@ export function FloatingChatWidget({
       )}
 
       {/* Input Area */}
-      <div className="border-t border-border p-3">
+      <div className="border-t border-white/[0.07] p-3">
         <div className="flex items-end gap-2">
           <input
             ref={fileInputRef}
@@ -244,37 +239,34 @@ export function FloatingChatWidget({
             onChange={handleImageSelect}
             className="hidden"
           />
-          <Button
-            variant="ghost"
-            size="sm"
+          <button
             onClick={() => fileInputRef.current?.click()}
-            className="h-9 w-9 p-0 shrink-0"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[9px] text-[#7E7E89] transition-colors hover:bg-white/[0.06] hover:text-[#9C9CA8] disabled:opacity-50"
             disabled={isGenerating}
           >
             <Paperclip className="h-4 w-4" />
-          </Button>
+          </button>
           <textarea
             ref={textareaRef}
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder={t('chat.placeholder')}
-            className="flex-1 resize-none rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+            className="flex-1 resize-none rounded-[9px] border border-white/[0.09] bg-white/[0.04] px-3 py-2 text-sm text-[#F4F4F6] placeholder:text-[#5C5C66] transition-colors focus:border-[#8C6CFF]/50 focus:outline-none disabled:opacity-60"
             rows={1}
             disabled={isGenerating}
           />
-          <Button
-            size="sm"
+          <button
             onClick={handleSend}
             disabled={(!inputValue.trim() && !selectedImage) || isGenerating}
-            className="h-9 w-9 p-0 shrink-0"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[9px] bg-[linear-gradient(140deg,#8C6CFF,#5B3FE0)] text-white shadow-[0_6px_18px_rgba(124,92,255,0.4)] transition-all hover:-translate-y-px disabled:opacity-50 disabled:shadow-none disabled:hover:translate-y-0"
           >
             {isGenerating ? (
               <Loader2 className="h-4 w-4 animate-spin" />
             ) : (
               <Send className="h-4 w-4" />
             )}
-          </Button>
+          </button>
         </div>
       </div>
     </div>
