@@ -19,6 +19,7 @@ import type {
   GenerateAITemplateRequest,
   GenerateAITemplateResponse,
   MarketplaceTemplate,
+  LedgerEntry,
 } from '@/types'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'
@@ -198,12 +199,12 @@ export async function getJobStatus(jobId: string): Promise<import('@/types').Job
 // Stripe / Billing
 // ============================================
 
-export async function createCheckoutSession(plan: string): Promise<{ url: string; sessionId: string }> {
+export async function createCheckoutSession(): Promise<{ url: string; sessionId: string }> {
   const response = await authFetch<{ success: boolean; url: string; sessionId: string }>(
     '/stripe/create-checkout-session',
     {
       method: 'POST',
-      body: JSON.stringify({ plan }),
+      body: JSON.stringify({}),
     }
   )
   return { url: response.url, sessionId: response.sessionId }
@@ -217,6 +218,20 @@ export async function createPortalSession(): Promise<{ url: string }> {
     }
   )
   return { url: response.url }
+}
+
+export async function updateAutoRecharge(
+  enabled: boolean,
+  threshold?: number
+): Promise<{ success: boolean; autoRecharge: boolean; rechargeThreshold: number }> {
+  return authFetch('/billing/auto-recharge', {
+    method: 'PUT',
+    body: JSON.stringify({ enabled, threshold }),
+  })
+}
+
+export async function getCreditLedger(): Promise<{ success: boolean; entries: LedgerEntry[] }> {
+  return authFetch('/billing/ledger', { method: 'GET' })
 }
 
 // ============================================

@@ -11,11 +11,10 @@ export interface MkpdfsUser {
 }
 
 export interface SubscriptionLimits {
-  pagesPerMonth: number  // Each data object = 1 page
   templatesAllowed: number
   apiTokensAllowed: number
   maxPdfSizeMB: number
-  aiGenerationsPerMonth: number  // AI template generations per month
+  aiGenerationsPerMonth: number
 }
 
 export interface CurrentUsage {
@@ -81,15 +80,26 @@ export interface UsageStats {
 }
 
 // Subscription types
-export type SubscriptionPlan = 'free' | 'starter' | 'basic' | 'professional' | 'enterprise'
+export type SubscriptionPlan = 'credits' | 'enterprise'
 
 export interface Subscription {
   plan: SubscriptionPlan
   status: 'active' | 'cancelled' | 'past_due'
-  currentPeriodEnd?: string
+  creditBalance?: number
+  autoRecharge?: boolean
+  rechargeThreshold?: number
+  autoRechargeError?: string
   stripeCustomerId?: string
-  stripeSubscriptionId?: string
-  stripePriceId?: string
+  stripePaymentMethodId?: string
+}
+
+export interface LedgerEntry {
+  entryId: string
+  type: 'purchase' | 'auto_recharge' | 'debit'
+  amount: number
+  balanceAfter?: number | null
+  description?: string | null
+  createdAt: string
 }
 
 // PDF Generation types
