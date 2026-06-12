@@ -61,7 +61,7 @@
       "subtitle": "Pick a template or upload your own, then generate PDFs with one API call — or straight from the dashboard. No Puppeteer, no Chromium crashes, no cold starts. We run the infrastructure.",
       "ctaPrimary": "Start for free",
       "ctaSecondary": "See how it works",
-      "microcopy": "No credit card · 100 free pages · Live in 2 minutes"
+      "microcopy": "No credit card · 10 free pages · Live in 2 minutes"
     },
     "logos": {
       "title": "Replacing fragile in-house PDF stacks at"
@@ -141,10 +141,10 @@
       "approxPages": "1,000 PDF pages",
       "perPage": "$0.01 / page",
       "bullet1": "Credits never expire — top up whenever",
-      "bullet2": "All templates, API + portal, unlimited tokens",
-      "bullet3": "Volume discounts kick in automatically",
-      "bullet4": "100 free pages to start — no card required",
-      "cta": "Start with 100 free pages",
+      "bullet2": "All templates, API + dashboard included",
+      "bullet3": "Flat $0.01 per page — no surprises",
+      "bullet4": "10 free pages to start — no card required",
+      "cta": "Start with 10 free pages",
       "enterprisePrefix": "Need enterprise volume, SSO, or an SLA?",
       "enterpriseLink": "Talk to us →"
     },
@@ -208,59 +208,6 @@
       "team": {
         "name": "Team Ready",
         "description": "Multiple API keys, shared templates. Give your team access without sharing credentials."
-      }
-    },
-    "pricing": {
-      "title": "Cheaper than building it yourself",
-      "subtitle": "No servers to maintain. No Chromium updates. Pay only for what you use.",
-      "mostPopular": "Most Popular",
-      "contactSales": "Contact Sales",
-      "free": {
-        "name": "Free",
-        "description": "Test your integration",
-        "features": {
-          "pages": "100 pages per month",
-          "templates": "5 templates",
-          "keys": "1 API key",
-          "fileSize": "10MB max file size",
-          "support": "Community support"
-        }
-      },
-      "starter": {
-        "name": "Starter",
-        "description": "Ship to production",
-        "features": {
-          "pages": "1,000 pages per month",
-          "templates": "50 templates",
-          "keys": "3 API keys",
-          "fileSize": "25MB max file size",
-          "support": "Email support"
-        }
-      },
-      "professional": {
-        "name": "Professional",
-        "description": "Scale with confidence",
-        "features": {
-          "pages": "10,000 pages per month",
-          "templates": "500 templates",
-          "keys": "10 API keys",
-          "fileSize": "50MB max file size",
-          "support": "Priority support",
-          "branding": "Custom branding"
-        }
-      },
-      "enterprise": {
-        "name": "Enterprise",
-        "description": "Unlimited everything",
-        "features": {
-          "pages": "Unlimited pages",
-          "templates": "Unlimited templates",
-          "keys": "Unlimited API keys",
-          "fileSize": "100MB max file size",
-          "support": "Dedicated support",
-          "integrations": "Custom integrations",
-          "sla": "SLA guarantee"
-        }
       }
     },
     "cta": {
@@ -569,53 +516,32 @@
   },
   "billing": {
     "title": "Billing",
-    "subtitle": "Manage your subscription and payment methods.",
-    "currentPlan": {
-      "title": "Current Plan",
-      "free": "Free",
-      "starter": "Starter",
-      "professional": "Professional",
-      "enterprise": "Enterprise",
-      "renewsOn": "Renews on {date}",
-      "upgrade": "Upgrade Plan",
-      "manage": "Manage Subscription"
+    "subtitle": "Buy PDF credits and manage auto-recharge.",
+    "balance": {
+      "title": "Credit Balance",
+      "credits": "{count} credits",
+      "hint": "1 credit = 1 PDF page. Credits never expire.",
+      "buy": "Buy 1,000 PDFs — $10",
+      "enterprise": "Enterprise — unlimited",
+      "updateCard": "Update card"
     },
-    "paymentMethod": {
-      "title": "Payment Method",
-      "noMethod": "No payment method on file",
-      "addMethod": "Add Payment Method",
-      "cardEnding": "Card ending in {last4}",
-      "expires": "Expires {date}",
-      "update": "Update"
+    "autoRecharge": {
+      "title": "Auto-recharge",
+      "description": "Automatically buy 1,000 more credits ($10) when your balance drops below the threshold.",
+      "threshold": "Recharge when balance falls below",
+      "enable": "Enable auto-recharge",
+      "disable": "Disable auto-recharge",
+      "needsPurchase": "Buy a credit pack first so we have a card on file.",
+      "failedBanner": "Your last auto-recharge failed: {reason}. Update your card and re-enable auto-recharge.",
+      "saved": "Auto-recharge settings saved"
     },
-    "invoices": {
-      "title": "Billing History",
-      "noInvoices": "No invoices yet",
-      "date": "Date",
-      "amount": "Amount",
-      "status": "Status",
-      "download": "Download",
-      "paid": "Paid",
-      "pending": "Pending",
-      "failed": "Failed"
-    },
-    "plans": {
-      "title": "Available Plans",
-      "current": "Current",
-      "select": "Select Plan",
-      "features": "Features",
-      "free": {
-        "name": "Free"
-      },
-      "starter": {
-        "name": "Starter"
-      },
-      "professional": {
-        "name": "Professional"
-      },
-      "enterprise": {
-        "name": "Enterprise"
-      }
+    "history": {
+      "title": "History",
+      "empty": "No transactions yet",
+      "purchase": "Credit pack purchase",
+      "auto_recharge": "Auto-recharge",
+      "debit": "PDF generation",
+      "balanceAfter": "Balance: {count}"
     }
   },
   "languageSelector": {

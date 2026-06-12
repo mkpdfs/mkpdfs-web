@@ -97,7 +97,7 @@ const jsonLd = {
   offers: {
     '@type': 'Offer',
     name: 'Pay-as-you-go credits',
-    description: '$10 of credits ≈ 1,000 PDF pages ($0.01/page). 100 free pages to start, no card required.',
+    description: '$10 of credits ≈ 1,000 PDF pages ($0.01/page). 10 free pages to start, no card required.',
     price: '10',
     priceCurrency: 'USD',
   },

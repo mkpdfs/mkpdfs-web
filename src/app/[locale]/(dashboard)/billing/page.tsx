@@ -1,124 +1,63 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, Button } from '@/components/ui'
-import { CreditCard, Check, Zap, Loader2, ExternalLink } from 'lucide-react'
+import { Card, CardHeader, CardTitle, CardContent, Button } from '@/components/ui'
+import { CreditCard, Zap, Loader2, ExternalLink, AlertTriangle, History } from 'lucide-react'
 import { useProfile } from '@/hooks/useApi'
-import { createCheckoutSession, createPortalSession } from '@/lib/api'
+import { createCheckoutSession, createPortalSession, updateAutoRecharge, getCreditLedger } from '@/lib/api'
+import type { LedgerEntry } from '@/types'
 import { useTranslations } from 'next-intl'
-import { useQueryClient } from '@tanstack/react-query'
+import { useQueryClient, useQuery } from '@tanstack/react-query'
 
 export default function BillingPage() {
   const queryClient = useQueryClient()
   const { data: profile, isLoading, refetch } = useProfile()
-  const [loadingPlan, setLoadingPlan] = useState<string | null>(null)
+  const [loadingBuy, setLoadingBuy] = useState(false)
   const [loadingPortal, setLoadingPortal] = useState(false)
+  const [savingAutoRecharge, setSavingAutoRecharge] = useState(false)
+  const [threshold, setThreshold] = useState<number | null>(null)
   const t = useTranslations('billing')
-  const pricing = useTranslations('landing.pricing')
-  const common = useTranslations('common')
   const errors = useTranslations('errors')
 
-  const plans = [
-    {
-      id: 'free',
-      name: pricing('free.name'),
-      price: '$0',
-      description: pricing('free.description'),
-      features: [
-        pricing('free.features.pages'),
-        pricing('free.features.templates'),
-        pricing('free.features.keys'),
-        pricing('free.features.fileSize'),
-        pricing('free.features.support'),
-      ],
-    },
-    {
-      id: 'basic',
-      name: pricing('starter.name'),
-      price: '$29.99',
-      description: pricing('starter.description'),
-      features: [
-        pricing('starter.features.pages'),
-        pricing('starter.features.templates'),
-        pricing('starter.features.keys'),
-        pricing('starter.features.fileSize'),
-        pricing('starter.features.support'),
-      ],
-      popular: true,
-    },
-    {
-      id: 'professional',
-      name: pricing('professional.name'),
-      price: '$99.99',
-      description: pricing('professional.description'),
-      features: [
-        pricing('professional.features.pages'),
-        pricing('professional.features.templates'),
-        pricing('professional.features.keys'),
-        pricing('professional.features.fileSize'),
-        pricing('professional.features.support'),
-        pricing('professional.features.branding'),
-      ],
-    },
-    {
-      id: 'enterprise',
-      name: pricing('enterprise.name'),
-      price: pricing('contactSales'),
-      description: pricing('enterprise.description'),
-      features: [
-        pricing('enterprise.features.pages'),
-        pricing('enterprise.features.templates'),
-        pricing('enterprise.features.keys'),
-        pricing('enterprise.features.fileSize'),
-        pricing('enterprise.features.support'),
-        pricing('enterprise.features.integrations'),
-        pricing('enterprise.features.sla'),
-      ],
-    },
-  ]
+  const { data: ledger } = useQuery({
+    queryKey: ['creditLedger'],
+    queryFn: getCreditLedger,
+  })
 
-  const currentPlan = profile?.subscription?.plan || 'free'
-  const hasStripeSubscription = !!profile?.subscription?.stripeCustomerId
+  const sub = profile?.subscription
+  const isEnterprise = sub?.plan === 'enterprise'
+  const balance = sub?.creditBalance ?? 0
+  const autoRechargeOn = !!sub?.autoRecharge
+  const effectiveThreshold = threshold ?? sub?.rechargeThreshold ?? 100
+  const hasCard = !!sub?.stripePaymentMethodId
 
-  // Refresh profile on mount and periodically to catch subscription updates from webhooks
+  // Poll after returning from Stripe checkout so the webhook-credited
+  // balance shows up without a manual refresh
   useEffect(() => {
-    // Invalidate cache on mount to get fresh data
     queryClient.invalidateQueries({ queryKey: ['profile'] })
-
-    // Poll for updates every 5 seconds for 30 seconds after page load
-    // This catches webhook updates that happen after Stripe checkout
     let pollCount = 0
-    const maxPolls = 6
     const interval = setInterval(() => {
       pollCount++
       refetch()
-      if (pollCount >= maxPolls) {
-        clearInterval(interval)
-      }
+      queryClient.invalidateQueries({ queryKey: ['creditLedger'] })
+      if (pollCount >= 6) clearInterval(interval)
     }, 5000)
-
     return () => clearInterval(interval)
   }, [queryClient, refetch])
 
-  const handleUpgrade = async (planId: string) => {
-    if (planId === 'enterprise') {
-      window.location.href = 'mailto:sales@mkpdfs.com?subject=Enterprise%20Plan%20Inquiry'
-      return
-    }
-
+  const handleBuy = async () => {
     try {
-      setLoadingPlan(planId)
-      const { url } = await createCheckoutSession(planId)
+      setLoadingBuy(true)
+      const { url } = await createCheckoutSession()
       window.location.href = url
     } catch (error) {
       console.error('Failed to create checkout session:', error)
       alert(errors('generic'))
-    } finally {
-      setLoadingPlan(null)
+      setLoadingBuy(false)
     }
   }
 
-  const handleManageSubscription = async () => {
+  const handlePortal = async () => {
     try {
       setLoadingPortal(true)
       const { url } = await createPortalSession()
@@ -126,31 +65,21 @@ export default function BillingPage() {
     } catch (error) {
       console.error('Failed to create portal session:', error)
       alert(errors('generic'))
-    } finally {
       setLoadingPortal(false)
     }
   }
 
-  const getPlanDisplayName = (plan: string) => {
-    const planMap: Record<string, string> = {
-      free: t('currentPlan.free'),
-      starter: t('currentPlan.starter'),
-      basic: t('currentPlan.starter'),
-      professional: t('currentPlan.professional'),
-      enterprise: t('currentPlan.enterprise'),
+  const handleAutoRechargeToggle = async (enabled: boolean) => {
+    try {
+      setSavingAutoRecharge(true)
+      await updateAutoRecharge(enabled, effectiveThreshold)
+      await refetch()
+    } catch (error) {
+      console.error('Failed to update auto-recharge:', error)
+      alert(errors('generic'))
+    } finally {
+      setSavingAutoRecharge(false)
     }
-    return planMap[plan] || plan
-  }
-
-  const getPlanPrice = (plan: string) => {
-    const priceMap: Record<string, string> = {
-      free: '$0',
-      starter: '$29.99',
-      basic: '$29.99',
-      professional: '$99.99',
-      enterprise: pricing('contactSales'),
-    }
-    return priceMap[plan] || '$0'
   }
 
   if (isLoading) {
@@ -165,120 +94,138 @@ export default function BillingPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-foreground-dark">{t('title')}</h1>
-        <p className="mt-1 text-sm text-foreground-light">
-          {t('subtitle')}
-        </p>
+        <p className="mt-1 text-sm text-foreground-light">{t('subtitle')}</p>
       </div>
 
-      {/* Current Plan */}
+      {sub?.autoRechargeError && (
+        <div className="flex items-start gap-3 rounded-md border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900">
+          <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0" />
+          <span>{t('autoRecharge.failedBanner', { reason: sub.autoRechargeError })}</span>
+        </div>
+      )}
+
+      {/* Balance */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-lg">
             <CreditCard className="h-5 w-5" />
-            {t('currentPlan.title')}
+            {t('balance.title')}
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center justify-between">
+          <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
-              <p className="text-2xl font-bold text-foreground-dark">
-                {getPlanDisplayName(currentPlan)}
+              <p className="text-4xl font-bold text-foreground-dark">
+                {isEnterprise ? t('balance.enterprise') : t('balance.credits', { count: balance })}
               </p>
-              <p className="text-sm text-foreground-light">
-                {getPlanPrice(currentPlan)}{common('perMonth')}
-              </p>
+              {!isEnterprise && (
+                <p className="mt-1 text-sm text-foreground-light">{t('balance.hint')}</p>
+              )}
             </div>
-            <div className="flex gap-2">
-              {hasStripeSubscription && (
-                <Button
-                  variant="outline"
-                  onClick={handleManageSubscription}
-                  disabled={loadingPortal}
-                >
-                  {loadingPortal ? (
+            {!isEnterprise && (
+              <div className="flex gap-2">
+                {hasCard && (
+                  <Button variant="outline" onClick={handlePortal} disabled={loadingPortal}>
+                    {loadingPortal ? (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    ) : (
+                      <ExternalLink className="mr-2 h-4 w-4" />
+                    )}
+                    {t('balance.updateCard')}
+                  </Button>
+                )}
+                <Button onClick={handleBuy} disabled={loadingBuy}>
+                  {loadingBuy ? (
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   ) : (
-                    <ExternalLink className="mr-2 h-4 w-4" />
+                    <Zap className="mr-2 h-4 w-4" />
                   )}
-                  {t('currentPlan.manage')}
+                  {t('balance.buy')}
                 </Button>
-              )}
-              {currentPlan === 'free' && (
-                <Button onClick={() => handleUpgrade('basic')}>
-                  <Zap className="mr-2 h-4 w-4" />
-                  {t('currentPlan.upgrade')}
-                </Button>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
 
-      {/* Available Plans */}
-      <div>
-        <h2 className="mb-4 text-lg font-semibold text-foreground-dark">{t('plans.title')}</h2>
-        <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2 2xl:grid-cols-4">
-          {plans.map((plan) => {
-            const isCurrent = currentPlan === plan.id ||
-              (currentPlan === 'starter' && plan.id === 'basic')
-            const isUpgrade = !isCurrent && plan.id !== 'free'
+      {/* Auto-recharge */}
+      {!isEnterprise && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">{t('autoRecharge.title')}</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <p className="text-sm text-foreground-light">{t('autoRecharge.description')}</p>
+            {!hasCard ? (
+              <p className="text-sm text-foreground-light">{t('autoRecharge.needsPurchase')}</p>
+            ) : (
+              <div className="flex flex-wrap items-center gap-4">
+                <label className="flex items-center gap-2 text-sm text-foreground-dark">
+                  {t('autoRecharge.threshold')}
+                  <input
+                    type="number"
+                    min={1}
+                    max={1000}
+                    className="w-24 rounded-md border border-input bg-background px-2 py-1"
+                    value={effectiveThreshold}
+                    disabled={autoRechargeOn}
+                    onChange={(e) => {
+                      const v = parseInt(e.target.value || '1', 10)
+                      setThreshold(Math.min(1000, Math.max(1, v)))
+                    }}
+                  />
+                </label>
+                <Button
+                  variant={autoRechargeOn ? 'outline' : 'default'}
+                  onClick={() => handleAutoRechargeToggle(!autoRechargeOn)}
+                  disabled={savingAutoRecharge}
+                >
+                  {savingAutoRecharge && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  {autoRechargeOn ? t('autoRecharge.disable') : t('autoRecharge.enable')}
+                </Button>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
 
-            return (
-              <Card
-                key={plan.id}
-                className={`relative ${plan.popular ? 'border-primary ring-1 ring-primary' : ''}`}
-              >
-                {plan.popular && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                    <span className="rounded-full bg-primary px-3 py-1 text-xs font-medium text-white">
-                      {pricing('mostPopular')}
-                    </span>
+      {/* History */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-lg">
+            <History className="h-5 w-5" />
+            {t('history.title')}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {!ledger?.entries?.length ? (
+            <p className="text-sm text-foreground-light">{t('history.empty')}</p>
+          ) : (
+            <ul className="divide-y divide-border">
+              {ledger.entries.map((entry: LedgerEntry) => (
+                <li key={entry.entryId} className="flex items-center justify-between py-2 text-sm">
+                  <div>
+                    <p className="text-foreground-dark">{t(`history.${entry.type}`)}</p>
+                    <p className="text-xs text-foreground-light">
+                      {new Date(entry.createdAt).toLocaleString()}
+                    </p>
                   </div>
-                )}
-                <CardHeader>
-                  <CardTitle className="text-lg">{plan.name}</CardTitle>
-                  <CardDescription>{plan.description}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-3xl font-bold text-foreground-dark">
-                    {plan.price}
-                    {plan.price !== pricing('contactSales') && (
-                      <span className="text-sm font-normal text-foreground-light">{common('perMonth')}</span>
+                  <div className="text-right">
+                    <p className={entry.amount > 0 ? 'font-medium text-success' : 'text-foreground-dark'}>
+                      {entry.amount > 0 ? `+${entry.amount}` : entry.amount}
+                    </p>
+                    {entry.balanceAfter != null && (
+                      <p className="text-xs text-foreground-light">
+                        {t('history.balanceAfter', { count: entry.balanceAfter })}
+                      </p>
                     )}
-                  </p>
-
-                  <ul className="mt-4 space-y-2">
-                    {plan.features.map((feature, index) => (
-                      <li key={index} className="flex items-center gap-2 text-sm text-foreground-light">
-                        <Check className="h-4 w-4 text-success" />
-                        {feature}
-                      </li>
-                    ))}
-                  </ul>
-
-                  <Button
-                    className="mt-6 w-full"
-                    variant={isCurrent ? 'outline' : plan.popular ? 'default' : 'secondary'}
-                    disabled={isCurrent || plan.id === 'free' || loadingPlan === plan.id}
-                    onClick={() => isUpgrade && handleUpgrade(plan.id)}
-                  >
-                    {loadingPlan === plan.id ? (
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    ) : null}
-                    {isCurrent
-                      ? t('plans.current')
-                      : plan.id === 'free'
-                        ? t('currentPlan.free')
-                        : plan.price === pricing('contactSales')
-                          ? pricing('contactSales')
-                          : t('plans.select')}
-                  </Button>
-                </CardContent>
-              </Card>
-            )
-          })}
-        </div>
-      </div>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </CardContent>
+      </Card>
     </div>
   )
 }
