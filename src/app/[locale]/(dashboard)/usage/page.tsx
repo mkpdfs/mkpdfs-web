@@ -26,14 +26,14 @@ export default function UsagePage() {
           {isLoading ? (
             <Spinner size="sm" />
           ) : (
-            <p className="text-[14.5px] text-[#9C9CA8]">
+            <p className="text-[14.5px] text-fg-muted">
               {t.rich('subtitle', {
                 pages: () => (
-                  <span className="font-geist-mono text-[#F4F4F6]">
+                  <span className="font-geist-mono text-fg">
                     {t('pagesValue', { pages })}
                   </span>
                 ),
-                spend: () => <span className="font-geist-mono text-[#F4F4F6]">${spend}</span>,
+                spend: () => <span className="font-geist-mono text-fg">${spend}</span>,
               })}
             </p>
           )}
@@ -41,12 +41,12 @@ export default function UsagePage() {
       </div>
 
       {/* Requests table */}
-      <div className="overflow-hidden rounded-[14px] border border-white/[0.09] bg-[#0B0B0E]">
-        <div className="hidden grid-cols-[2fr_1fr_1.3fr_0.9fr_0.7fr_0.9fr_1fr] items-center gap-3 border-b border-white/[0.08] bg-white/[0.02] px-[18px] py-[11px] md:grid">
+      <div className="overflow-hidden rounded-[14px] border border-ink/[0.09] bg-surface">
+        <div className="hidden grid-cols-[2fr_1fr_1.3fr_0.9fr_0.7fr_0.9fr_1fr] items-center gap-3 border-b border-ink/[0.08] bg-ink/[0.02] px-[18px] py-[11px] md:grid">
           {COLUMNS.map((col) => (
             <span
               key={col}
-              className={`font-geist-mono text-[11px] uppercase tracking-[0.08em] text-[#7E7E89] ${
+              className={`font-geist-mono text-[11px] uppercase tracking-[0.08em] text-fg-dim ${
                 RIGHT_ALIGNED.has(col) ? 'text-right' : ''
               }`}
             >
@@ -57,16 +57,16 @@ export default function UsagePage() {
 
         {/* Empty state — per-request history will populate once requests are logged */}
         <div className="flex flex-col items-center px-6 py-14 text-center">
-          <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-[13px] border border-[#8C6CFF]/25 bg-[#8C6CFF]/[0.1] text-[#B7A6FF]">
+          <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-[13px] border border-[#8C6CFF]/25 bg-[#8C6CFF]/[0.1] text-brand-text">
             <FileText className="h-[22px] w-[22px]" strokeWidth={1.7} />
           </div>
           <h2 className="mb-1.5 text-base font-semibold">{t('empty.title')}</h2>
-          <p className="max-w-[380px] text-[13.5px] text-[#9C9CA8]">{t('empty.body')}</p>
+          <p className="max-w-[380px] text-[13.5px] text-fg-muted">{t('empty.body')}</p>
         </div>
 
-        <div className="flex items-center justify-between border-t border-white/[0.05] px-[18px] py-3">
-          <span className="text-[12.5px] text-[#7E7E89]">{t('footer.count', { count: 0 })}</span>
-          <span className="font-geist-mono text-xs text-[#5C5C66]">{t('footer.retention')}</span>
+        <div className="flex items-center justify-between border-t border-ink/[0.05] px-[18px] py-3">
+          <span className="text-[12.5px] text-fg-dim">{t('footer.count', { count: 0 })}</span>
+          <span className="font-geist-mono text-xs text-fg-faint">{t('footer.retention')}</span>
         </div>
       </div>
     </div>

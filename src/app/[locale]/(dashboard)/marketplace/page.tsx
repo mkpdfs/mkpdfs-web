@@ -75,11 +75,11 @@ export default function MarketplacePage() {
       <div className="flex flex-wrap items-end justify-between gap-5">
         <div>
           <h1 className="mb-1.5 text-[26px] font-bold tracking-[-0.025em]">{t('pageTitle')}</h1>
-          <p className="text-[14.5px] text-[#9C9CA8]">{t('pageSubtitle')}</p>
+          <p className="text-[14.5px] text-fg-muted">{t('pageSubtitle')}</p>
         </div>
         <div className="relative w-full min-w-[260px] sm:w-auto">
           <Search
-            className="pointer-events-none absolute left-3.5 top-1/2 h-[15px] w-[15px] -translate-y-1/2 text-[#7E7E89]"
+            className="pointer-events-none absolute left-3.5 top-1/2 h-[15px] w-[15px] -translate-y-1/2 text-fg-dim"
             strokeWidth={2}
           />
           <input
@@ -87,7 +87,7 @@ export default function MarketplacePage() {
             placeholder={t('searchPlaceholder')}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="h-[38px] w-full rounded-[10px] border border-white/10 bg-white/[0.03] pl-9 pr-3.5 text-[13.5px] text-[#F4F4F6] outline-none transition-colors placeholder:text-[#5C5C66] focus:border-[#8C6CFF]/50 sm:w-[280px]"
+            className="h-[38px] w-full rounded-[10px] border border-ink/10 bg-ink/[0.03] pl-9 pr-3.5 text-[13.5px] text-fg outline-none transition-colors placeholder:text-fg-faint focus:border-[#8C6CFF]/50 sm:w-[280px]"
           />
         </div>
       </div>
@@ -101,13 +101,13 @@ export default function MarketplacePage() {
           <Spinner size="lg" className="text-[#8C6CFF]" />
         </div>
       ) : error ? (
-        <div className="rounded-[14px] border border-white/[0.09] bg-[#0C0C0F] py-12 text-center">
-          <p className="text-[14px] text-[#9C9CA8]">{errors('generic')}</p>
+        <div className="rounded-[14px] border border-ink/[0.09] bg-surface-raised py-12 text-center">
+          <p className="text-[14px] text-fg-muted">{errors('generic')}</p>
         </div>
       ) : filteredTemplates?.length === 0 ? (
-        <div className="rounded-[14px] border border-dashed border-white/[0.12] py-12 text-center">
-          <h3 className="text-[15px] font-semibold text-[#F4F4F6]">{t('empty')}</h3>
-          <p className="mt-2 text-[13.5px] text-[#9C9CA8]">
+        <div className="rounded-[14px] border border-dashed border-ink/[0.12] py-12 text-center">
+          <h3 className="text-[15px] font-semibold text-fg">{t('empty')}</h3>
+          <p className="mt-2 text-[13.5px] text-fg-muted">
             {searchQuery ? t('emptySearch') : t('emptyDefault')}
           </p>
         </div>
@@ -126,11 +126,11 @@ export default function MarketplacePage() {
 
           {/* Request a custom template */}
           <ContactLink className="flex min-h-[248px] flex-col items-center justify-center gap-2.5 rounded-[14px] border border-dashed border-[#8C6CFF]/40 p-7 text-center transition-colors hover:bg-[#8C6CFF]/5">
-            <span className="flex h-10 w-10 items-center justify-center rounded-[11px] border border-[#8C6CFF]/30 bg-[#8C6CFF]/[0.14] text-[#B7A6FF]">
+            <span className="flex h-10 w-10 items-center justify-center rounded-[11px] border border-[#8C6CFF]/30 bg-[#8C6CFF]/[0.14] text-brand-text">
               <Plus className="h-5 w-5" strokeWidth={2} />
             </span>
-            <span className="text-[14.5px] font-semibold text-[#F4F4F6]">{t('request.title')}</span>
-            <span className="text-[13px] text-[#7E7E89]">{t('request.subtitle')}</span>
+            <span className="text-[14.5px] font-semibold text-fg">{t('request.title')}</span>
+            <span className="text-[13px] text-fg-dim">{t('request.subtitle')}</span>
           </ContactLink>
         </div>
       )}

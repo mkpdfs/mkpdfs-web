@@ -135,21 +135,21 @@ export function FloatingChatWidget({
     <div
       className={cn(
         'fixed bottom-4 right-4 z-50',
-        'flex flex-col w-[380px] max-h-[500px] rounded-[14px] border border-white/[0.09] bg-[#0C0C0F] shadow-[0_24px_60px_rgba(0,0,0,0.6)]',
+        'flex flex-col w-[380px] max-h-[500px] rounded-[14px] border border-ink/[0.09] bg-surface-raised shadow-[0_24px_60px_rgba(0,0,0,0.6)]',
         className
       )}
     >
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-white/[0.07] px-4 py-3">
+      <div className="flex items-center justify-between border-b border-ink/[0.07] px-4 py-3">
         <div className="flex items-center gap-2">
-          <MessageSquare className="h-[18px] w-[18px] text-[#B7A6FF]" strokeWidth={1.9} />
-          <span className="text-sm font-semibold text-[#F4F4F6]">{t('chat.title')}</span>
+          <MessageSquare className="h-[18px] w-[18px] text-brand-text" strokeWidth={1.9} />
+          <span className="text-sm font-semibold text-fg">{t('chat.title')}</span>
         </div>
         <div className="flex items-center gap-1">
           {showCodeEditorToggle && (
             <button
               onClick={onToggleCodeEditor}
-              className="flex h-8 w-8 items-center justify-center rounded-lg text-[#7E7E89] transition-colors hover:bg-white/[0.06] hover:text-[#F4F4F6]"
+              className="flex h-8 w-8 items-center justify-center rounded-lg text-fg-dim transition-colors hover:bg-ink/[0.06] hover:text-fg"
               title={t('chat.toggleCode')}
             >
               <Code2 className="h-4 w-4" />
@@ -157,7 +157,7 @@ export function FloatingChatWidget({
           )}
           <button
             onClick={() => setIsExpanded(false)}
-            className="flex h-8 w-8 items-center justify-center rounded-lg text-[#7E7E89] transition-colors hover:bg-white/[0.06] hover:text-[#F4F4F6]"
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-fg-dim transition-colors hover:bg-ink/[0.06] hover:text-fg"
           >
             <Minimize2 className="h-4 w-4" />
           </button>
@@ -168,8 +168,8 @@ export function FloatingChatWidget({
       <div className="flex-1 overflow-y-auto p-4 space-y-4 min-h-[200px]">
         {messages.length === 0 ? (
           <div className="py-8 text-center">
-            <MessageSquare className="mx-auto mb-3 h-12 w-12 text-[#5C5C66]" strokeWidth={1.5} />
-            <p className="text-sm text-[#9C9CA8]">{t('chat.welcome')}</p>
+            <MessageSquare className="mx-auto mb-3 h-12 w-12 text-fg-faint" strokeWidth={1.5} />
+            <p className="text-sm text-fg-muted">{t('chat.welcome')}</p>
           </div>
         ) : (
           messages.map((message) => (
@@ -185,7 +185,7 @@ export function FloatingChatWidget({
                   'max-w-[85%] rounded-[11px] px-3 py-2',
                   message.role === 'user'
                     ? 'bg-[linear-gradient(140deg,#8C6CFF,#5B3FE0)] text-white'
-                    : 'border border-white/[0.07] bg-white/[0.04] text-[#C9C9D2]'
+                    : 'border border-ink/[0.07] bg-ink/[0.04] text-fg-muted'
                 )}
               >
                 {message.imageUrl && (
@@ -197,8 +197,8 @@ export function FloatingChatWidget({
                 )}
                 {message.isLoading ? (
                   <div className="flex items-center gap-2">
-                    <Loader2 className="h-4 w-4 animate-spin text-[#B7A6FF]" />
-                    <span className="font-geist-mono text-[12.5px] text-[#9C9CA8]">{t('chat.thinking')}</span>
+                    <Loader2 className="h-4 w-4 animate-spin text-brand-text" />
+                    <span className="font-geist-mono text-[12.5px] text-fg-muted">{t('chat.thinking')}</span>
                   </div>
                 ) : (
                   <p className="text-sm whitespace-pre-wrap">{message.content}</p>
@@ -217,11 +217,11 @@ export function FloatingChatWidget({
             <img
               src={selectedImage.preview}
               alt="Selected"
-              className="h-16 w-16 rounded-[9px] border border-white/[0.09] object-cover"
+              className="h-16 w-16 rounded-[9px] border border-ink/[0.09] object-cover"
             />
             <button
               onClick={removeImage}
-              className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full border border-white/[0.12] bg-[#1A1A20] text-[#9C9CA8] transition-colors hover:text-[#F4F4F6]"
+              className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full border border-ink/[0.12] bg-surface-overlay text-fg-muted transition-colors hover:text-fg"
             >
               <X className="h-3 w-3" />
             </button>
@@ -230,7 +230,7 @@ export function FloatingChatWidget({
       )}
 
       {/* Input Area */}
-      <div className="border-t border-white/[0.07] p-3">
+      <div className="border-t border-ink/[0.07] p-3">
         <div className="flex items-end gap-2">
           <input
             ref={fileInputRef}
@@ -241,7 +241,7 @@ export function FloatingChatWidget({
           />
           <button
             onClick={() => fileInputRef.current?.click()}
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[9px] text-[#7E7E89] transition-colors hover:bg-white/[0.06] hover:text-[#9C9CA8] disabled:opacity-50"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[9px] text-fg-dim transition-colors hover:bg-ink/[0.06] hover:text-fg-muted disabled:opacity-50"
             disabled={isGenerating}
           >
             <Paperclip className="h-4 w-4" />
@@ -252,7 +252,7 @@ export function FloatingChatWidget({
             onChange={(e) => setInputValue(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder={t('chat.placeholder')}
-            className="flex-1 resize-none rounded-[9px] border border-white/[0.09] bg-white/[0.04] px-3 py-2 text-sm text-[#F4F4F6] placeholder:text-[#5C5C66] transition-colors focus:border-[#8C6CFF]/50 focus:outline-none disabled:opacity-60"
+            className="flex-1 resize-none rounded-[9px] border border-ink/[0.09] bg-ink/[0.04] px-3 py-2 text-sm text-fg placeholder:text-fg-faint transition-colors focus:border-[#8C6CFF]/50 focus:outline-none disabled:opacity-60"
             rows={1}
             disabled={isGenerating}
           />

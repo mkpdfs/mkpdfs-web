@@ -27,9 +27,9 @@ export function TemplateCard({ template, onPreview, onUse, isLoading, isAdded }:
     : template.description
 
   return (
-    <div className="group flex flex-col overflow-hidden rounded-[14px] border border-white/[0.09] bg-[#0C0C0F] transition-all hover:-translate-y-0.5 hover:border-[#8C6CFF]/45">
+    <div className="group flex flex-col overflow-hidden rounded-[14px] border border-ink/[0.09] bg-surface-raised transition-all hover:-translate-y-0.5 hover:border-[#8C6CFF]/45">
       {/* Preview area */}
-      <div className="relative flex h-32 shrink-0 items-center justify-center border-b border-white/[0.06] bg-[linear-gradient(160deg,#17171D,#0C0C0F)]">
+      <div className="relative flex h-32 shrink-0 items-center justify-center border-b border-ink/[0.06] bg-[linear-gradient(160deg,rgb(var(--surface-card)),rgb(var(--surface-raised)))]">
         {template.thumbnailUrl ? (
           <Image
             src={template.thumbnailUrl}
@@ -52,12 +52,12 @@ export function TemplateCard({ template, onPreview, onUse, isLoading, isAdded }:
       {/* Body */}
       <div className="flex flex-1 flex-col px-4 pb-4 pt-3.5">
         <div className="mb-[5px] flex items-center justify-between gap-2">
-          <span className="truncate text-[15px] font-semibold text-[#F4F4F6]">{templateName}</span>
-          <span className="max-w-[45%] shrink-0 truncate rounded-[5px] bg-white/[0.05] px-[7px] py-0.5 font-geist-mono text-[10.5px] text-[#6B6B76]">
+          <span className="truncate text-[15px] font-semibold text-fg">{templateName}</span>
+          <span className="max-w-[45%] shrink-0 truncate rounded-[5px] bg-ink/[0.05] px-[7px] py-0.5 font-geist-mono text-[10.5px] text-fg-dim">
             {template.templateId}
           </span>
         </div>
-        <p className="mb-3.5 line-clamp-2 text-[13px] text-[#7E7E89]">{templateDescription}</p>
+        <p className="mb-3.5 line-clamp-2 text-[13px] text-fg-dim">{templateDescription}</p>
 
         {/* Actions */}
         <div className="mt-auto flex gap-2">
@@ -65,7 +65,7 @@ export function TemplateCard({ template, onPreview, onUse, isLoading, isAdded }:
             <button
               type="button"
               disabled
-              className="flex h-8 flex-1 items-center justify-center gap-1.5 rounded-lg border border-[#3FBF7F]/40 bg-[#3FBF7F]/[0.12] text-[13px] font-semibold text-[#7CF0B0]"
+              className="flex h-8 flex-1 items-center justify-center gap-1.5 rounded-lg border border-ok/40 bg-ok/[0.12] text-[13px] font-semibold text-ok"
             >
               <Check className="h-3.5 w-3.5" strokeWidth={2.4} />
               {t('card.used')}
@@ -75,16 +75,16 @@ export function TemplateCard({ template, onPreview, onUse, isLoading, isAdded }:
               type="button"
               onClick={() => onUse(template)}
               disabled={isLoading}
-              className="flex h-8 flex-1 items-center justify-center gap-1.5 rounded-lg border border-[#8C6CFF]/35 bg-[#8C6CFF]/[0.13] text-[13px] font-semibold text-[#C9BBFF] transition-colors hover:bg-[#8C6CFF]/[0.22] disabled:cursor-not-allowed disabled:opacity-60"
+              className="flex h-8 flex-1 items-center justify-center gap-1.5 rounded-lg border border-[#8C6CFF]/35 bg-[#8C6CFF]/[0.13] text-[13px] font-semibold text-brand-strong transition-colors hover:bg-[#8C6CFF]/[0.22] disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {isLoading && <Spinner size="sm" className="text-[#C9BBFF]" />}
+              {isLoading && <Spinner size="sm" className="text-brand-strong" />}
               {t('card.useTemplate')}
             </button>
           )}
           <button
             type="button"
             onClick={() => onPreview(template)}
-            className="h-8 rounded-lg border border-white/10 px-3 text-[13px] font-medium text-[#9C9CA8] transition-colors hover:bg-white/[0.05] hover:text-[#F4F4F6]"
+            className="h-8 rounded-lg border border-ink/10 px-3 text-[13px] font-medium text-fg-muted transition-colors hover:bg-ink/[0.05] hover:text-fg"
           >
             {t('card.preview')}
           </button>

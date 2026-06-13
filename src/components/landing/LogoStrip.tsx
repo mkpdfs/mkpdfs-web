@@ -8,7 +8,7 @@ export async function LogoStrip() {
 
   return (
     <section className="relative z-[1] mx-auto max-w-[1000px] px-7 pb-20 pt-[30px] text-center">
-      <p className="mb-[22px] text-[12.5px] uppercase tracking-[0.1em] text-[#5C5C66]">
+      <p className="mb-[22px] text-[12.5px] uppercase tracking-[0.1em] text-fg-faint">
         {t('title')}
       </p>
       <div className="flex flex-wrap items-center justify-center gap-x-[46px] gap-y-4">

@@ -13,12 +13,12 @@ export function UpgradePrompt({ feature }: UpgradePromptProps) {
   const common = useTranslations('common')
 
   return (
-    <div className="flex flex-col items-center rounded-2xl border border-dashed border-white/[0.15] px-8 py-16 text-center">
-      <div className="mb-[18px] flex h-14 w-14 items-center justify-center rounded-[15px] border border-[#8C6CFF]/25 bg-[#8C6CFF]/[0.1] text-[#B7A6FF]">
+    <div className="flex flex-col items-center rounded-2xl border border-dashed border-ink/[0.15] px-8 py-16 text-center">
+      <div className="mb-[18px] flex h-14 w-14 items-center justify-center rounded-[15px] border border-[#8C6CFF]/25 bg-[#8C6CFF]/[0.1] text-brand-text">
         <Lock className="h-[26px] w-[26px]" strokeWidth={1.7} />
       </div>
-      <h3 className="mb-2 text-lg font-semibold text-[#F4F4F6]">{feature}</h3>
-      <p className="mb-6 max-w-[400px] text-[14.5px] text-[#9C9CA8]">
+      <h3 className="mb-2 text-lg font-semibold text-fg">{feature}</h3>
+      <p className="mb-6 max-w-[400px] text-[14.5px] text-fg-muted">
         {common('creditsRequired')}
       </p>
       <Link

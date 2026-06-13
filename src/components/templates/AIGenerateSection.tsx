@@ -579,17 +579,17 @@ export function AIGenerateSection({ onSaveComplete }: AIGenerateSectionProps) {
       {/* Header with usage indicator and save button */}
       <div className="mb-6 flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <span className="flex items-center gap-2 font-geist-mono text-[11.5px] uppercase tracking-[0.09em] text-[#7E7E89]">
-            <Sparkles className="h-3.5 w-3.5 text-[#B7A6FF]" strokeWidth={1.9} />
-            {ai('remainingGenerations')}: <span className="text-[#9C9CA8]">{displayRemaining}</span>
+          <span className="flex items-center gap-2 font-geist-mono text-[11.5px] uppercase tracking-[0.09em] text-fg-dim">
+            <Sparkles className="h-3.5 w-3.5 text-brand-text" strokeWidth={1.9} />
+            {ai('remainingGenerations')}: <span className="text-fg-muted">{displayRemaining}</span>
           </span>
           {!isUnlimited && remainingGenerations <= 2 && remainingGenerations > 0 && (
-            <span className="font-geist-mono text-[11.5px] uppercase tracking-[0.09em] text-[#F0C987]">
+            <span className="font-geist-mono text-[11.5px] uppercase tracking-[0.09em] text-warn">
               {ai('limitWarning')}
             </span>
           )}
           {!isUnlimited && remainingGenerations <= 0 && (
-            <span className="font-geist-mono text-[11.5px] uppercase tracking-[0.09em] text-[#FF8B8B]">
+            <span className="font-geist-mono text-[11.5px] uppercase tracking-[0.09em] text-danger">
               {ai('limitReached')}
             </span>
           )}
@@ -618,14 +618,14 @@ export function AIGenerateSection({ onSaveComplete }: AIGenerateSectionProps) {
 
       {/* Question Form (shown during 'questions' step) */}
       {flowStep === 'questions' && analysisResult && (
-        <div className="flex h-full flex-col overflow-hidden rounded-[14px] border border-white/[0.09] bg-[#0C0C0F]">
-          <div className="flex items-center justify-between border-b border-white/[0.07] px-6 py-4">
-            <h2 className="text-lg font-semibold tracking-[-0.015em] text-[#F4F4F6]">
+        <div className="flex h-full flex-col overflow-hidden rounded-[14px] border border-ink/[0.09] bg-surface-raised">
+          <div className="flex items-center justify-between border-b border-ink/[0.07] px-6 py-4">
+            <h2 className="text-lg font-semibold tracking-[-0.015em] text-fg">
               {ai('questionsTitle') || 'Help us understand your template needs'}
             </h2>
             <button
               onClick={handleBackToPrompt}
-              className="flex items-center gap-2 rounded-[9px] px-3 py-1.5 text-[13px] font-medium text-[#9C9CA8] transition-colors hover:bg-white/[0.06] hover:text-[#F4F4F6]"
+              className="flex items-center gap-2 rounded-[9px] px-3 py-1.5 text-[13px] font-medium text-fg-muted transition-colors hover:bg-ink/[0.06] hover:text-fg"
             >
               <ArrowLeft className="h-3.5 w-3.5" />
               {ai('startOver') || 'Start Over'}
@@ -648,17 +648,17 @@ export function AIGenerateSection({ onSaveComplete }: AIGenerateSectionProps) {
         <div className="mx-auto max-w-[760px]">
           {/* Centered hero */}
           <div className="pb-[30px] pt-4 text-center">
-            <div className="mx-auto mb-4 flex h-[52px] w-[52px] items-center justify-center rounded-[14px] border border-[#8C6CFF]/30 bg-[#8C6CFF]/[0.14] text-[#B7A6FF]">
+            <div className="mx-auto mb-4 flex h-[52px] w-[52px] items-center justify-center rounded-[14px] border border-[#8C6CFF]/30 bg-[#8C6CFF]/[0.14] text-brand-text">
               <Sparkles className="h-6 w-6" strokeWidth={1.7} />
             </div>
-            <h1 className="mb-2 text-[26px] font-bold tracking-[-0.025em] text-[#F4F4F6]">
+            <h1 className="mb-2 text-[26px] font-bold tracking-[-0.025em] text-fg">
               {ai('hero.title')}
             </h1>
-            <p className="text-[14.5px] text-[#9C9CA8]">{ai('hero.subtitle')}</p>
+            <p className="text-[14.5px] text-fg-muted">{ai('hero.subtitle')}</p>
           </div>
 
           {/* Prompt card */}
-          <div className="mb-4 overflow-hidden rounded-2xl border border-[#8C6CFF]/30 bg-[#0C0C0F] shadow-[0_0_0_4px_rgba(124,92,255,0.06)] transition-colors focus-within:border-[#8C6CFF]/50">
+          <div className="mb-4 overflow-hidden rounded-2xl border border-[#8C6CFF]/30 bg-surface-raised shadow-[0_0_0_4px_rgba(124,92,255,0.06)] transition-colors focus-within:border-[#8C6CFF]/50">
             <textarea
               value={promptValue}
               onChange={(e) => setPromptValue(e.target.value)}
@@ -666,7 +666,7 @@ export function AIGenerateSection({ onSaveComplete }: AIGenerateSectionProps) {
               placeholder={ai('hero.placeholder')}
               disabled={isGenerating}
               rows={4}
-              className="block min-h-[110px] w-full resize-none border-0 bg-transparent px-5 py-[18px] text-[15px] leading-[1.6] text-[#F4F4F6] placeholder:text-[#5C5C66] focus:outline-none focus:ring-0 disabled:opacity-60"
+              className="block min-h-[110px] w-full resize-none border-0 bg-transparent px-5 py-[18px] text-[15px] leading-[1.6] text-fg placeholder:text-fg-faint focus:outline-none focus:ring-0 disabled:opacity-60"
             />
 
             {/* Selected brand-asset preview */}
@@ -676,12 +676,12 @@ export function AIGenerateSection({ onSaveComplete }: AIGenerateSectionProps) {
                   <img
                     src={composerImage.preview}
                     alt={ai('hero.attach')}
-                    className="h-16 w-16 rounded-[9px] border border-white/[0.09] object-cover"
+                    className="h-16 w-16 rounded-[9px] border border-ink/[0.09] object-cover"
                   />
                   <button
                     onClick={() => setComposerImage(null)}
                     aria-label={ai('hero.removeImage')}
-                    className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full border border-white/[0.12] bg-[#1A1A20] text-[#9C9CA8] transition-colors hover:text-[#F4F4F6]"
+                    className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full border border-ink/[0.12] bg-surface-overlay text-fg-muted transition-colors hover:text-fg"
                   >
                     <X className="h-3 w-3" />
                   </button>
@@ -690,7 +690,7 @@ export function AIGenerateSection({ onSaveComplete }: AIGenerateSectionProps) {
             )}
 
             {/* Card footer: attach + generate */}
-            <div className="flex items-center justify-between border-t border-white/[0.07] px-3.5 py-3">
+            <div className="flex items-center justify-between border-t border-ink/[0.07] px-3.5 py-3">
               <input
                 ref={composerFileRef}
                 type="file"
@@ -702,7 +702,7 @@ export function AIGenerateSection({ onSaveComplete }: AIGenerateSectionProps) {
                 type="button"
                 onClick={() => composerFileRef.current?.click()}
                 disabled={isGenerating}
-                className="flex items-center gap-[7px] rounded-lg px-2 py-1.5 text-[13px] text-[#7E7E89] transition-colors hover:text-[#9C9CA8] disabled:opacity-50"
+                className="flex items-center gap-[7px] rounded-lg px-2 py-1.5 text-[13px] text-fg-dim transition-colors hover:text-fg-muted disabled:opacity-50"
               >
                 <Paperclip className="h-3.5 w-3.5" strokeWidth={2} />
                 {ai('hero.attach')}
@@ -731,7 +731,7 @@ export function AIGenerateSection({ onSaveComplete }: AIGenerateSectionProps) {
                 type="button"
                 onClick={() => setPromptValue(ai(`examples.${key}.prompt`))}
                 disabled={isGenerating}
-                className="rounded-full border border-white/[0.09] bg-white/[0.03] px-3.5 py-[7px] text-[13px] text-[#9C9CA8] transition-colors hover:border-[#8C6CFF]/40 hover:text-[#C9BBFF] disabled:opacity-50"
+                className="rounded-full border border-ink/[0.09] bg-ink/[0.03] px-3.5 py-[7px] text-[13px] text-fg-muted transition-colors hover:border-[#8C6CFF]/40 hover:text-brand-strong disabled:opacity-50"
               >
                 {ai(`examples.${key}.label`)}
               </button>

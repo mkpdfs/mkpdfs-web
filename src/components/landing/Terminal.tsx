@@ -110,9 +110,9 @@ export function Terminal() {
       className="mk-rise relative z-[1] mx-auto max-w-[840px] px-7 pb-[30px]"
       style={{ '--mk-delay': '0.45s' } as React.CSSProperties}
     >
-      <div className="overflow-hidden rounded-2xl border border-white/10 bg-[linear-gradient(180deg,#101014,#0C0C0F)] shadow-[0_40px_90px_-30px_rgba(0,0,0,0.9),0_0_0_1px_rgba(124,92,255,0.06)] transition-shadow duration-500 hover:shadow-[0_40px_90px_-30px_rgba(0,0,0,0.9),0_0_0_1px_rgba(124,92,255,0.14),0_0_60px_-20px_rgba(124,92,255,0.25)]">
+      <div className="overflow-hidden rounded-2xl border border-ink/10 bg-[linear-gradient(180deg,rgb(var(--surface-card)),rgb(var(--surface-raised)))] shadow-[0_40px_90px_-30px_rgba(0,0,0,0.9),0_0_0_1px_rgba(124,92,255,0.06)] transition-shadow duration-500 hover:shadow-[0_40px_90px_-30px_rgba(0,0,0,0.9),0_0_0_1px_rgba(124,92,255,0.14),0_0_60px_-20px_rgba(124,92,255,0.25)]">
         {/* window header */}
-        <div className="flex items-center gap-3.5 border-b border-white/[0.07] px-4 py-[13px]">
+        <div className="flex items-center gap-3.5 border-b border-ink/[0.07] px-4 py-[13px]">
           <div className="flex gap-[7px]">
             <span className="h-[11px] w-[11px] rounded-full bg-[#FF5F57]" />
             <span className="h-[11px] w-[11px] rounded-full bg-[#FEBC2E]" />
@@ -126,30 +126,30 @@ export function Terminal() {
                 onClick={() => selectTab(item.id)}
                 className={`rounded-[7px] px-3 py-[5px] font-geist-mono text-[12.5px] transition-all active:scale-95 ${
                   tab === item.id
-                    ? 'bg-[#8C6CFF]/[0.18] text-[#C9BBFF]'
-                    : 'bg-transparent text-[#7C7C86] hover:text-[#A0A0AB]'
+                    ? 'bg-[#8C6CFF]/[0.18] text-brand-strong'
+                    : 'bg-transparent text-fg-dim hover:text-fg-muted'
                 }`}
               >
                 {item.label}
               </button>
             ))}
           </div>
-          <div className="ml-auto font-geist-mono text-xs text-[#5C5C66]">POST /v1/pdf</div>
+          <div className="ml-auto font-geist-mono text-xs text-fg-faint">POST /v1/pdf</div>
         </div>
 
         <div className="grid min-h-[268px] grid-cols-1 md:grid-cols-[1.55fr_1fr]">
           {/* code pane */}
-          <pre className="m-0 overflow-x-auto border-b border-white/[0.06] p-[22px] font-geist-mono text-[13px] leading-[1.7] text-[#D6D6E0] md:border-b-0 md:border-r">
+          <pre className="m-0 overflow-x-auto border-b border-ink/[0.06] p-[22px] font-geist-mono text-[13px] leading-[1.7] text-brand-strong md:border-b-0 md:border-r">
             <span ref={codeRef} />
-            <span className="ml-[3px] inline-block h-[13px] w-[7px] bg-[#B7A6FF] align-[-2px] [animation:mk-blink_1.1s_steps(1)_infinite]" />
+            <span className="ml-[3px] inline-block h-[13px] w-[7px] bg-brand-text align-[-2px] [animation:mk-blink_1.1s_steps(1)_infinite]" />
           </pre>
 
           {/* response pane */}
-          <div className="flex flex-col gap-3.5 bg-white/[0.012] p-[22px]">
-            <div className="font-geist-mono text-[11px] uppercase tracking-[0.08em] text-[#5C5C66]">
+          <div className="flex flex-col gap-3.5 bg-ink/[0.012] p-[22px]">
+            <div className="font-geist-mono text-[11px] uppercase tracking-[0.08em] text-fg-faint">
               {done ? 'Response · 200' : 'Response · …'}
             </div>
-            <div className="relative flex flex-1 items-center justify-center overflow-hidden rounded-[10px] border border-white/[0.09] bg-[#0A0A0C]">
+            <div className="relative flex flex-1 items-center justify-center overflow-hidden rounded-[10px] border border-ink/[0.09] bg-surface">
               <div className="absolute inset-x-0 h-[30px] bg-[linear-gradient(90deg,transparent,rgba(124,92,255,0.14),transparent)] [animation:mk-scan_2.6s_linear_infinite]" />
               <div
                 className="transition-all duration-700 ease-out"
@@ -174,7 +174,7 @@ export function Terminal() {
             </div>
             <div
               className={`break-all font-geist-mono text-[11px] transition-colors duration-[400ms] ${
-                done ? 'text-[#7CF0B0]' : 'text-[#5C5C66]'
+                done ? 'text-ok' : 'text-fg-faint'
               }`}
             >
               {done ? '{ "url": "cdn.mkpdfs.com/…" }' : '⠋ awaiting request…'}

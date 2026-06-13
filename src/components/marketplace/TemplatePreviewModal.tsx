@@ -59,28 +59,28 @@ export function TemplatePreviewModal({
   const tabClass = (isActive: boolean) =>
     `flex items-center gap-2 border-b-2 px-4 py-3 text-sm font-medium transition-colors ${
       isActive
-        ? 'border-[#8C6CFF] text-[#C9BBFF]'
-        : 'border-transparent text-[#7E7E89] hover:text-[#F4F4F6]'
+        ? 'border-[#8C6CFF] text-brand-strong'
+        : 'border-transparent text-fg-dim hover:text-fg'
     }`
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm">
-      <div className="relative max-h-[90vh] w-full max-w-4xl overflow-hidden rounded-2xl border border-white/10 bg-[#101014] shadow-[0_24px_70px_rgba(0,0,0,0.6)]">
+      <div className="relative max-h-[90vh] w-full max-w-4xl overflow-hidden rounded-2xl border border-ink/10 bg-surface-card shadow-[0_24px_70px_rgba(0,0,0,0.6)]">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-white/[0.08] px-6 py-4">
+        <div className="flex items-center justify-between border-b border-ink/[0.08] px-6 py-4">
           <div>
-            <h2 className="text-xl font-semibold tracking-[-0.015em] text-[#F4F4F6]">
+            <h2 className="text-xl font-semibold tracking-[-0.015em] text-fg">
               {templateName}
             </h2>
             <p className="mt-1.5 text-sm">
-              <span className="rounded-full border border-[#8C6CFF]/30 bg-[#8C6CFF]/[0.13] px-2.5 py-0.5 text-xs font-medium text-[#B7A6FF]">
+              <span className="rounded-full border border-[#8C6CFF]/30 bg-[#8C6CFF]/[0.13] px-2.5 py-0.5 text-xs font-medium text-brand-text">
                 {getCategoryLabel(template.category, categoryT)}
               </span>
             </p>
           </div>
           <button
             onClick={onClose}
-            className="rounded-lg p-2 text-[#7E7E89] transition-colors hover:bg-white/[0.06] hover:text-[#F4F4F6]"
+            className="rounded-lg p-2 text-fg-dim transition-colors hover:bg-ink/[0.06] hover:text-fg"
           >
             <X className="h-5 w-5" />
           </button>
@@ -88,7 +88,7 @@ export function TemplatePreviewModal({
 
         {/* Thumbnail Preview */}
         {template.thumbnailUrl && (
-          <div className="border-b border-white/[0.08] bg-black/30 px-6 py-4">
+          <div className="border-b border-ink/[0.08] bg-black/30 px-6 py-4">
             <div className="relative mx-auto h-64 w-full max-w-xl">
               <Image
                 src={template.thumbnailUrl}
@@ -103,7 +103,7 @@ export function TemplatePreviewModal({
         )}
 
         {/* Tabs */}
-        <div className="flex border-b border-white/[0.08] px-6">
+        <div className="flex border-b border-ink/[0.08] px-6">
           <button onClick={() => setActiveTab('preview')} className={tabClass(activeTab === 'preview')}>
             <FileText className="h-4 w-4" />
             {t('template')}
@@ -121,14 +121,14 @@ export function TemplatePreviewModal({
               <Spinner size="lg" className="text-[#8C6CFF]" />
             </div>
           ) : activeTab === 'preview' ? (
-            <div className="rounded-lg border border-white/[0.08] bg-black/40 p-4">
-              <pre className="max-h-96 overflow-auto font-geist-mono text-[12.5px] leading-relaxed text-[#9C9CA8]">
+            <div className="rounded-lg border border-ink/[0.08] bg-black/40 p-4">
+              <pre className="max-h-96 overflow-auto font-geist-mono text-[12.5px] leading-relaxed text-fg-muted">
                 <code>{previewData?.content || t('loadingTemplate')}</code>
               </pre>
             </div>
           ) : (
-            <div className="rounded-lg border border-white/[0.08] bg-black/40 p-4">
-              <pre className="max-h-96 overflow-auto font-geist-mono text-[12.5px] leading-relaxed text-[#9C9CA8]">
+            <div className="rounded-lg border border-ink/[0.08] bg-black/40 p-4">
+              <pre className="max-h-96 overflow-auto font-geist-mono text-[12.5px] leading-relaxed text-fg-muted">
                 <code>{JSON.stringify(sampleData, null, 2)}</code>
               </pre>
             </div>
@@ -136,14 +136,14 @@ export function TemplatePreviewModal({
         </div>
 
         {/* Description */}
-        <div className="border-t border-white/[0.08] px-6 py-4">
-          <p className="text-[13px] text-[#7E7E89]">{templateDescription}</p>
+        <div className="border-t border-ink/[0.08] px-6 py-4">
+          <p className="text-[13px] text-fg-dim">{templateDescription}</p>
           {template.tags && template.tags.length > 0 && (
             <div className="mt-2 flex flex-wrap gap-1.5">
               {template.tags.map((tag) => (
                 <span
                   key={tag}
-                  className="rounded-[5px] bg-white/[0.05] px-2 py-0.5 font-geist-mono text-[10.5px] text-[#6B6B76]"
+                  className="rounded-[5px] bg-ink/[0.05] px-2 py-0.5 font-geist-mono text-[10.5px] text-fg-dim"
                 >
                   {tag}
                 </span>
@@ -153,11 +153,11 @@ export function TemplatePreviewModal({
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-end gap-3 border-t border-white/[0.08] px-6 py-4">
+        <div className="flex items-center justify-end gap-3 border-t border-ink/[0.08] px-6 py-4">
           <button
             type="button"
             onClick={onClose}
-            className="h-9 rounded-[9px] border border-white/10 px-4 text-[13.5px] font-medium text-[#9C9CA8] transition-colors hover:bg-white/[0.05] hover:text-[#F4F4F6]"
+            className="h-9 rounded-[9px] border border-ink/10 px-4 text-[13.5px] font-medium text-fg-muted transition-colors hover:bg-ink/[0.05] hover:text-fg"
           >
             {t('close')}
           </button>
@@ -165,7 +165,7 @@ export function TemplatePreviewModal({
             <button
               type="button"
               disabled
-              className="flex h-9 items-center gap-1.5 rounded-[9px] border border-[#3FBF7F]/40 bg-[#3FBF7F]/[0.12] px-4 text-[13.5px] font-semibold text-[#7CF0B0]"
+              className="flex h-9 items-center gap-1.5 rounded-[9px] border border-ok/40 bg-ok/[0.12] px-4 text-[13.5px] font-semibold text-ok"
             >
               <Check className="h-4 w-4" strokeWidth={2.4} />
               {t('added')}

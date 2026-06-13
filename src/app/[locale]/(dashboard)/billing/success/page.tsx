@@ -15,15 +15,15 @@ export default function BillingSuccessPage() {
 
   return (
     <div className="flex min-h-[60vh] items-center justify-center">
-      <div className="w-full max-w-md rounded-2xl border border-white/[0.09] bg-[linear-gradient(180deg,rgba(255,255,255,0.025),rgba(255,255,255,0))] px-8 py-9 text-center">
-        <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-[14px] border border-[#3FBF7F]/35 bg-[#3FBF7F]/[0.12]">
-          <CheckCircle className="h-7 w-7 text-[#7CF0B0]" strokeWidth={1.9} />
+      <div className="w-full max-w-md rounded-2xl border border-ink/[0.09] bg-[linear-gradient(180deg,rgba(255,255,255,0.025),rgba(255,255,255,0))] px-8 py-9 text-center">
+        <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-[14px] border border-ok/35 bg-ok/[0.12]">
+          <CheckCircle className="h-7 w-7 text-ok" strokeWidth={1.9} />
         </div>
         <h1 className="mb-2 text-[22px] font-bold tracking-[-0.02em]">Payment Successful!</h1>
-        <p className="mb-3 text-[14.5px] text-[#9C9CA8]">
+        <p className="mb-3 text-[14.5px] text-fg-muted">
           Thank you for upgrading your plan. Your new features are now active.
         </p>
-        <p className="mb-7 text-[13px] text-[#7E7E89]">
+        <p className="mb-7 text-[13px] text-fg-dim">
           Your subscription has been activated and you now have access to all the features included
           in your new plan.
         </p>
@@ -37,7 +37,7 @@ export default function BillingSuccessPage() {
           </Link>
           <Link
             href="/billing"
-            className="inline-flex h-[38px] items-center justify-center rounded-[10px] border border-white/[0.12] bg-white/[0.04] px-[18px] text-sm font-medium text-[#F4F4F6] transition-colors hover:border-white/25"
+            className="inline-flex h-[38px] items-center justify-center rounded-[10px] border border-ink/[0.12] bg-ink/[0.04] px-[18px] text-sm font-medium text-fg transition-colors hover:border-ink/25"
           >
             View Billing
           </Link>

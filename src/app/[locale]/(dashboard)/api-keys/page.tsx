@@ -13,7 +13,7 @@ const gradientButtonClass =
   'inline-flex h-[38px] items-center justify-center gap-2 rounded-[10px] bg-[linear-gradient(140deg,#8C6CFF,#5B3FE0)] px-[18px] text-sm font-semibold text-white shadow-[0_6px_20px_rgba(124,92,255,0.35)] transition-all hover:-translate-y-px hover:shadow-[0_10px_28px_rgba(124,92,255,0.5)] disabled:pointer-events-none disabled:opacity-60'
 
 const ghostIconButtonClass =
-  'flex h-9 w-9 shrink-0 items-center justify-center rounded-[9px] border border-white/[0.12] bg-white/[0.04] text-[#9C9CA8] transition-colors hover:bg-white/[0.08] hover:text-[#F4F4F6]'
+  'flex h-9 w-9 shrink-0 items-center justify-center rounded-[9px] border border-ink/[0.12] bg-ink/[0.04] text-fg-muted transition-colors hover:bg-ink/[0.08] hover:text-fg'
 
 function maskTokenId(tokenId: string) {
   if (tokenId.length <= 10) return tokenId
@@ -97,9 +97,9 @@ export default function ApiKeysPage() {
       <div className="mb-7 flex flex-wrap items-end justify-between gap-5">
         <div>
           <h1 className="mb-1.5 text-[26px] font-bold tracking-[-0.025em]">{t('title')}</h1>
-          <p className="text-[14.5px] text-[#9C9CA8]">
+          <p className="text-[14.5px] text-fg-muted">
             {t('subtitleScoped')}{' '}
-            <span className="font-geist-mono text-[#7E7E89]">
+            <span className="font-geist-mono text-fg-dim">
               {keyCount} / {keyLimit === -1 ? '∞' : keyLimit}
             </span>
           </p>
@@ -113,9 +113,9 @@ export default function ApiKeysPage() {
       {/* New key reveal — shown once */}
       {newToken && (
         <div className="mb-6 rounded-[14px] border border-[#8C6CFF]/30 bg-[#8C6CFF]/[0.08] p-5">
-          <p className="mb-3 text-sm font-medium text-[#C9BBFF]">{t('warning')}</p>
+          <p className="mb-3 text-sm font-medium text-brand-strong">{t('warning')}</p>
           <div className="flex items-center gap-2">
-            <code className="min-w-0 flex-1 truncate rounded-[9px] border border-white/10 bg-white/[0.05] px-3.5 py-2.5 font-geist-mono text-[13px] text-[#F4F4F6]">
+            <code className="min-w-0 flex-1 truncate rounded-[9px] border border-ink/10 bg-ink/[0.05] px-3.5 py-2.5 font-geist-mono text-[13px] text-fg">
               {showToken ? newToken : '••••••••••••••••••••••••'}
             </code>
             <button
@@ -140,34 +140,34 @@ export default function ApiKeysPage() {
 
       {/* Keys */}
       {isLoading ? (
-        <div className="flex justify-center py-16 text-[#9C9CA8]">
+        <div className="flex justify-center py-16 text-fg-muted">
           <Spinner />
         </div>
       ) : keyCount === 0 ? (
-        <div className="flex flex-col items-center rounded-2xl border border-dashed border-white/[0.15] px-8 py-16 text-center">
-          <div className="mb-[18px] flex h-14 w-14 items-center justify-center rounded-[15px] border border-[#8C6CFF]/25 bg-[#8C6CFF]/10 text-[#B7A6FF]">
+        <div className="flex flex-col items-center rounded-2xl border border-dashed border-ink/[0.15] px-8 py-16 text-center">
+          <div className="mb-[18px] flex h-14 w-14 items-center justify-center rounded-[15px] border border-[#8C6CFF]/25 bg-[#8C6CFF]/10 text-brand-text">
             <Key className="h-[26px] w-[26px]" strokeWidth={1.7} />
           </div>
           <h2 className="mb-2 text-lg font-semibold">{t('empty.title')}</h2>
-          <p className="mb-6 max-w-[400px] text-[14.5px] text-[#9C9CA8]">{t('empty.body')}</p>
+          <p className="mb-6 max-w-[400px] text-[14.5px] text-fg-muted">{t('empty.body')}</p>
           <button onClick={() => setDialogOpen(true)} className={gradientButtonClass}>
             {t('empty.cta')}
           </button>
         </div>
       ) : (
-        <div className="overflow-hidden rounded-[14px] border border-white/[0.09] bg-[#0B0B0E]">
+        <div className="overflow-hidden rounded-[14px] border border-ink/[0.09] bg-surface">
           {/* Column headers */}
-          <div className="hidden grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)_minmax(0,0.9fr)_minmax(0,0.9fr)_88px] items-center gap-4 border-b border-white/[0.08] bg-white/[0.02] px-[18px] py-[11px] sm:grid">
-            <span className="font-geist-mono text-[11px] uppercase tracking-[0.08em] text-[#7E7E89]">
+          <div className="hidden grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)_minmax(0,0.9fr)_minmax(0,0.9fr)_88px] items-center gap-4 border-b border-ink/[0.08] bg-ink/[0.02] px-[18px] py-[11px] sm:grid">
+            <span className="font-geist-mono text-[11px] uppercase tracking-[0.08em] text-fg-dim">
               {t('table.name')}
             </span>
-            <span className="font-geist-mono text-[11px] uppercase tracking-[0.08em] text-[#7E7E89]">
+            <span className="font-geist-mono text-[11px] uppercase tracking-[0.08em] text-fg-dim">
               {t('table.key')}
             </span>
-            <span className="font-geist-mono text-[11px] uppercase tracking-[0.08em] text-[#7E7E89]">
+            <span className="font-geist-mono text-[11px] uppercase tracking-[0.08em] text-fg-dim">
               {t('table.created')}
             </span>
-            <span className="font-geist-mono text-[11px] uppercase tracking-[0.08em] text-[#7E7E89]">
+            <span className="font-geist-mono text-[11px] uppercase tracking-[0.08em] text-fg-dim">
               {t('table.lastUsed')}
             </span>
             <span />
@@ -176,24 +176,24 @@ export default function ApiKeysPage() {
           {tokens?.map((token) => (
             <div
               key={token.tokenId}
-              className="grid grid-cols-1 items-center gap-2 border-b border-white/[0.05] px-[18px] py-[13px] transition-colors last:border-b-0 hover:bg-white/[0.025] sm:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)_minmax(0,0.9fr)_minmax(0,0.9fr)_88px] sm:gap-4"
+              className="grid grid-cols-1 items-center gap-2 border-b border-ink/[0.05] px-[18px] py-[13px] transition-colors last:border-b-0 hover:bg-ink/[0.025] sm:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)_minmax(0,0.9fr)_minmax(0,0.9fr)_88px] sm:gap-4"
             >
               <div className="flex min-w-0 items-center gap-3">
-                <Key className="h-4 w-4 shrink-0 text-[#B7A6FF]" strokeWidth={1.9} />
-                <span className="truncate text-[14px] font-medium text-[#F4F4F6]">
+                <Key className="h-4 w-4 shrink-0 text-brand-text" strokeWidth={1.9} />
+                <span className="truncate text-[14px] font-medium text-fg">
                   {token.name}
                 </span>
               </div>
               <div>
-                <span className="inline-flex max-w-full items-center truncate rounded-md border border-white/[0.08] bg-white/[0.05] px-[9px] py-[3px] font-geist-mono text-[11.5px] text-[#9C9CA8]">
+                <span className="inline-flex max-w-full items-center truncate rounded-md border border-ink/[0.08] bg-ink/[0.05] px-[9px] py-[3px] font-geist-mono text-[11.5px] text-fg-muted">
                   {maskTokenId(token.tokenId)}
                 </span>
               </div>
-              <div className="text-[13px] text-[#7E7E89]">
+              <div className="text-[13px] text-fg-dim">
                 <span className="sm:hidden">{t('card.created', { date: formatDate(token.createdAt) })}</span>
                 <span className="hidden sm:inline">{formatDate(token.createdAt)}</span>
               </div>
-              <div className="text-[13px] text-[#7E7E89]">
+              <div className="text-[13px] text-fg-dim">
                 {token.lastUsed ? (
                   <>
                     <span className="sm:hidden">{t('card.lastUsed', { date: formatDate(token.lastUsed) })}</span>
@@ -207,7 +207,7 @@ export default function ApiKeysPage() {
                 <button
                   type="button"
                   onClick={() => handleDelete(token.tokenId, token.name)}
-                  className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-[rgba(255,108,140,0.35)] bg-[rgba(255,108,140,0.1)] px-3 text-[12.5px] font-medium text-[#FF8A9B] transition-colors hover:bg-[rgba(255,108,140,0.18)]"
+                  className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-[rgb(var(--danger-soft)/0.35)] bg-[rgb(var(--danger-soft)/0.1)] px-3 text-[12.5px] font-medium text-danger-soft transition-colors hover:bg-[rgb(var(--danger-soft)/0.18)]"
                 >
                   <Trash2 className="h-[13px] w-[13px]" strokeWidth={2} />
                   {t('card.revoke')}
@@ -222,11 +222,11 @@ export default function ApiKeysPage() {
       <DialogPrimitive.Root open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogPrimitive.Portal>
           <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=closed]:animate-out data-[state=closed]:fade-out-0" />
-          <DialogPrimitive.Content className="fixed left-1/2 top-1/2 z-50 w-[calc(100%-32px)] max-w-[440px] -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-white/10 bg-[#101014] p-6 text-[#F4F4F6] shadow-[0_24px_60px_rgba(0,0,0,0.55)] duration-200 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95">
+          <DialogPrimitive.Content className="fixed left-1/2 top-1/2 z-50 w-[calc(100%-32px)] max-w-[440px] -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-ink/10 bg-surface-card p-6 text-fg shadow-[0_24px_60px_rgba(0,0,0,0.55)] duration-200 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95">
             <DialogPrimitive.Title className="text-[17px] font-semibold tracking-[-0.015em]">
               {t('createDialog.title')}
             </DialogPrimitive.Title>
-            <DialogPrimitive.Description className="mt-1.5 text-[13.5px] text-[#9C9CA8]">
+            <DialogPrimitive.Description className="mt-1.5 text-[13.5px] text-fg-muted">
               {t('createDialog.description')}
             </DialogPrimitive.Description>
 
@@ -239,7 +239,7 @@ export default function ApiKeysPage() {
             >
               <label
                 htmlFor="api-key-name"
-                className="mb-2 block font-geist-mono text-[11px] uppercase tracking-[0.08em] text-[#7E7E89]"
+                className="mb-2 block font-geist-mono text-[11px] uppercase tracking-[0.08em] text-fg-dim"
               >
                 {t('createDialog.name')}
               </label>
@@ -249,15 +249,15 @@ export default function ApiKeysPage() {
                 placeholder={t('createDialog.namePlaceholder')}
                 value={newTokenName}
                 onChange={(e) => setNewTokenName(e.target.value)}
-                className="w-full rounded-[9px] border border-white/10 bg-white/[0.03] px-3.5 py-2.5 text-sm text-[#F4F4F6] outline-none transition-colors placeholder:text-[#5C5C66] focus:border-[rgba(124,92,255,0.5)]"
+                className="w-full rounded-[9px] border border-ink/10 bg-ink/[0.03] px-3.5 py-2.5 text-sm text-fg outline-none transition-colors placeholder:text-fg-faint focus:border-[rgba(124,92,255,0.5)]"
               />
-              <p className="mt-2 text-[12.5px] text-[#7E7E89]">{t('createDialog.nameHint')}</p>
+              <p className="mt-2 text-[12.5px] text-fg-dim">{t('createDialog.nameHint')}</p>
 
               <div className="mt-6 flex justify-end gap-2.5">
                 <button
                   type="button"
                   onClick={() => setDialogOpen(false)}
-                  className="inline-flex h-[38px] items-center rounded-[10px] border border-white/[0.12] bg-white/[0.04] px-4 text-sm font-medium text-[#9C9CA8] transition-colors hover:bg-white/[0.08] hover:text-[#F4F4F6]"
+                  className="inline-flex h-[38px] items-center rounded-[10px] border border-ink/[0.12] bg-ink/[0.04] px-4 text-sm font-medium text-fg-muted transition-colors hover:bg-ink/[0.08] hover:text-fg"
                 >
                   {common('cancel')}
                 </button>
@@ -274,7 +274,7 @@ export default function ApiKeysPage() {
 
             <DialogPrimitive.Close
               aria-label={common('close')}
-              className="absolute right-4 top-4 flex h-[30px] w-[30px] items-center justify-center rounded-lg text-[#7E7E89] transition-colors hover:bg-white/[0.06] hover:text-[#F4F4F6]"
+              className="absolute right-4 top-4 flex h-[30px] w-[30px] items-center justify-center rounded-lg text-fg-dim transition-colors hover:bg-ink/[0.06] hover:text-fg"
             >
               <X className="h-[15px] w-[15px]" />
             </DialogPrimitive.Close>

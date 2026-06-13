@@ -24,20 +24,20 @@ export async function HowItWorks() {
           <h2 className="mb-4 text-4xl font-bold tracking-[-0.03em] md:text-[46px] md:leading-tight">
             {t('title')}
           </h2>
-          <p className="mx-auto max-w-[540px] text-lg text-[#9C9CA8]">{t('subtitle')}</p>
+          <p className="mx-auto max-w-[540px] text-lg text-fg-muted">{t('subtitle')}</p>
         </div>
       </ScrollReveal>
 
       <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
         {steps.map((step, i) => (
           <ScrollReveal key={step.index} delay={i * 100}>
-            <div className="h-full rounded-2xl border border-white/[0.09] bg-[linear-gradient(180deg,rgba(255,255,255,0.025),rgba(255,255,255,0))] p-7">
-              <div className="mb-[18px] font-geist-mono text-[13px] text-[#5C5C66]">{step.index}</div>
+            <div className="h-full rounded-2xl border border-ink/[0.09] bg-[linear-gradient(180deg,rgba(255,255,255,0.025),rgba(255,255,255,0))] p-7">
+              <div className="mb-[18px] font-geist-mono text-[13px] text-fg-faint">{step.index}</div>
               <div className="mb-[18px] flex h-[46px] w-[46px] items-center justify-center rounded-[11px] border border-[#8C6CFF]/30 bg-[#8C6CFF]/[0.14]">
-                <step.Icon className="h-[22px] w-[22px] text-[#B7A6FF]" strokeWidth={1.9} />
+                <step.Icon className="h-[22px] w-[22px] text-brand-text" strokeWidth={1.9} />
               </div>
               <h3 className="mb-2.5 text-xl font-semibold">{step.title}</h3>
-              <p className="text-[15px] leading-[1.6] text-[#9C9CA8]">{step.body}</p>
+              <p className="text-[15px] leading-[1.6] text-fg-muted">{step.body}</p>
             </div>
           </ScrollReveal>
         ))}

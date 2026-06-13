@@ -13,13 +13,13 @@ import { UserTemplatePreviewModal } from '@/components/templates/UserTemplatePre
 import type { Template } from '@/types'
 
 const ghostButtonClasses =
-  'inline-flex h-[38px] items-center justify-center gap-2 rounded-[10px] border border-white/[0.12] bg-white/[0.04] px-[18px] text-sm font-semibold text-[#F4F4F6] transition-colors hover:bg-white/[0.08] disabled:cursor-not-allowed disabled:opacity-50'
+  'inline-flex h-[38px] items-center justify-center gap-2 rounded-[10px] border border-ink/[0.12] bg-ink/[0.04] px-[18px] text-sm font-semibold text-fg transition-colors hover:bg-ink/[0.08] disabled:cursor-not-allowed disabled:opacity-50'
 
 const gradientButtonClasses =
   'inline-flex h-[38px] items-center justify-center gap-2 rounded-[10px] bg-[linear-gradient(140deg,#8C6CFF,#5B3FE0)] px-[18px] text-sm font-semibold text-white shadow-[0_6px_20px_rgba(124,92,255,0.35)] transition-all hover:-translate-y-px hover:shadow-[0_10px_28px_rgba(124,92,255,0.5)] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0 disabled:hover:shadow-[0_6px_20px_rgba(124,92,255,0.35)]'
 
 const inputClasses =
-  'h-10 w-full rounded-[10px] border border-white/10 bg-white/[0.03] px-3.5 text-sm text-[#F4F4F6] placeholder:text-[#5C5C66] transition-colors focus:border-[rgba(124,92,255,0.5)] focus:outline-none focus:ring-[3px] focus:ring-[rgba(124,92,255,0.15)] disabled:cursor-not-allowed disabled:opacity-50'
+  'h-10 w-full rounded-[10px] border border-ink/10 bg-ink/[0.03] px-3.5 text-sm text-fg placeholder:text-fg-faint transition-colors focus:border-[rgba(124,92,255,0.5)] focus:outline-none focus:ring-[3px] focus:ring-[rgba(124,92,255,0.15)] disabled:cursor-not-allowed disabled:opacity-50'
 
 function UploadDropZone({
   onFileSelect,
@@ -73,19 +73,19 @@ function UploadDropZone({
       className={`flex cursor-pointer flex-col items-center justify-center rounded-xl border border-dashed p-8 text-center transition-colors ${
         isDragging
           ? 'border-[rgba(124,92,255,0.6)] bg-[rgba(124,92,255,0.08)]'
-          : 'border-white/[0.15] hover:border-[rgba(124,92,255,0.45)] hover:bg-white/[0.02]'
+          : 'border-ink/[0.15] hover:border-[rgba(124,92,255,0.45)] hover:bg-ink/[0.02]'
       } ${disabled ? 'cursor-not-allowed opacity-50' : ''}`}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
     >
-      <div className="mb-3.5 flex h-11 w-11 items-center justify-center rounded-xl border border-[rgba(124,92,255,0.25)] bg-[rgba(124,92,255,0.1)] text-[#B7A6FF]">
+      <div className="mb-3.5 flex h-11 w-11 items-center justify-center rounded-xl border border-[rgba(124,92,255,0.25)] bg-[rgba(124,92,255,0.1)] text-brand-text">
         <Upload className="h-5 w-5" strokeWidth={1.8} />
       </div>
-      <p className="mb-1 text-sm font-medium text-[#F4F4F6]">
-        {selectFileLabel} <span className="font-normal text-[#9C9CA8]">{dragDropLabel}</span>
+      <p className="mb-1 text-sm font-medium text-fg">
+        {selectFileLabel} <span className="font-normal text-fg-muted">{dragDropLabel}</span>
       </p>
-      <p className="font-geist-mono text-xs text-[#5C5C66]">{fileTypesLabel}</p>
+      <p className="font-geist-mono text-xs text-fg-faint">{fileTypesLabel}</p>
       <input
         type="file"
         accept=".hbs,.handlebars,.html"
@@ -199,10 +199,10 @@ export default function TemplatesPage() {
       <div className="mb-7 flex flex-wrap items-end justify-between gap-5">
         <div>
           <h1 className="mb-1.5 text-[26px] font-bold tracking-[-0.025em]">{t('title')}</h1>
-          <p className="text-[14.5px] text-[#9C9CA8]">
+          <p className="text-[14.5px] text-fg-muted">
             {t('headerSubtitle')}{' '}
             {templateLimit != null && (
-              <span className="font-geist-mono text-[#7E7E89]">
+              <span className="font-geist-mono text-fg-dim">
                 {templateCount} / {templateLimit === -1 ? '∞' : templateLimit}
               </span>
             )}
@@ -216,7 +216,7 @@ export default function TemplatesPage() {
 
       {/* Search */}
       <div className="relative mb-6 max-w-sm">
-        <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#5C5C66]" />
+        <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-fg-faint" />
         <input
           placeholder={common('search')}
           value={searchQuery}
@@ -231,18 +231,18 @@ export default function TemplatesPage() {
           <Spinner size="lg" className="text-[#8C6CFF]" />
         </div>
       ) : error ? (
-        <div className="rounded-[14px] border border-white/[0.09] bg-[#0C0C0F] py-12 text-center">
-          <p className="text-[14.5px] text-[#9C9CA8]">{errors('generic')}</p>
+        <div className="rounded-[14px] border border-ink/[0.09] bg-surface-raised py-12 text-center">
+          <p className="text-[14.5px] text-fg-muted">{errors('generic')}</p>
         </div>
       ) : filteredTemplates?.length === 0 ? (
-        <div className="flex flex-col items-center rounded-2xl border border-dashed border-white/[0.15] px-8 py-16 text-center">
-          <div className="mb-[18px] flex h-14 w-14 items-center justify-center rounded-[15px] border border-[rgba(124,92,255,0.25)] bg-[rgba(124,92,255,0.1)] text-[#B7A6FF]">
+        <div className="flex flex-col items-center rounded-2xl border border-dashed border-ink/[0.15] px-8 py-16 text-center">
+          <div className="mb-[18px] flex h-14 w-14 items-center justify-center rounded-[15px] border border-[rgba(124,92,255,0.25)] bg-[rgba(124,92,255,0.1)] text-brand-text">
             <FileText className="h-[26px] w-[26px]" strokeWidth={1.7} />
           </div>
-          <h2 className="mb-2 text-lg font-semibold text-[#F4F4F6]">
+          <h2 className="mb-2 text-lg font-semibold text-fg">
             {searchQuery ? t('empty.noResults') : t('empty.title')}
           </h2>
-          <p className="mb-6 max-w-[380px] text-[14.5px] text-[#9C9CA8]">
+          <p className="mb-6 max-w-[380px] text-[14.5px] text-fg-muted">
             {searchQuery ? t('empty.tryAgain') : t('empty.dragDescription')}
           </p>
           {!searchQuery && (
@@ -262,11 +262,11 @@ export default function TemplatesPage() {
           {filteredTemplates?.map((template) => (
             <div
               key={template.id}
-              className="group cursor-pointer overflow-hidden rounded-[14px] border border-white/[0.09] bg-[#0C0C0F] transition-colors hover:border-[rgba(124,92,255,0.45)]"
+              className="group cursor-pointer overflow-hidden rounded-[14px] border border-ink/[0.09] bg-surface-raised transition-colors hover:border-[rgba(124,92,255,0.45)]"
               onClick={() => setPreviewTemplate(template)}
             >
               {/* Thumbnail Area */}
-              <div className="relative aspect-video w-full overflow-hidden border-b border-white/[0.06] bg-white/[0.02]">
+              <div className="relative aspect-video w-full overflow-hidden border-b border-ink/[0.06] bg-ink/[0.02]">
                 {template.thumbnailUrl ? (
                   <Image
                     src={template.thumbnailUrl}
@@ -277,13 +277,13 @@ export default function TemplatesPage() {
                   />
                 ) : (
                   <div className="flex h-full w-full items-center justify-center bg-[linear-gradient(140deg,rgba(124,92,255,0.12),rgba(124,92,255,0.02))]">
-                    <FileText className="h-12 w-12 text-[#B7A6FF]/40" strokeWidth={1.5} />
+                    <FileText className="h-12 w-12 text-brand-text/40" strokeWidth={1.5} />
                   </div>
                 )}
                 {/* Hover overlay with preview button */}
                 <div className="absolute inset-0 flex items-center justify-center bg-black/0 opacity-0 transition-all group-hover:bg-black/40 group-hover:opacity-100">
-                  <div className="rounded-full border border-white/10 bg-[#101014]/90 p-2 shadow-lg">
-                    <Eye className="h-5 w-5 text-[#F4F4F6]" strokeWidth={1.8} />
+                  <div className="rounded-full border border-ink/10 bg-surface-card/90 p-2 shadow-lg">
+                    <Eye className="h-5 w-5 text-fg" strokeWidth={1.8} />
                   </div>
                 </div>
               </div>
@@ -291,10 +291,10 @@ export default function TemplatesPage() {
               <div className="p-4">
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0 flex-1">
-                    <h3 className="truncate text-[15px] font-semibold text-[#F4F4F6]">
+                    <h3 className="truncate text-[15px] font-semibold text-fg">
                       {template.name}
                     </h3>
-                    <p className="mt-0.5 font-geist-mono text-[12.5px] text-[#7E7E89]">
+                    <p className="mt-0.5 font-geist-mono text-[12.5px] text-fg-dim">
                       {formatDate(template.createdAt)}
                     </p>
                   </div>
@@ -302,13 +302,13 @@ export default function TemplatesPage() {
                     onClick={(e) => handleDeleteClick(template, e)}
                     disabled={deleteTemplate.isPending}
                     aria-label={t('card.delete')}
-                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-[#7E7E89] transition-colors hover:bg-[rgba(255,108,140,0.1)] hover:text-[#FF8A9B] disabled:cursor-not-allowed disabled:opacity-50"
+                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-fg-dim transition-colors hover:bg-danger-soft/[0.1] hover:text-danger-soft disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     <Trash2 className="h-4 w-4" />
                   </button>
                 </div>
                 {template.description && (
-                  <p className="mt-2 text-[13px] text-[#9C9CA8] line-clamp-2">
+                  <p className="mt-2 text-[13px] text-fg-muted line-clamp-2">
                     {template.description}
                   </p>
                 )}
@@ -329,15 +329,15 @@ export default function TemplatesPage() {
 
           {/* Modal panel */}
           <div className="fixed inset-0 flex items-center justify-center p-4">
-            <div className="relative w-full max-w-lg rounded-2xl border border-white/10 bg-[#101014] p-6 shadow-[0_24px_60px_rgba(0,0,0,0.6)]">
+            <div className="relative w-full max-w-lg rounded-2xl border border-ink/10 bg-surface-card p-6 shadow-[0_24px_60px_rgba(0,0,0,0.6)]">
               {/* Header */}
               <div className="mb-5 flex items-center justify-between">
-                <h2 className="text-lg font-semibold tracking-[-0.015em] text-[#F4F4F6]">
+                <h2 className="text-lg font-semibold tracking-[-0.015em] text-fg">
                   {t('uploadDialog.title')}
                 </h2>
                 <button
                   onClick={handleCloseModal}
-                  className="flex h-[30px] w-[30px] items-center justify-center rounded-lg text-[#7E7E89] transition-colors hover:bg-white/[0.06] hover:text-[#F4F4F6]"
+                  className="flex h-[30px] w-[30px] items-center justify-center rounded-lg text-fg-dim transition-colors hover:bg-ink/[0.06] hover:text-fg"
                 >
                   <X className="h-[15px] w-[15px]" />
                 </button>
@@ -355,17 +355,17 @@ export default function TemplatesPage() {
                   />
                 ) : (
                   <>
-                    <div className="flex items-center justify-between rounded-[10px] border border-white/10 bg-white/[0.04] p-3">
+                    <div className="flex items-center justify-between rounded-[10px] border border-ink/10 bg-ink/[0.04] p-3">
                       <div className="flex min-w-0 items-center gap-3">
-                        <FileText className="h-5 w-5 shrink-0 text-[#B7A6FF]" strokeWidth={1.8} />
-                        <span className="truncate text-sm font-medium text-[#F4F4F6]">
+                        <FileText className="h-5 w-5 shrink-0 text-brand-text" strokeWidth={1.8} />
+                        <span className="truncate text-sm font-medium text-fg">
                           {selectedFile.name}
                         </span>
                       </div>
                       <button
                         onClick={handleClearFile}
                         disabled={uploadTemplate.isPending}
-                        className="flex h-[30px] w-[30px] shrink-0 items-center justify-center rounded-lg text-[#7E7E89] transition-colors hover:bg-white/[0.06] hover:text-[#F4F4F6] disabled:cursor-not-allowed disabled:opacity-50"
+                        className="flex h-[30px] w-[30px] shrink-0 items-center justify-center rounded-lg text-fg-dim transition-colors hover:bg-ink/[0.06] hover:text-fg disabled:cursor-not-allowed disabled:opacity-50"
                       >
                         <X className="h-4 w-4" />
                       </button>
@@ -374,7 +374,7 @@ export default function TemplatesPage() {
                     <div className="space-y-2">
                       <label
                         htmlFor="templateName"
-                        className="block font-geist-mono text-[11.5px] uppercase tracking-[0.09em] text-[#9C9CA8]"
+                        className="block font-geist-mono text-[11.5px] uppercase tracking-[0.09em] text-fg-muted"
                       >
                         {t('uploadDialog.name')} *
                       </label>
@@ -391,7 +391,7 @@ export default function TemplatesPage() {
                     <div className="space-y-2">
                       <label
                         htmlFor="description"
-                        className="block font-geist-mono text-[11.5px] uppercase tracking-[0.09em] text-[#9C9CA8]"
+                        className="block font-geist-mono text-[11.5px] uppercase tracking-[0.09em] text-fg-muted"
                       >
                         {t('uploadDialog.description')}
                       </label>
@@ -450,16 +450,16 @@ export default function TemplatesPage() {
 
       {/* Delete Confirmation Modal */}
       <Dialog open={!!templateToDelete} onOpenChange={(open) => !open && setTemplateToDelete(null)}>
-        <DialogContent className="border-white/10 bg-[#101014] text-[#F4F4F6] sm:max-w-md sm:rounded-2xl">
+        <DialogContent className="border-ink/10 bg-surface-card text-fg sm:max-w-md sm:rounded-2xl">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-[#FF8A9B]">
+            <DialogTitle className="flex items-center gap-2 text-danger-soft">
               <Trash2 className="h-5 w-5" />
               {t('card.delete')}
             </DialogTitle>
-            <DialogDescription className="pt-2 text-[#9C9CA8]">
+            <DialogDescription className="pt-2 text-fg-muted">
               {t('card.deleteConfirm')}
               {templateToDelete && (
-                <span className="mt-2 block font-medium text-[#F4F4F6]">
+                <span className="mt-2 block font-medium text-fg">
                   &quot;{templateToDelete.name}&quot;
                 </span>
               )}
@@ -476,11 +476,11 @@ export default function TemplatesPage() {
             <button
               onClick={handleConfirmDelete}
               disabled={deleteTemplate.isPending}
-              className="inline-flex h-[38px] items-center justify-center gap-2 rounded-[10px] border border-[rgba(255,108,140,0.35)] bg-[rgba(255,108,140,0.1)] px-[18px] text-sm font-semibold text-[#FF8A9B] transition-colors hover:bg-[rgba(255,108,140,0.16)] disabled:cursor-not-allowed disabled:opacity-50"
+              className="inline-flex h-[38px] items-center justify-center gap-2 rounded-[10px] border border-danger-soft/[0.35] bg-danger-soft/[0.1] px-[18px] text-sm font-semibold text-danger-soft transition-colors hover:bg-danger-soft/[0.16] disabled:cursor-not-allowed disabled:opacity-50"
             >
               {deleteTemplate.isPending ? (
                 <>
-                  <Spinner size="sm" className="text-[#FF8A9B]" />
+                  <Spinner size="sm" className="text-danger-soft" />
                   {common('loading')}
                 </>
               ) : (

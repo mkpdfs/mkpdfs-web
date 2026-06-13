@@ -6,15 +6,15 @@ import { XCircle, ArrowLeft } from 'lucide-react'
 export default function BillingCancelPage() {
   return (
     <div className="flex min-h-[60vh] items-center justify-center">
-      <div className="w-full max-w-md rounded-2xl border border-white/[0.09] bg-[linear-gradient(180deg,rgba(255,255,255,0.025),rgba(255,255,255,0))] px-8 py-9 text-center">
-        <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-[14px] border border-white/10 bg-white/[0.05]">
-          <XCircle className="h-7 w-7 text-[#9C9CA8]" strokeWidth={1.9} />
+      <div className="w-full max-w-md rounded-2xl border border-ink/[0.09] bg-[linear-gradient(180deg,rgba(255,255,255,0.025),rgba(255,255,255,0))] px-8 py-9 text-center">
+        <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-[14px] border border-ink/10 bg-ink/[0.05]">
+          <XCircle className="h-7 w-7 text-fg-muted" strokeWidth={1.9} />
         </div>
         <h1 className="mb-2 text-[22px] font-bold tracking-[-0.02em]">Payment Cancelled</h1>
-        <p className="mb-3 text-[14.5px] text-[#9C9CA8]">
+        <p className="mb-3 text-[14.5px] text-fg-muted">
           Your payment was not processed. No charges were made.
         </p>
-        <p className="mb-7 text-[13px] text-[#7E7E89]">
+        <p className="mb-7 text-[13px] text-fg-dim">
           If you encountered any issues during checkout or have questions about our plans, please
           don&apos;t hesitate to contact our support team.
         </p>
@@ -28,7 +28,7 @@ export default function BillingCancelPage() {
           </Link>
           <a
             href="mailto:support@mkpdfs.com"
-            className="inline-flex h-[38px] items-center justify-center rounded-[10px] border border-white/[0.12] bg-white/[0.04] px-[18px] text-sm font-medium text-[#F4F4F6] transition-colors hover:border-white/25"
+            className="inline-flex h-[38px] items-center justify-center rounded-[10px] border border-ink/[0.12] bg-ink/[0.04] px-[18px] text-sm font-medium text-fg transition-colors hover:border-ink/25"
           >
             Contact Support
           </a>

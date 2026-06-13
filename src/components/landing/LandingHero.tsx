@@ -10,11 +10,11 @@ export async function LandingHero() {
       <div className="mk-rise" style={{ '--mk-delay': '0.05s' } as React.CSSProperties}>
         <a
           href="#pricing"
-          className="group mb-[34px] inline-flex items-center gap-2.5 rounded-full border border-white/10 bg-white/[0.04] py-1.5 pl-3.5 pr-1.5 text-[13px] text-[#C8C8D0] transition-colors hover:border-[#8C6CFF]/50"
+          className="group mb-[34px] inline-flex items-center gap-2.5 rounded-full border border-ink/10 bg-ink/[0.04] py-1.5 pl-3.5 pr-1.5 text-[13px] text-fg-muted transition-colors hover:border-[#8C6CFF]/50"
         >
-          <span className="h-1.5 w-1.5 rounded-full bg-[#7CF0B0] shadow-[0_0_8px_#7CF0B0] [animation:mk-pulse_2s_infinite]" />
+          <span className="h-1.5 w-1.5 rounded-full bg-ok shadow-[0_0_8px_rgb(var(--ok))] [animation:mk-pulse_2s_infinite]" />
           <span>{t('badge')}</span>
-          <span className="rounded-full bg-white/[0.08] px-[9px] py-0.5 text-xs text-[#A0A0AB] transition-colors group-hover:bg-[#8C6CFF]/20 group-hover:text-[#C9BBFF]">
+          <span className="rounded-full bg-ink/[0.08] px-[9px] py-0.5 text-xs text-fg-muted transition-colors group-hover:bg-[#8C6CFF]/20 group-hover:text-brand-strong">
             {t('badgeCta')}
           </span>
         </a>
@@ -32,7 +32,7 @@ export async function LandingHero() {
       </h1>
 
       <p
-        className="mk-rise mx-auto mb-[38px] max-w-[600px] text-lg leading-[1.55] text-[#9C9CA8] md:text-xl"
+        className="mk-rise mx-auto mb-[38px] max-w-[600px] text-lg leading-[1.55] text-fg-muted md:text-xl"
         style={{ '--mk-delay': '0.2s' } as React.CSSProperties}
       >
         {t('subtitle')}
@@ -44,7 +44,7 @@ export async function LandingHero() {
       >
         <Link
           href="/register"
-          className="group flex items-center gap-[9px] rounded-[11px] bg-[linear-gradient(140deg,#8C6CFF,#5B3FE0)] px-[26px] py-3.5 text-[15.5px] font-semibold text-white shadow-[0_8px_28px_rgba(124,92,255,0.4),inset_0_1px_0_rgba(255,255,255,0.2)] transition hover:-translate-y-0.5 hover:shadow-[0_12px_36px_rgba(124,92,255,0.55)] active:translate-y-0 active:scale-[0.98]"
+          className="group flex items-center gap-[9px] rounded-[11px] bg-[linear-gradient(140deg,#8C6CFF,#5B3FE0)] px-[26px] py-3.5 text-[15.5px] font-semibold text-white shadow-[0_8px_28px_rgba(124,92,255,0.4),inset_0_1px_0_rgb(var(--ink)/0.2)] transition hover:-translate-y-0.5 hover:shadow-[0_12px_36px_rgba(124,92,255,0.55)] active:translate-y-0 active:scale-[0.98]"
         >
           {t('ctaPrimary')}{' '}
           <span className="transition-transform group-hover:translate-x-0.5">→</span>
@@ -52,7 +52,7 @@ export async function LandingHero() {
         <ExplainerModal />
       </div>
       <p
-        className="mk-rise text-[13.5px] text-[#6B6B76]"
+        className="mk-rise text-[13.5px] text-fg-dim"
         style={{ '--mk-delay': '0.4s' } as React.CSSProperties}
       >
         {t('microcopy')}

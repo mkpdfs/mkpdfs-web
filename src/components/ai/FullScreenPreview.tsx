@@ -130,16 +130,16 @@ export function FullScreenPreview({
   const hasContent = templateContent.trim().length > 0
 
   return (
-    <div className={cn('flex flex-col h-full rounded-[14px] border border-white/[0.09] overflow-hidden bg-[linear-gradient(180deg,#101014,#0C0C0F)]', className)}>
+    <div className={cn('flex flex-col h-full rounded-[14px] border border-ink/[0.09] overflow-hidden bg-[linear-gradient(180deg,rgb(var(--surface-card)),rgb(var(--surface-raised)))]', className)}>
       {/* Mode Toggle - Top Left */}
-      <div className="absolute left-4 top-8 z-10 flex items-center gap-1 rounded-[11px] border border-white/[0.09] bg-[#0C0C0F]/95 p-1 shadow-[0_8px_24px_rgba(0,0,0,0.5)] backdrop-blur">
+      <div className="absolute left-4 top-8 z-10 flex items-center gap-1 rounded-[11px] border border-ink/[0.09] bg-surface-raised/95 p-1 shadow-[0_8px_24px_rgba(0,0,0,0.5)] backdrop-blur">
         <button
           onClick={() => handleModeChange('html')}
           className={cn(
             'flex items-center gap-2 rounded-[8px] px-3 py-1.5 font-geist-mono text-[12.5px] font-medium uppercase tracking-[0.06em] transition-colors',
             mode === 'html'
               ? 'bg-[#8C6CFF] text-white'
-              : 'text-[#7E7E89] hover:bg-white/[0.06] hover:text-[#F4F4F6]'
+              : 'text-fg-dim hover:bg-ink/[0.06] hover:text-fg'
           )}
         >
           <Code2 className="h-4 w-4" />
@@ -151,7 +151,7 @@ export function FullScreenPreview({
             'flex items-center gap-2 rounded-[8px] px-3 py-1.5 font-geist-mono text-[12.5px] font-medium uppercase tracking-[0.06em] transition-colors',
             mode === 'pdf'
               ? 'bg-[#8C6CFF] text-white'
-              : 'text-[#7E7E89] hover:bg-white/[0.06] hover:text-[#F4F4F6]'
+              : 'text-fg-dim hover:bg-ink/[0.06] hover:text-fg'
           )}
         >
           <FileText className="h-4 w-4" />
@@ -162,7 +162,7 @@ export function FullScreenPreview({
           <button
             onClick={handleRefreshPdf}
             disabled={isPdfLoading}
-            className="ml-1 flex h-8 w-8 items-center justify-center rounded-[8px] text-[#7E7E89] transition-colors hover:bg-white/[0.06] hover:text-[#F4F4F6] disabled:opacity-50"
+            className="ml-1 flex h-8 w-8 items-center justify-center rounded-[8px] text-fg-dim transition-colors hover:bg-ink/[0.06] hover:text-fg disabled:opacity-50"
           >
             <RefreshCw className={cn('h-4 w-4', isPdfLoading && 'animate-spin')} />
           </button>
@@ -173,24 +173,24 @@ export function FullScreenPreview({
       <div className="flex-1 min-h-0 relative">
         {!hasContent ? (
           // Empty State
-          <div className="absolute inset-0 flex flex-col items-center justify-center bg-[linear-gradient(180deg,#101014,#0C0C0F)]">
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-[linear-gradient(180deg,rgb(var(--surface-card)),rgb(var(--surface-raised)))]">
             <div className="flex max-w-md flex-col items-center p-8 text-center">
-              <div className="mb-6 flex h-[52px] w-[52px] items-center justify-center rounded-[14px] border border-[#8C6CFF]/30 bg-[#8C6CFF]/[0.14] text-[#B7A6FF]">
+              <div className="mb-6 flex h-[52px] w-[52px] items-center justify-center rounded-[14px] border border-[#8C6CFF]/30 bg-[#8C6CFF]/[0.14] text-brand-text">
                 <Sparkles className="h-6 w-6" strokeWidth={1.7} />
               </div>
-              <h3 className="mb-2 text-xl font-semibold tracking-[-0.015em] text-[#F4F4F6]">
+              <h3 className="mb-2 text-xl font-semibold tracking-[-0.015em] text-fg">
                 {t('fullscreen.emptyTitle')}
               </h3>
-              <p className="text-sm text-[#9C9CA8]">
+              <p className="text-sm text-fg-muted">
                 {t('fullscreen.emptyDescription')}
               </p>
             </div>
           </div>
         ) : error ? (
-          <div className="absolute inset-0 flex flex-col items-center justify-center bg-[linear-gradient(180deg,#101014,#0C0C0F)] p-4">
-            <AlertCircle className="mb-2 h-12 w-12 text-[#FF8B8B]" strokeWidth={1.5} />
-            <p className="text-lg font-medium text-[#FF8B8B]">{t('preview.renderError')}</p>
-            <p className="mt-2 max-w-md text-center font-geist-mono text-[13px] text-[#9C9CA8]">{error}</p>
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-[linear-gradient(180deg,rgb(var(--surface-card)),rgb(var(--surface-raised)))] p-4">
+            <AlertCircle className="mb-2 h-12 w-12 text-danger" strokeWidth={1.5} />
+            <p className="text-lg font-medium text-danger">{t('preview.renderError')}</p>
+            <p className="mt-2 max-w-md text-center font-geist-mono text-[13px] text-fg-muted">{error}</p>
           </div>
         ) : mode === 'html' ? (
           <iframe
@@ -200,10 +200,10 @@ export function FullScreenPreview({
             sandbox="allow-same-origin"
           />
         ) : isPdfLoading ? (
-          <div className="absolute inset-0 flex items-center justify-center bg-[linear-gradient(180deg,#101014,#0C0C0F)]">
+          <div className="absolute inset-0 flex items-center justify-center bg-[linear-gradient(180deg,rgb(var(--surface-card)),rgb(var(--surface-raised)))]">
             <div className="flex flex-col items-center text-center">
-              <Loader2 className="mb-4 h-8 w-8 animate-spin text-[#B7A6FF]" strokeWidth={1.7} />
-              <p className="font-geist-mono text-[13px] text-[#9C9CA8]">{t('preview.generatingPdf')}</p>
+              <Loader2 className="mb-4 h-8 w-8 animate-spin text-brand-text" strokeWidth={1.7} />
+              <p className="font-geist-mono text-[13px] text-fg-muted">{t('preview.generatingPdf')}</p>
             </div>
           </div>
         ) : pdfUrl ? (
@@ -213,14 +213,14 @@ export function FullScreenPreview({
             className="absolute inset-0 h-full w-full border-0"
           />
         ) : (
-          <div className="absolute inset-0 flex items-center justify-center bg-[linear-gradient(180deg,#101014,#0C0C0F)]">
+          <div className="absolute inset-0 flex items-center justify-center bg-[linear-gradient(180deg,rgb(var(--surface-card)),rgb(var(--surface-raised)))]">
             <div className="text-center">
-              <FileText className="mx-auto mb-4 h-12 w-12 text-[#5C5C66]" strokeWidth={1.5} />
-              <p className="mb-4 font-geist-mono text-[13px] text-[#9C9CA8]">{t('preview.clickToGenerate')}</p>
+              <FileText className="mx-auto mb-4 h-12 w-12 text-fg-faint" strokeWidth={1.5} />
+              <p className="mb-4 font-geist-mono text-[13px] text-fg-muted">{t('preview.clickToGenerate')}</p>
               {onRequestPdf && (
                 <button
                   onClick={handleRefreshPdf}
-                  className="h-9 rounded-[9px] border border-white/[0.12] bg-white/[0.04] px-[18px] text-sm font-semibold text-[#F4F4F6] transition-colors hover:bg-white/[0.08]"
+                  className="h-9 rounded-[9px] border border-ink/[0.12] bg-ink/[0.04] px-[18px] text-sm font-semibold text-fg transition-colors hover:bg-ink/[0.08]"
                 >
                   {t('preview.generatePdf')}
                 </button>

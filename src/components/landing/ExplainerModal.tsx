@@ -16,17 +16,17 @@ export function ExplainerModal() {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="group flex items-center gap-[9px] rounded-[11px] border border-white/[0.12] bg-white/[0.05] px-6 py-3.5 text-[15.5px] font-semibold text-[#F4F4F6] transition hover:bg-white/[0.09] active:scale-[0.98]"
+        className="group flex items-center gap-[9px] rounded-[11px] border border-ink/[0.12] bg-ink/[0.05] px-6 py-3.5 text-[15.5px] font-semibold text-fg transition hover:bg-ink/[0.09] active:scale-[0.98]"
       >
         <Code
-          className="h-4 w-4 text-[#B7A6FF] transition-transform group-hover:scale-110"
+          className="h-4 w-4 text-brand-text transition-transform group-hover:scale-110"
           strokeWidth={2}
         />
         {t('ctaSecondary')}
       </button>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="w-[calc(100vw-32px)] max-w-[1080px] gap-0 overflow-hidden rounded-2xl border-white/10 bg-[#08080A] p-0 shadow-[0_40px_120px_-20px_rgba(0,0,0,0.9)]">
+        <DialogContent className="w-[calc(100vw-32px)] max-w-[1080px] gap-0 overflow-hidden rounded-2xl border-ink/10 bg-surface p-0 shadow-[0_40px_120px_-20px_rgba(0,0,0,0.9)]">
           <DialogTitle className="sr-only">{t('ctaSecondary')}</DialogTitle>
           <iframe
             src="/explainer.html"

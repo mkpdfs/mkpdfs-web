@@ -77,29 +77,29 @@ const defaultJsonData = '{\n  "name": "John Doe",\n  "date": "2025-01-01"\n}'
 // ============================================
 
 const cardCls =
-  'rounded-[14px] border border-white/[0.09] bg-[linear-gradient(180deg,rgba(255,255,255,0.025),rgba(255,255,255,0))] px-[22px] py-5'
+  'rounded-[14px] border border-ink/[0.09] bg-[linear-gradient(180deg,rgba(255,255,255,0.025),rgba(255,255,255,0))] px-[22px] py-5'
 
 const fieldCls =
-  'w-full rounded-[9px] border border-white/10 bg-white/[0.03] px-3 py-2.5 text-sm text-[#F4F4F6] transition-colors placeholder:text-[#5C5C66] focus:border-[#8C6CFF]/60 focus:outline-none'
+  'w-full rounded-[9px] border border-ink/10 bg-ink/[0.03] px-3 py-2.5 text-sm text-fg transition-colors placeholder:text-fg-faint focus:border-[#8C6CFF]/60 focus:outline-none'
 
-const selectCls = `${fieldCls} [&>option]:bg-[#101014] [&>option]:text-[#F4F4F6]`
+const selectCls = `${fieldCls} [&>option]:bg-surface-card [&>option]:text-fg`
 
 const monoFieldCls =
-  'w-full rounded-[9px] border border-white/10 bg-white/[0.03] px-3 py-2.5 font-geist-mono text-[12.5px] leading-[1.7] text-[#D6D6E0] transition-colors placeholder:text-[#5C5C66] focus:border-[#8C6CFF]/60 focus:outline-none'
+  'w-full rounded-[9px] border border-ink/10 bg-ink/[0.03] px-3 py-2.5 font-geist-mono text-[12.5px] leading-[1.7] text-brand-strong transition-colors placeholder:text-fg-faint focus:border-[#8C6CFF]/60 focus:outline-none'
 
 const btnPrimaryCls =
   'inline-flex items-center justify-center gap-2 rounded-[10px] bg-[linear-gradient(140deg,#8C6CFF,#5B3FE0)] px-5 py-[10px] text-sm font-semibold text-white shadow-[0_6px_20px_rgba(124,92,255,0.35),inset_0_1px_0_rgba(255,255,255,0.2)] transition-all hover:-translate-y-px hover:shadow-[0_10px_28px_rgba(124,92,255,0.5)] disabled:pointer-events-none disabled:opacity-40'
 
 const btnSecondaryCls =
-  'inline-flex items-center justify-center gap-2 rounded-[10px] border border-white/10 bg-white/[0.05] px-4 py-[10px] text-sm font-medium text-[#9C9CA8] transition-colors hover:bg-white/[0.08] hover:text-[#F4F4F6] disabled:pointer-events-none disabled:opacity-40'
+  'inline-flex items-center justify-center gap-2 rounded-[10px] border border-ink/10 bg-ink/[0.05] px-4 py-[10px] text-sm font-medium text-fg-muted transition-colors hover:bg-ink/[0.08] hover:text-fg disabled:pointer-events-none disabled:opacity-40'
 
-const pillActiveCls = 'bg-[#8C6CFF]/[0.18] text-[#C9BBFF]'
-const pillIdleCls = 'bg-transparent text-[#7C7C86] hover:text-[#A0A0AB]'
+const pillActiveCls = 'bg-[#8C6CFF]/[0.18] text-brand-strong'
+const pillIdleCls = 'bg-transparent text-fg-dim hover:text-fg-muted'
 const pillBaseCls =
   'flex items-center gap-1.5 rounded-[7px] px-3 py-[5px] font-geist-mono text-[12.5px] transition-all'
 
 const sectionLabelCls =
-  'mb-3 font-geist-mono text-[11.5px] uppercase tracking-[0.1em] text-[#7E7E89]'
+  'mb-3 font-geist-mono text-[11.5px] uppercase tracking-[0.1em] text-fg-dim'
 
 // ============================================
 // Helper Functions
@@ -418,11 +418,11 @@ function CopyButton({
   return (
     <button
       onClick={handleCopy}
-      className="ml-auto flex h-[30px] items-center gap-[7px] rounded-lg border border-white/10 bg-white/[0.05] px-3 text-[12.5px] font-medium text-[#9C9CA8] transition-colors hover:text-[#F4F4F6]"
+      className="ml-auto flex h-[30px] items-center gap-[7px] rounded-lg border border-ink/10 bg-ink/[0.05] px-3 text-[12.5px] font-medium text-fg-muted transition-colors hover:text-fg"
     >
       {copied ? (
         <>
-          <Check className="h-[13px] w-[13px] text-[#7CF0B0]" strokeWidth={2.2} />
+          <Check className="h-[13px] w-[13px] text-ok" strokeWidth={2.2} />
           {copiedLabel}
         </>
       ) : (
@@ -449,8 +449,8 @@ function TabbedCodeBlock({
   copiedLabel: string
 }) {
   return (
-    <div className="overflow-hidden rounded-[14px] border border-white/10 bg-[linear-gradient(180deg,#101014,#0C0C0F)]">
-      <div className="flex flex-wrap items-center gap-1 border-b border-white/[0.07] px-3.5 py-[11px]">
+    <div className="overflow-hidden rounded-[14px] border border-ink/10 bg-[linear-gradient(180deg,rgb(var(--surface-card)),rgb(var(--surface-raised)))]">
+      <div className="flex flex-wrap items-center gap-1 border-b border-ink/[0.07] px-3.5 py-[11px]">
         {languages.map((lang) => (
           <button
             key={lang.id}
@@ -465,7 +465,7 @@ function TabbedCodeBlock({
         ))}
         <CopyButton code={code} label={copyLabel} copiedLabel={copiedLabel} />
       </div>
-      <pre className="m-0 min-h-[230px] overflow-x-auto px-[22px] py-5 font-geist-mono text-[13px] leading-[1.7] text-[#D6D6E0]">
+      <pre className="m-0 min-h-[230px] overflow-x-auto px-[22px] py-5 font-geist-mono text-[13px] leading-[1.7] text-brand-strong">
         <code>{code}</code>
       </pre>
     </div>
@@ -484,14 +484,14 @@ function LabeledCodeBlock({
   copiedLabel: string
 }) {
   return (
-    <div className="overflow-hidden rounded-[14px] border border-white/10 bg-[linear-gradient(180deg,#101014,#0C0C0F)]">
-      <div className="flex items-center border-b border-white/[0.07] px-3.5 py-[9px]">
-        <span className="font-geist-mono text-[11px] uppercase tracking-[0.08em] text-[#5C5C66]">
+    <div className="overflow-hidden rounded-[14px] border border-ink/10 bg-[linear-gradient(180deg,rgb(var(--surface-card)),rgb(var(--surface-raised)))]">
+      <div className="flex items-center border-b border-ink/[0.07] px-3.5 py-[9px]">
+        <span className="font-geist-mono text-[11px] uppercase tracking-[0.08em] text-fg-faint">
           {label}
         </span>
         <CopyButton code={code} label={copyLabel} copiedLabel={copiedLabel} />
       </div>
-      <pre className="m-0 overflow-x-auto px-[22px] py-4 font-geist-mono text-[12.5px] leading-[1.7] text-[#D6D6E0]">
+      <pre className="m-0 overflow-x-auto px-[22px] py-4 font-geist-mono text-[12.5px] leading-[1.7] text-brand-strong">
         <code>{code}</code>
       </pre>
     </div>
@@ -522,16 +522,16 @@ function StepIndicator({
       <span
         className={`flex h-[26px] w-[26px] shrink-0 items-center justify-center rounded-full border-[1.5px] font-geist-mono text-xs font-semibold transition-colors ${
           isCompleted
-            ? 'border-[#3FBF7F]/50 bg-[#3FBF7F]/[0.15] text-[#7CF0B0]'
+            ? 'border-ok/50 bg-ok/[0.15] text-ok'
             : isCurrent
-              ? 'border-[#8C6CFF]/60 bg-[#8C6CFF]/[0.15] text-[#B7A6FF]'
-              : 'border-white/15 text-[#5C5C66]'
+              ? 'border-[#8C6CFF]/60 bg-[#8C6CFF]/[0.15] text-brand-text'
+              : 'border-ink/15 text-fg-faint'
         }`}
       >
         {isCompleted ? <Check className="h-[13px] w-[13px]" strokeWidth={2.6} /> : step}
       </span>
       <span
-        className={`text-sm font-medium ${isCurrent ? 'text-[#F4F4F6]' : 'text-[#7E7E89]'}`}
+        className={`text-sm font-medium ${isCurrent ? 'text-fg' : 'text-fg-dim'}`}
       >
         {title}
       </span>
@@ -603,12 +603,12 @@ function CreateApiKeyModal({
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="dark border-white/10 bg-[#101014] font-geist text-[#F4F4F6] sm:rounded-[14px]">
+      <DialogContent className="border-ink/10 bg-surface-card font-geist text-fg sm:rounded-[14px]">
         <DialogHeader>
-          <DialogTitle className="tracking-[-0.015em] text-[#F4F4F6]">
+          <DialogTitle className="tracking-[-0.015em] text-fg">
             {t('createDialog.title')}
           </DialogTitle>
-          <DialogDescription className="text-[13.5px] text-[#9C9CA8]">
+          <DialogDescription className="text-[13.5px] text-fg-muted">
             {t('createDialog.description')}
           </DialogDescription>
         </DialogHeader>
@@ -642,21 +642,21 @@ function CreateApiKeyModal({
           </div>
         ) : (
           <div className="space-y-4">
-            <div className="rounded-[10px] border border-[#FEBC2E]/30 bg-[#FEBC2E]/[0.08] p-4">
-              <p className="mb-2 text-sm font-medium text-[#FFD479]">{t('warning')}</p>
+            <div className="rounded-[10px] border border-warn/30 bg-warn/[0.08] p-4">
+              <p className="mb-2 text-sm font-medium text-warn">{t('warning')}</p>
               <div className="flex items-center gap-2">
-                <code className="flex-1 overflow-x-auto rounded-[9px] border border-white/10 bg-[#0A0A0C] p-2.5 font-geist-mono text-[12.5px] text-[#D6D6E0]">
+                <code className="flex-1 overflow-x-auto rounded-[9px] border border-ink/10 bg-surface p-2.5 font-geist-mono text-[12.5px] text-brand-strong">
                   {showToken ? newToken : '••••••••••••••••••••••••'}
                 </code>
                 <button
                   onClick={() => setShowToken(!showToken)}
-                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-[#9C9CA8] transition-colors hover:bg-white/[0.06] hover:text-[#F4F4F6]"
+                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-fg-muted transition-colors hover:bg-ink/[0.06] hover:text-fg"
                 >
                   {showToken ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
                 <button
                   onClick={() => copyToClipboard(newToken)}
-                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-[#9C9CA8] transition-colors hover:bg-white/[0.06] hover:text-[#F4F4F6]"
+                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-fg-muted transition-colors hover:bg-ink/[0.06] hover:text-fg"
                 >
                   <Copy className="h-4 w-4" />
                 </button>
@@ -944,7 +944,7 @@ export default function IntegrationPage() {
       {/* Header */}
       <div className="mb-7">
         <h1 className="mb-1.5 text-[26px] font-bold tracking-[-0.025em]">{t('header.title')}</h1>
-        <p className="text-[14.5px] text-[#9C9CA8]">{t('header.subtitle')}</p>
+        <p className="text-[14.5px] text-fg-muted">{t('header.subtitle')}</p>
       </div>
 
       {isLoading ? (
@@ -954,7 +954,7 @@ export default function IntegrationPage() {
       ) : (
         <>
           {/* Step Indicators */}
-          <div className="flex flex-wrap items-center gap-4 border-b border-white/[0.08] pb-4">
+          <div className="flex flex-wrap items-center gap-4 border-b border-ink/[0.08] pb-4">
             {steps.map((s, index) => (
               <div key={s.step} className="flex items-center gap-2.5">
                 <StepIndicator
@@ -964,7 +964,7 @@ export default function IntegrationPage() {
                   onClick={() => currentStep >= s.step && setCurrentStep(s.step)}
                 />
                 {index < steps.length - 1 && (
-                  <ChevronRight className="h-4 w-4 text-[#5C5C66]" />
+                  <ChevronRight className="h-4 w-4 text-fg-faint" />
                 )}
               </div>
             ))}
@@ -974,14 +974,14 @@ export default function IntegrationPage() {
           {currentStep === 1 && (
             <div className={cardCls}>
               <div className="mb-5 flex items-center gap-2.5">
-                <FileText className="h-[17px] w-[17px] text-[#B7A6FF]" strokeWidth={1.9} />
+                <FileText className="h-[17px] w-[17px] text-brand-text" strokeWidth={1.9} />
                 <span className="text-[15px] font-semibold">{t('steps.configuration')}</span>
               </div>
               <div className="space-y-6">
                 <div className="grid gap-6 sm:grid-cols-2">
                   {/* Template Selector */}
                   <div className="space-y-2">
-                    <label className="text-sm font-medium text-[#F4F4F6]">
+                    <label className="text-sm font-medium text-fg">
                       {t('selectTemplate')}
                     </label>
                     <select
@@ -997,9 +997,9 @@ export default function IntegrationPage() {
                       ))}
                     </select>
                     {templates?.length === 0 && (
-                      <p className="text-xs text-[#7E7E89]">
+                      <p className="text-xs text-fg-dim">
                         {t('noTemplates')}{' '}
-                        <Link href="/templates" className="text-[#B7A6FF] hover:underline">
+                        <Link href="/templates" className="text-brand-text hover:underline">
                           {t('createOne')}
                         </Link>
                       </p>
@@ -1008,7 +1008,7 @@ export default function IntegrationPage() {
 
                   {/* Token Selector */}
                   <div className="space-y-2">
-                    <label className="text-sm font-medium text-[#F4F4F6]">
+                    <label className="text-sm font-medium text-fg">
                       {t('selectToken')}
                     </label>
                     <div className="flex gap-2">
@@ -1027,13 +1027,13 @@ export default function IntegrationPage() {
                       <button
                         onClick={() => setShowCreateKeyModal(true)}
                         title={t('createApiKey')}
-                        className="flex h-[42px] w-[42px] shrink-0 items-center justify-center rounded-[9px] border border-white/10 bg-white/[0.05] text-[#9C9CA8] transition-colors hover:bg-white/[0.08] hover:text-[#F4F4F6]"
+                        className="flex h-[42px] w-[42px] shrink-0 items-center justify-center rounded-[9px] border border-ink/10 bg-ink/[0.05] text-fg-muted transition-colors hover:bg-ink/[0.08] hover:text-fg"
                       >
                         <Plus className="h-4 w-4" strokeWidth={2.2} />
                       </button>
                     </div>
                     {tokens?.length === 0 && (
-                      <p className="text-xs text-[#7E7E89]">{t('noTokens')}</p>
+                      <p className="text-xs text-fg-dim">{t('noTokens')}</p>
                     )}
                   </div>
                 </div>
@@ -1057,10 +1057,10 @@ export default function IntegrationPage() {
             <div className={cardCls}>
               <div className="mb-2 flex flex-wrap items-center justify-between gap-3">
                 <div className="flex items-center gap-2.5">
-                  <Braces className="h-[17px] w-[17px] text-[#B7A6FF]" strokeWidth={1.9} />
+                  <Braces className="h-[17px] w-[17px] text-brand-text" strokeWidth={1.9} />
                   <span className="text-[15px] font-semibold">{t('body.title')}</span>
                 </div>
-                <div className="flex gap-1 rounded-[10px] border border-white/10 bg-white/[0.03] p-1">
+                <div className="flex gap-1 rounded-[10px] border border-ink/10 bg-ink/[0.03] p-1">
                   <button
                     onClick={() => handleModeChange('json')}
                     className={`${pillBaseCls} ${bodyMode === 'json' ? pillActiveCls : pillIdleCls}`}
@@ -1084,7 +1084,7 @@ export default function IntegrationPage() {
                   </button>
                 </div>
               </div>
-              <p className="mb-5 text-[13.5px] text-[#9C9CA8]">{t('body.description')}</p>
+              <p className="mb-5 text-[13.5px] text-fg-muted">{t('body.description')}</p>
               <div className="space-y-6">
                 {bodyMode === 'json' && (
                   <textarea
@@ -1117,7 +1117,7 @@ export default function IntegrationPage() {
                         <button
                           onClick={() => removeKeyValuePair(index)}
                           disabled={keyValuePairs.length <= 1}
-                          className="rounded-lg p-2 text-[#7E7E89] transition-colors hover:bg-white/[0.06] hover:text-[#F4F4F6] disabled:cursor-not-allowed disabled:opacity-40"
+                          className="rounded-lg p-2 text-fg-dim transition-colors hover:bg-ink/[0.06] hover:text-fg disabled:cursor-not-allowed disabled:opacity-40"
                         >
                           <Trash2 className="h-4 w-4" />
                         </button>
@@ -1125,7 +1125,7 @@ export default function IntegrationPage() {
                     ))}
                     <button
                       onClick={addKeyValuePair}
-                      className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-[#B7A6FF] transition-colors hover:bg-[#8C6CFF]/[0.12]"
+                      className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-brand-text transition-colors hover:bg-[#8C6CFF]/[0.12]"
                     >
                       <Plus className="h-4 w-4" strokeWidth={2.2} />
                       {t('body.addField')}
@@ -1136,7 +1136,7 @@ export default function IntegrationPage() {
                 {bodyMode === 'csv' && (
                   <div className="space-y-4">
                     {/* CSV Input Mode Toggle */}
-                    <div className="flex gap-1 self-start rounded-[10px] border border-white/10 bg-white/[0.03] p-1">
+                    <div className="flex gap-1 self-start rounded-[10px] border border-ink/10 bg-ink/[0.03] p-1">
                       <button
                         onClick={() => setCsvInputMode('inline')}
                         className={`${pillBaseCls} ${csvInputMode === 'inline' ? pillActiveCls : pillIdleCls}`}
@@ -1168,12 +1168,12 @@ export default function IntegrationPage() {
                     {csvInputMode === 'upload' && (
                       <div className="space-y-3">
                         {!csvFile ? (
-                          <label className="flex cursor-pointer flex-col items-center justify-center rounded-[12px] border-2 border-dashed border-white/15 p-8 transition-colors hover:border-[#8C6CFF]/50 hover:bg-white/[0.02]">
-                            <Upload className="mb-2 h-8 w-8 text-[#7E7E89]" strokeWidth={1.7} />
-                            <span className="text-sm font-medium text-[#F4F4F6]">
+                          <label className="flex cursor-pointer flex-col items-center justify-center rounded-[12px] border-2 border-dashed border-ink/15 p-8 transition-colors hover:border-[#8C6CFF]/50 hover:bg-ink/[0.02]">
+                            <Upload className="mb-2 h-8 w-8 text-fg-dim" strokeWidth={1.7} />
+                            <span className="text-sm font-medium text-fg">
                               {t('body.csvDropzone')}
                             </span>
-                            <span className="mt-1 font-geist-mono text-xs text-[#5C5C66]">.csv</span>
+                            <span className="mt-1 font-geist-mono text-xs text-fg-faint">.csv</span>
                             <input
                               type="file"
                               accept=".csv"
@@ -1185,19 +1185,19 @@ export default function IntegrationPage() {
                             />
                           </label>
                         ) : (
-                          <div className="flex items-center justify-between rounded-[12px] border border-white/[0.09] bg-white/[0.03] p-4">
+                          <div className="flex items-center justify-between rounded-[12px] border border-ink/[0.09] bg-ink/[0.03] p-4">
                             <div className="flex items-center gap-3">
-                              <FileText className="h-8 w-8 text-[#B7A6FF]" strokeWidth={1.7} />
+                              <FileText className="h-8 w-8 text-brand-text" strokeWidth={1.7} />
                               <div>
-                                <p className="font-medium text-[#F4F4F6]">{csvFile.name}</p>
-                                <p className="font-geist-mono text-xs text-[#7E7E89]">
+                                <p className="font-medium text-fg">{csvFile.name}</p>
+                                <p className="font-geist-mono text-xs text-fg-dim">
                                   {parsedCsvData ? `${parsedCsvData.data.length} rows` : 'Parsing...'}
                                 </p>
                               </div>
                             </div>
                             <button
                               onClick={handleCsvFileRemove}
-                              className="rounded-lg p-2 text-[#7E7E89] transition-colors hover:bg-white/[0.06] hover:text-[#F4F4F6]"
+                              className="rounded-lg p-2 text-fg-dim transition-colors hover:bg-ink/[0.06] hover:text-fg"
                             >
                               <Trash2 className="h-4 w-4" />
                             </button>
@@ -1210,19 +1210,19 @@ export default function IntegrationPage() {
                     {parsedCsvData && parsedCsvData.data.length > 0 && (
                       <div className="space-y-2">
                         <div className="flex items-center justify-between">
-                          <h4 className="text-sm font-medium text-[#F4F4F6]">{t('body.csvPreview')}</h4>
-                          <span className="font-geist-mono text-[12.5px] text-[#7E7E89]">
+                          <h4 className="text-sm font-medium text-fg">{t('body.csvPreview')}</h4>
+                          <span className="font-geist-mono text-[12.5px] text-fg-dim">
                             {t('body.csvRowCount', { count: parsedCsvData.data.length })}
                           </span>
                         </div>
-                        <div className="max-h-48 overflow-auto rounded-[10px] border border-white/[0.09]">
+                        <div className="max-h-48 overflow-auto rounded-[10px] border border-ink/[0.09]">
                           <table className="w-full text-[13px]">
-                            <thead className="sticky top-0 bg-[#101014]">
+                            <thead className="sticky top-0 bg-surface-card">
                               <tr>
                                 {parsedCsvData.headers.map((header) => (
                                   <th
                                     key={header}
-                                    className="border-b border-white/[0.08] px-3 py-2 text-left font-geist-mono text-[11px] font-medium uppercase tracking-[0.08em] text-[#7E7E89]"
+                                    className="border-b border-ink/[0.08] px-3 py-2 text-left font-geist-mono text-[11px] font-medium uppercase tracking-[0.08em] text-fg-dim"
                                   >
                                     {header}
                                   </th>
@@ -1231,9 +1231,9 @@ export default function IntegrationPage() {
                             </thead>
                             <tbody>
                               {parsedCsvData.data.slice(0, 5).map((row, i) => (
-                                <tr key={i} className="border-b border-white/[0.06] last:border-0">
+                                <tr key={i} className="border-b border-ink/[0.06] last:border-0">
                                   {parsedCsvData.headers.map((header) => (
-                                    <td key={header} className="px-3 py-2 text-[#9C9CA8]">
+                                    <td key={header} className="px-3 py-2 text-fg-muted">
                                       {String(row[header] ?? '')}
                                     </td>
                                   ))}
@@ -1243,7 +1243,7 @@ export default function IntegrationPage() {
                                 <tr>
                                   <td
                                     colSpan={parsedCsvData.headers.length}
-                                    className="px-3 py-2 text-center text-[#7E7E89]"
+                                    className="px-3 py-2 text-center text-fg-dim"
                                   >
                                     ... {parsedCsvData.data.length - 5} more rows
                                   </td>
@@ -1253,20 +1253,20 @@ export default function IntegrationPage() {
                           </table>
                         </div>
                         {isCsvOverLimit && (
-                          <div className="flex items-start gap-2 rounded-[10px] border border-[#FF6B6B]/30 bg-[#FF6B6B]/[0.08] p-3">
-                            <AlertCircle className="mt-0.5 h-4 w-4 flex-shrink-0 text-[#FF8C8C]" />
+                          <div className="flex items-start gap-2 rounded-[10px] border border-danger/30 bg-danger/[0.08] p-3">
+                            <AlertCircle className="mt-0.5 h-4 w-4 flex-shrink-0 text-danger" />
                             <div>
-                              <p className="text-sm font-medium text-[#FF8C8C]">{t('body.csvTooManyRows')}</p>
-                              <p className="mt-1 text-xs text-[#FF8C8C]/80">
+                              <p className="text-sm font-medium text-danger">{t('body.csvTooManyRows')}</p>
+                              <p className="mt-1 text-xs text-danger/80">
                                 {t('body.csvMaxRows', { count: MAX_CSV_ROWS, current: csvRowCount })}
                               </p>
                             </div>
                           </div>
                         )}
                         {parsedCsvData.errors.length > 0 && (
-                          <div className="rounded-[10px] border border-[#FF6B6B]/30 bg-[#FF6B6B]/[0.08] p-3">
-                            <p className="text-sm font-medium text-[#FF8C8C]">{t('body.csvInvalid')}</p>
-                            <ul className="mt-1 text-xs text-[#FF8C8C]/80">
+                          <div className="rounded-[10px] border border-danger/30 bg-danger/[0.08] p-3">
+                            <p className="text-sm font-medium text-danger">{t('body.csvInvalid')}</p>
+                            <ul className="mt-1 text-xs text-danger/80">
                               {parsedCsvData.errors.slice(0, 3).map((err, i) => (
                                 <li key={i}>{err}</li>
                               ))}
@@ -1300,10 +1300,10 @@ export default function IntegrationPage() {
           {currentStep === 3 && (
             <div className={cardCls}>
               <div className="mb-2 flex items-center gap-2.5">
-                <Zap className="h-[17px] w-[17px] text-[#B7A6FF]" strokeWidth={1.9} />
+                <Zap className="h-[17px] w-[17px] text-brand-text" strokeWidth={1.9} />
                 <span className="text-[15px] font-semibold">{t('steps.method')}</span>
               </div>
-              <p className="mb-5 text-[13.5px] text-[#9C9CA8]">{t('method.description')}</p>
+              <p className="mb-5 text-[13.5px] text-fg-muted">{t('method.description')}</p>
               <div className="space-y-6">
                 <div className="grid gap-4 sm:grid-cols-2">
                   {/* Sync Option */}
@@ -1312,15 +1312,15 @@ export default function IntegrationPage() {
                     className={`rounded-[12px] border p-4 text-left transition-colors ${
                       generationMode === 'sync'
                         ? 'border-[#8C6CFF]/60 bg-[#8C6CFF]/[0.08]'
-                        : 'border-white/[0.09] hover:border-[#8C6CFF]/40'
+                        : 'border-ink/[0.09] hover:border-[#8C6CFF]/40'
                     }`}
                   >
                     <div className="flex items-center gap-2">
-                      <Zap className="h-[17px] w-[17px] text-[#7CF0B0]" strokeWidth={1.9} />
-                      <span className="text-[15px] font-semibold text-[#F4F4F6]">{t('sync.title')}</span>
+                      <Zap className="h-[17px] w-[17px] text-ok" strokeWidth={1.9} />
+                      <span className="text-[15px] font-semibold text-fg">{t('sync.title')}</span>
                     </div>
-                    <p className="mt-2 text-[13.5px] leading-[1.6] text-[#9C9CA8]">{t('sync.description')}</p>
-                    <div className="mt-3 flex items-center gap-2 font-geist-mono text-[11.5px] text-[#FFD479]">
+                    <p className="mt-2 text-[13.5px] leading-[1.6] text-fg-muted">{t('sync.description')}</p>
+                    <div className="mt-3 flex items-center gap-2 font-geist-mono text-[11.5px] text-warn">
                       <AlertCircle className="h-3 w-3" />
                       {t('sync.timeout')}
                     </div>
@@ -1332,15 +1332,15 @@ export default function IntegrationPage() {
                     className={`rounded-[12px] border p-4 text-left transition-colors ${
                       generationMode === 'async'
                         ? 'border-[#8C6CFF]/60 bg-[#8C6CFF]/[0.08]'
-                        : 'border-white/[0.09] hover:border-[#8C6CFF]/40'
+                        : 'border-ink/[0.09] hover:border-[#8C6CFF]/40'
                     }`}
                   >
                     <div className="flex items-center gap-2">
-                      <Clock className="h-[17px] w-[17px] text-[#B7A6FF]" strokeWidth={1.9} />
-                      <span className="text-[15px] font-semibold text-[#F4F4F6]">{t('async.title')}</span>
+                      <Clock className="h-[17px] w-[17px] text-brand-text" strokeWidth={1.9} />
+                      <span className="text-[15px] font-semibold text-fg">{t('async.title')}</span>
                     </div>
-                    <p className="mt-2 text-[13.5px] leading-[1.6] text-[#9C9CA8]">{t('async.description')}</p>
-                    <div className="mt-3 flex items-center gap-2 font-geist-mono text-[11.5px] text-[#B7A6FF]">
+                    <p className="mt-2 text-[13.5px] leading-[1.6] text-fg-muted">{t('async.description')}</p>
+                    <div className="mt-3 flex items-center gap-2 font-geist-mono text-[11.5px] text-brand-text">
                       <Webhook className="h-3 w-3" />
                       {t('async.webhookSupport')}
                     </div>
@@ -1350,10 +1350,10 @@ export default function IntegrationPage() {
                 {/* Webhook URL (only for async) */}
                 {generationMode === 'async' && (
                   <div className="space-y-2">
-                    <label className="flex items-center gap-2 text-sm font-medium text-[#F4F4F6]">
-                      <Webhook className="h-4 w-4 text-[#B7A6FF]" strokeWidth={1.9} />
+                    <label className="flex items-center gap-2 text-sm font-medium text-fg">
+                      <Webhook className="h-4 w-4 text-brand-text" strokeWidth={1.9} />
                       {t('async.webhookUrl')}
-                      <span className="font-normal text-[#7E7E89]">({t('optional')})</span>
+                      <span className="font-normal text-fg-dim">({t('optional')})</span>
                     </label>
                     <input
                       type="text"
@@ -1362,7 +1362,7 @@ export default function IntegrationPage() {
                       placeholder="https://your-server.com/webhook"
                       className={monoFieldCls}
                     />
-                    <p className="text-xs text-[#7E7E89]">{t('async.webhookDescription')}</p>
+                    <p className="text-xs text-fg-dim">{t('async.webhookDescription')}</p>
                   </div>
                 )}
 
@@ -1385,10 +1385,10 @@ export default function IntegrationPage() {
             <div className="space-y-6">
               <div className={cardCls}>
                 <div className="mb-2 flex items-center gap-2.5">
-                  <Play className="h-[17px] w-[17px] text-[#B7A6FF]" strokeWidth={1.9} />
+                  <Play className="h-[17px] w-[17px] text-brand-text" strokeWidth={1.9} />
                   <span className="text-[15px] font-semibold">{t('steps.test')}</span>
                 </div>
-                <p className="mb-5 text-[13.5px] text-[#9C9CA8]">{t('test.description')}</p>
+                <p className="mb-5 text-[13.5px] text-fg-muted">{t('test.description')}</p>
                 <div className="space-y-4">
                   {/* Test button */}
                   <div className="flex flex-wrap items-center gap-4">
@@ -1404,7 +1404,7 @@ export default function IntegrationPage() {
                       )}
                       {t('test.tryIt')}
                     </button>
-                    <p className="text-[13px] text-[#7E7E89]">{t('test.note')}</p>
+                    <p className="text-[13px] text-fg-dim">{t('test.note')}</p>
                   </div>
 
                   {/* Test Result */}
@@ -1412,13 +1412,13 @@ export default function IntegrationPage() {
                     <div
                       className={`rounded-[12px] border p-4 ${
                         testResult.type === 'success'
-                          ? 'border-[#3FBF7F]/30 bg-[#3FBF7F]/[0.08]'
-                          : 'border-[#FF6B6B]/30 bg-[#FF6B6B]/[0.08]'
+                          ? 'border-ok/30 bg-ok/[0.08]'
+                          : 'border-danger/30 bg-danger/[0.08]'
                       }`}
                     >
                       {testResult.type === 'success' ? (
                         <div className="space-y-3">
-                          <div className="flex items-center gap-2 text-[#7CF0B0]">
+                          <div className="flex items-center gap-2 text-ok">
                             <CheckCircle2 className="h-5 w-5" strokeWidth={1.9} />
                             <span className="font-medium">
                               {testResult.pdfUrl ? t('test.success') : t('test.asyncStarted')}
@@ -1432,7 +1432,7 @@ export default function IntegrationPage() {
                                 href={testResult.pdfUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="flex items-center gap-2 rounded-[10px] border border-[#3FBF7F]/50 bg-[#3FBF7F]/[0.18] px-3.5 py-2 text-sm font-semibold text-[#7CF0B0] transition-colors hover:bg-[#3FBF7F]/[0.28]"
+                                className="flex items-center gap-2 rounded-[10px] border border-ok/50 bg-ok/[0.18] px-3.5 py-2 text-sm font-semibold text-ok transition-colors hover:bg-ok/[0.28]"
                               >
                                 <Download className="h-4 w-4" strokeWidth={2} />
                                 {t('test.downloadPdf')}
@@ -1441,7 +1441,7 @@ export default function IntegrationPage() {
                                 href={testResult.pdfUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="text-sm text-[#7CF0B0]/90 hover:underline"
+                                className="text-sm text-ok/90 hover:underline"
                               >
                                 {t('test.openInNewTab')}
                               </a>
@@ -1451,18 +1451,18 @@ export default function IntegrationPage() {
                           {/* Async result: Job ID */}
                           {testResult.jobId && (
                             <div className="space-y-3">
-                              <p className="text-sm text-[#7CF0B0]">
+                              <p className="text-sm text-ok">
                                 Job ID:{' '}
-                                <code className="rounded-[5px] bg-white/[0.06] px-1.5 py-0.5 font-geist-mono text-[12.5px] text-[#D6D6E0]">
+                                <code className="rounded-[5px] bg-ink/[0.06] px-1.5 py-0.5 font-geist-mono text-[12.5px] text-brand-strong">
                                   {testResult.jobId}
                                 </code>
                               </p>
-                              <p className="text-sm text-[#9C9CA8]">{t('test.jobQueued')}</p>
+                              <p className="text-sm text-fg-muted">{t('test.jobQueued')}</p>
                             </div>
                           )}
                         </div>
                       ) : (
-                        <div className="flex items-center gap-2 text-[#FF8C8C]">
+                        <div className="flex items-center gap-2 text-danger">
                           <XCircle className="h-5 w-5" strokeWidth={1.9} />
                           <span>{testResult.message}</span>
                         </div>
@@ -1473,10 +1473,10 @@ export default function IntegrationPage() {
                   {/* Raw API Response */}
                   {rawResponse && (
                     <div className="space-y-2">
-                      <h4 className="font-geist-mono text-[11.5px] uppercase tracking-[0.09em] text-[#7E7E89]">
+                      <h4 className="font-geist-mono text-[11.5px] uppercase tracking-[0.09em] text-fg-dim">
                         {t('test.rawResponse')}
                       </h4>
-                      <pre className="max-h-48 overflow-auto rounded-[10px] border border-white/[0.08] bg-[#0A0A0C] p-4 font-geist-mono text-xs leading-[1.7] text-[#D6D6E0]">
+                      <pre className="max-h-48 overflow-auto rounded-[10px] border border-ink/[0.08] bg-surface p-4 font-geist-mono text-xs leading-[1.7] text-brand-strong">
                         {rawResponse}
                       </pre>
                     </div>
@@ -1487,8 +1487,8 @@ export default function IntegrationPage() {
                     <div className="rounded-[12px] border border-[#8C6CFF]/40 bg-[#8C6CFF]/[0.06] p-4">
                       <div className="flex flex-wrap items-center justify-between gap-3">
                         <div>
-                          <h4 className="font-semibold text-[#F4F4F6]">{t('test.jobStatus')}</h4>
-                          <p className="text-[13px] text-[#9C9CA8]">{t('test.checkStatusHint')}</p>
+                          <h4 className="font-semibold text-fg">{t('test.jobStatus')}</h4>
+                          <p className="text-[13px] text-fg-muted">{t('test.checkStatusHint')}</p>
                         </div>
                         <button
                           className={btnSecondaryCls}
@@ -1506,14 +1506,14 @@ export default function IntegrationPage() {
                       {jobStatus && (
                         <div className="mt-3 space-y-3">
                           <div className="flex items-center gap-2">
-                            <span className="text-sm text-[#7E7E89]">{t('test.status')}:</span>
+                            <span className="text-sm text-fg-dim">{t('test.status')}:</span>
                             <span
                               className={`rounded-[5px] px-2 py-0.5 font-geist-mono text-[11px] font-medium ${
                                 jobStatus.status === 'completed'
-                                  ? 'bg-[#3FBF7F]/[0.15] text-[#7CF0B0]'
+                                  ? 'bg-ok/[0.15] text-ok'
                                   : jobStatus.status === 'failed'
-                                    ? 'bg-[#FF6B6B]/[0.15] text-[#FF8C8C]'
-                                    : 'bg-[#8C6CFF]/[0.15] text-[#B7A6FF]'
+                                    ? 'bg-danger/[0.15] text-danger'
+                                    : 'bg-[#8C6CFF]/[0.15] text-brand-text'
                               }`}
                             >
                               {jobStatus.status}
@@ -1534,14 +1534,14 @@ export default function IntegrationPage() {
                                 href={jobStatus.pdfUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="text-sm text-[#B7A6FF] hover:underline"
+                                className="text-sm text-brand-text hover:underline"
                               >
                                 {t('test.openInNewTab')}
                               </a>
                             </div>
                           )}
                           {jobStatus.status === 'failed' && jobStatus.error && (
-                            <p className="text-sm text-[#FF8C8C]">{jobStatus.error}</p>
+                            <p className="text-sm text-danger">{jobStatus.error}</p>
                           )}
                         </div>
                       )}
@@ -1591,7 +1591,7 @@ export default function IntegrationPage() {
 
                   <div>
                     <div className={sectionLabelCls}>{t('codeSnippets.webhookPayload')}</div>
-                    <p className="mb-3 text-[13.5px] text-[#9C9CA8]">
+                    <p className="mb-3 text-[13.5px] text-fg-muted">
                       {t('codeSnippets.webhookDescription')}
                     </p>
                     <LabeledCodeBlock
@@ -1605,31 +1605,31 @@ export default function IntegrationPage() {
               )}
 
               {/* API Reference (Collapsible) */}
-              <div className="rounded-[14px] border border-white/[0.09] bg-[linear-gradient(180deg,rgba(255,255,255,0.025),rgba(255,255,255,0))]">
+              <div className="rounded-[14px] border border-ink/[0.09] bg-[linear-gradient(180deg,rgba(255,255,255,0.025),rgba(255,255,255,0))]">
                 <button
                   onClick={() => setShowApiRef(!showApiRef)}
                   className="flex w-full items-center justify-between px-[22px] py-5 text-left"
                 >
                   <span className="flex items-center gap-2.5">
-                    <Code className="h-[17px] w-[17px] text-[#B7A6FF]" strokeWidth={1.9} />
+                    <Code className="h-[17px] w-[17px] text-brand-text" strokeWidth={1.9} />
                     <span className="text-[15px] font-semibold">{t('apiRef.title')}</span>
                   </span>
                   {showApiRef ? (
-                    <ChevronUp className="h-[18px] w-[18px] text-[#7E7E89]" />
+                    <ChevronUp className="h-[18px] w-[18px] text-fg-dim" />
                   ) : (
-                    <ChevronDown className="h-[18px] w-[18px] text-[#7E7E89]" />
+                    <ChevronDown className="h-[18px] w-[18px] text-fg-dim" />
                   )}
                 </button>
                 {showApiRef && (
-                  <div className="space-y-6 border-t border-white/[0.07] px-[22px] pb-6 pt-6">
+                  <div className="space-y-6 border-t border-ink/[0.07] px-[22px] pb-6 pt-6">
                     {/* Authentication */}
                     <div>
-                      <h4 className="text-sm font-semibold text-[#F4F4F6]">{t('apiRef.auth.title')}</h4>
-                      <p className="mt-1 text-[13.5px] text-[#9C9CA8]">
+                      <h4 className="text-sm font-semibold text-fg">{t('apiRef.auth.title')}</h4>
+                      <p className="mt-1 text-[13.5px] text-fg-muted">
                         {t('apiRef.auth.description')}
                       </p>
-                      <div className="mt-2 rounded-[9px] border border-white/10 bg-white/[0.03] px-3 py-2.5">
-                        <code className="font-geist-mono text-[12.5px] text-[#D6D6E0]">
+                      <div className="mt-2 rounded-[9px] border border-ink/10 bg-ink/[0.03] px-3 py-2.5">
+                        <code className="font-geist-mono text-[12.5px] text-brand-strong">
                           X-Api-Key: your_api_key
                         </code>
                       </div>
@@ -1637,16 +1637,16 @@ export default function IntegrationPage() {
 
                     {/* Sync Endpoint */}
                     <div>
-                      <h4 className="text-sm font-semibold text-[#F4F4F6]">{t('apiRef.sync.title')}</h4>
+                      <h4 className="text-sm font-semibold text-fg">{t('apiRef.sync.title')}</h4>
                       <div className="mt-2 space-y-3">
-                        <div className="rounded-[9px] border border-white/10 bg-white/[0.03] px-3 py-2.5 font-geist-mono text-[12.5px] text-[#D6D6E0]">
-                          <span className="text-[#7CF0B0]">POST</span> /pdf/generate
+                        <div className="rounded-[9px] border border-ink/10 bg-ink/[0.03] px-3 py-2.5 font-geist-mono text-[12.5px] text-brand-strong">
+                          <span className="text-ok">POST</span> /pdf/generate
                         </div>
                         <div className="text-sm">
-                          <p className="font-geist-mono text-[11px] uppercase tracking-[0.08em] text-[#7E7E89]">
+                          <p className="font-geist-mono text-[11px] uppercase tracking-[0.08em] text-fg-dim">
                             {t('apiRef.request')}
                           </p>
-                          <pre className="mt-1.5 rounded-[10px] border border-white/[0.08] bg-[#0A0A0C] p-3 font-geist-mono text-xs leading-[1.7] text-[#D6D6E0]">
+                          <pre className="mt-1.5 rounded-[10px] border border-ink/[0.08] bg-surface p-3 font-geist-mono text-xs leading-[1.7] text-brand-strong">
                             {`{
   "templateId": "string (required)",
   "data": "object | array (required)"
@@ -1654,10 +1654,10 @@ export default function IntegrationPage() {
                           </pre>
                         </div>
                         <div className="text-sm">
-                          <p className="font-geist-mono text-[11px] uppercase tracking-[0.08em] text-[#7E7E89]">
+                          <p className="font-geist-mono text-[11px] uppercase tracking-[0.08em] text-fg-dim">
                             {t('apiRef.response')}
                           </p>
-                          <pre className="mt-1.5 rounded-[10px] border border-white/[0.08] bg-[#0A0A0C] p-3 font-geist-mono text-xs leading-[1.7] text-[#D6D6E0]">
+                          <pre className="mt-1.5 rounded-[10px] border border-ink/[0.08] bg-surface p-3 font-geist-mono text-xs leading-[1.7] text-brand-strong">
                             {`{
   "success": true,
   "pdfUrl": "https://...",
@@ -1672,16 +1672,16 @@ export default function IntegrationPage() {
 
                     {/* Async Endpoint */}
                     <div>
-                      <h4 className="text-sm font-semibold text-[#F4F4F6]">{t('apiRef.async.title')}</h4>
+                      <h4 className="text-sm font-semibold text-fg">{t('apiRef.async.title')}</h4>
                       <div className="mt-2 space-y-3">
-                        <div className="rounded-[9px] border border-white/10 bg-white/[0.03] px-3 py-2.5 font-geist-mono text-[12.5px] text-[#D6D6E0]">
-                          <span className="text-[#7CF0B0]">POST</span> /pdf/generate-async
+                        <div className="rounded-[9px] border border-ink/10 bg-ink/[0.03] px-3 py-2.5 font-geist-mono text-[12.5px] text-brand-strong">
+                          <span className="text-ok">POST</span> /pdf/generate-async
                         </div>
                         <div className="text-sm">
-                          <p className="font-geist-mono text-[11px] uppercase tracking-[0.08em] text-[#7E7E89]">
+                          <p className="font-geist-mono text-[11px] uppercase tracking-[0.08em] text-fg-dim">
                             {t('apiRef.request')}
                           </p>
-                          <pre className="mt-1.5 rounded-[10px] border border-white/[0.08] bg-[#0A0A0C] p-3 font-geist-mono text-xs leading-[1.7] text-[#D6D6E0]">
+                          <pre className="mt-1.5 rounded-[10px] border border-ink/[0.08] bg-surface p-3 font-geist-mono text-xs leading-[1.7] text-brand-strong">
                             {`{
   "templateId": "string (required)",
   "data": "object | array (required)",
@@ -1690,10 +1690,10 @@ export default function IntegrationPage() {
                           </pre>
                         </div>
                         <div className="text-sm">
-                          <p className="font-geist-mono text-[11px] uppercase tracking-[0.08em] text-[#7E7E89]">
+                          <p className="font-geist-mono text-[11px] uppercase tracking-[0.08em] text-fg-dim">
                             {t('apiRef.response')}
                           </p>
-                          <pre className="mt-1.5 rounded-[10px] border border-white/[0.08] bg-[#0A0A0C] p-3 font-geist-mono text-xs leading-[1.7] text-[#D6D6E0]">
+                          <pre className="mt-1.5 rounded-[10px] border border-ink/[0.08] bg-surface p-3 font-geist-mono text-xs leading-[1.7] text-brand-strong">
                             {`{
   "success": true,
   "jobId": "abc-123-def",
@@ -1706,18 +1706,18 @@ export default function IntegrationPage() {
 
                     {/* Job Status */}
                     <div>
-                      <h4 className="text-sm font-semibold text-[#F4F4F6]">
+                      <h4 className="text-sm font-semibold text-fg">
                         {t('apiRef.jobStatus.title')}
                       </h4>
                       <div className="mt-2 space-y-3">
-                        <div className="rounded-[9px] border border-white/10 bg-white/[0.03] px-3 py-2.5 font-geist-mono text-[12.5px] text-[#D6D6E0]">
-                          <span className="text-[#7CF0B0]">GET</span> /jobs/:jobId
+                        <div className="rounded-[9px] border border-ink/10 bg-ink/[0.03] px-3 py-2.5 font-geist-mono text-[12.5px] text-brand-strong">
+                          <span className="text-ok">GET</span> /jobs/:jobId
                         </div>
                         <div className="text-sm">
-                          <p className="font-geist-mono text-[11px] uppercase tracking-[0.08em] text-[#7E7E89]">
+                          <p className="font-geist-mono text-[11px] uppercase tracking-[0.08em] text-fg-dim">
                             {t('apiRef.response')}
                           </p>
-                          <pre className="mt-1.5 rounded-[10px] border border-white/[0.08] bg-[#0A0A0C] p-3 font-geist-mono text-xs leading-[1.7] text-[#D6D6E0]">
+                          <pre className="mt-1.5 rounded-[10px] border border-ink/[0.08] bg-surface p-3 font-geist-mono text-xs leading-[1.7] text-brand-strong">
                             {`{
   "jobId": "abc-123-def",
   "status": "pending | processing | completed | failed",
@@ -1743,16 +1743,16 @@ export default function IntegrationPage() {
             {/* Webhooks */}
             <div className={cardCls}>
               <div className="mb-2.5 flex items-center gap-2.5">
-                <Activity className="h-[17px] w-[17px] text-[#B7A6FF]" strokeWidth={1.9} />
+                <Activity className="h-[17px] w-[17px] text-brand-text" strokeWidth={1.9} />
                 <span className="text-[15px] font-semibold">{t('cards.webhooks.title')}</span>
-                <span className="ml-auto rounded-[5px] bg-white/[0.05] px-2 py-0.5 font-geist-mono text-[10.5px] text-[#7E7E89]">
+                <span className="ml-auto rounded-[5px] bg-ink/[0.05] px-2 py-0.5 font-geist-mono text-[10.5px] text-fg-dim">
                   {t('cards.webhooks.chip')}
                 </span>
               </div>
-              <p className="mb-3.5 text-[13.5px] leading-[1.6] text-[#9C9CA8]">
+              <p className="mb-3.5 text-[13.5px] leading-[1.6] text-fg-muted">
                 {t('cards.webhooks.body')}
               </p>
-              <div className="flex h-9 items-center gap-2 overflow-x-auto whitespace-nowrap rounded-[9px] border border-white/10 bg-white/[0.03] px-3 font-geist-mono text-[12.5px] text-[#5C5C66]">
+              <div className="flex h-9 items-center gap-2 overflow-x-auto whitespace-nowrap rounded-[9px] border border-ink/10 bg-ink/[0.03] px-3 font-geist-mono text-[12.5px] text-fg-faint">
                 https://yourapp.com/hooks/mkpdfs
               </div>
             </div>
@@ -1760,18 +1760,18 @@ export default function IntegrationPage() {
             {/* Official SDKs */}
             <div className={cardCls}>
               <div className="mb-2.5 flex items-center gap-2.5">
-                <Package className="h-[17px] w-[17px] text-[#B7A6FF]" strokeWidth={1.9} />
+                <Package className="h-[17px] w-[17px] text-brand-text" strokeWidth={1.9} />
                 <span className="text-[15px] font-semibold">{t('cards.sdks.title')}</span>
               </div>
-              <p className="mb-3.5 text-[13.5px] leading-[1.6] text-[#9C9CA8]">
+              <p className="mb-3.5 text-[13.5px] leading-[1.6] text-fg-muted">
                 {t('cards.sdks.body')}
               </p>
               <div className="flex flex-col gap-2">
-                <div className="flex h-9 items-center gap-2 rounded-[9px] border border-white/10 bg-white/[0.03] px-3 font-geist-mono text-[12.5px] text-[#D6D6E0]">
-                  <span className="text-[#7CF0B0]">$</span> npm install mkpdfs
+                <div className="flex h-9 items-center gap-2 rounded-[9px] border border-ink/10 bg-ink/[0.03] px-3 font-geist-mono text-[12.5px] text-brand-strong">
+                  <span className="text-ok">$</span> npm install mkpdfs
                 </div>
-                <div className="flex h-9 items-center gap-2 rounded-[9px] border border-white/10 bg-white/[0.03] px-3 font-geist-mono text-[12.5px] text-[#D6D6E0]">
-                  <span className="text-[#7CF0B0]">$</span> pip install mkpdfs
+                <div className="flex h-9 items-center gap-2 rounded-[9px] border border-ink/10 bg-ink/[0.03] px-3 font-geist-mono text-[12.5px] text-brand-strong">
+                  <span className="text-ok">$</span> pip install mkpdfs
                 </div>
               </div>
             </div>

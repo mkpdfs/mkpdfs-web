@@ -17,7 +17,7 @@ export async function FeaturesGrid() {
   return (
     <section
       id="features"
-      className="relative z-[1] scroll-mt-[68px] border-y border-white/[0.06] bg-[linear-gradient(180deg,rgba(124,92,255,0.04),transparent)]"
+      className="relative z-[1] scroll-mt-[68px] border-y border-ink/[0.06] bg-[linear-gradient(180deg,rgba(124,92,255,0.04),transparent)]"
     >
       <div className="mx-auto max-w-[1200px] px-7 py-[84px]">
         <ScrollReveal>
@@ -28,25 +28,25 @@ export async function FeaturesGrid() {
             <h2 className="mb-4 text-4xl font-bold tracking-[-0.03em] md:text-[46px] md:leading-tight">
               {t('title')}
             </h2>
-            <p className="text-lg text-[#9C9CA8]">{t('subtitle')}</p>
+            <p className="text-lg text-fg-muted">{t('subtitle')}</p>
           </div>
         </ScrollReveal>
 
         <ScrollReveal>
-          <div className="grid grid-cols-1 gap-px overflow-hidden rounded-[18px] border border-white/[0.07] bg-white/[0.07] md:grid-cols-3">
+          <div className="grid grid-cols-1 gap-px overflow-hidden rounded-[18px] border border-ink/[0.07] bg-ink/[0.07] md:grid-cols-3">
             {FEATURES.map(({ key, Icon }) => (
               <div
                 key={key}
-                className="group bg-[#0A0A0C] p-[30px] transition-colors hover:bg-[#0E0E12]"
+                className="group bg-surface p-[30px] transition-colors hover:bg-surface-card"
               >
-                <div className="mb-4 text-[#B7A6FF]">
+                <div className="mb-4 text-brand-text">
                   <Icon
                     className="h-6 w-6 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:scale-110"
                     strokeWidth={1.8}
                   />
                 </div>
                 <h3 className="mb-2 text-lg font-semibold">{t(`${key}Title`)}</h3>
-                <p className="text-[14.5px] leading-[1.6] text-[#8E8E99]">{t(`${key}Body`)}</p>
+                <p className="text-[14.5px] leading-[1.6] text-fg-muted">{t(`${key}Body`)}</p>
               </div>
             ))}
           </div>
