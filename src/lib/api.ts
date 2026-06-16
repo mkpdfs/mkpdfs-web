@@ -20,6 +20,8 @@ import type {
   GenerateAITemplateResponse,
   MarketplaceTemplate,
   LedgerEntry,
+  ThemeInput,
+  Theme,
 } from '@/types'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'
@@ -416,12 +418,37 @@ export async function getMarketplaceTemplatePreview(templateId: string): Promise
   return data.template
 }
 
-export async function useMarketplaceTemplate(templateId: string): Promise<Template> {
+export async function copyMarketplaceTemplate(templateId: string, theme?: ThemeInput): Promise<Template> {
   const response = await authFetch<{ message: string; template: Template }>(
     `/marketplace/templates/${templateId}/use`,
-    { method: 'POST' }
+    { method: 'POST', body: JSON.stringify(theme ? { theme } : {}) }
   )
   return response.template
+}
+
+const LOGO_CONTENT_TYPES: Record<string, string> = {
+  'image/png': 'png', 'image/jpeg': 'jpg', 'image/webp': 'webp', 'image/svg+xml': 'svg',
+}
+
+export async function uploadLogoFile(file: File): Promise<string> {
+  if (!LOGO_CONTENT_TYPES[file.type]) {
+    throw new Error('Logo must be PNG, JPEG, WebP or SVG')
+  }
+  const { uploadUrl, s3Key } = await authFetch<{ uploadUrl: string; s3Key: string }>(
+    '/templates/logo-upload-url',
+    { method: 'POST', body: JSON.stringify({ contentType: file.type }) }
+  )
+  const put = await fetch(uploadUrl, { method: 'PUT', body: file, headers: { 'Content-Type': file.type } })
+  if (!put.ok) throw new Error(`Logo upload failed: ${put.status}`)
+  return s3Key
+}
+
+export async function updateTemplateTheme(templateId: string, theme: ThemeInput): Promise<Theme> {
+  const response = await authFetch<{ message: string; theme: Theme }>(
+    `/templates/${templateId}/theme`,
+    { method: 'PATCH', body: JSON.stringify(theme) }
+  )
+  return response.theme
 }
 
 // ============================================

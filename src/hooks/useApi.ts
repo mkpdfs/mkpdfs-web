@@ -28,7 +28,8 @@ import {
   getMarketplaceTemplates,
   getMarketplaceTemplate,
   getMarketplaceTemplatePreview,
-  useMarketplaceTemplate as copyMarketplaceTemplate,
+  copyMarketplaceTemplate,
+  updateTemplateTheme,
   contactEnterprise,
   type SubmitAIJobRequest,
   type AIJobStatus,
@@ -43,6 +44,7 @@ import type {
   GeneratePdfRequest,
   GeneratePdfResponse,
   GenerateAITemplateRequest,
+  ThemeInput,
 } from '@/types'
 
 // ============================================
@@ -322,10 +324,24 @@ export function useCopyMarketplaceTemplate() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (templateId: string) => copyMarketplaceTemplate(templateId),
+    mutationFn: ({ templateId, theme }: { templateId: string; theme?: ThemeInput }) =>
+      copyMarketplaceTemplate(templateId, theme),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.templates })
       queryClient.invalidateQueries({ queryKey: queryKeys.usage })
+    },
+  })
+}
+
+export function useUpdateTemplateTheme() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: ({ templateId, theme }: { templateId: string; theme: ThemeInput }) =>
+      updateTemplateTheme(templateId, theme),
+    onSuccess: (_data, { templateId }) => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.templates })
+      queryClient.invalidateQueries({ queryKey: queryKeys.template(templateId) })
     },
   })
 }

@@ -25,6 +25,26 @@ export interface CurrentUsage {
   aiGenerationCount?: number
 }
 
+// Theming types
+export type LogoInput =
+  | { source: 'upload'; s3Key: string }
+  | { source: 'url'; url: string }
+  | null
+
+export interface ThemeInput {
+  brand: string
+  accent: string
+  fontKey: string
+  logo?: LogoInput
+}
+
+export interface Theme {
+  brand: string
+  accent: string
+  fontKey: string
+  logoKey?: string
+}
+
 // Template types
 export interface Template {
   id: string
@@ -34,6 +54,7 @@ export interface Template {
   s3Key: string
   sourceMarketplaceId?: string // Links to original marketplace template if copied
   thumbnailUrl?: string | null // Thumbnail URL (from marketplace source if available)
+  theme?: Theme
   createdAt: string
   updatedAt: string
 }
