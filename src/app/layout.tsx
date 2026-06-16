@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next'
 import { Inter } from 'next/font/google'
+import { getLocale } from 'next-intl/server'
 import './globals.css'
 
 const inter = Inter({
@@ -123,9 +124,11 @@ const organizationJsonLd = {
   sameAs: [],
 }
 
-export default function RootLayout({ children }: Props) {
+export default async function RootLayout({ children }: Props) {
+  // Locale-aware <html lang>; resolves to the default locale on non-locale routes.
+  const locale = await getLocale()
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang={locale} suppressHydrationWarning>
       <head>
         <script
           dangerouslySetInnerHTML={{
