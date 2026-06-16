@@ -406,7 +406,10 @@
     },
     "preview": {
       "templateCode": "Código de Plantilla",
-      "loadingTemplate": "Cargando plantilla..."
+      "loadingTemplate": "Cargando plantilla...",
+      "editBranding": "Editar branding",
+      "editBrandingSuccess": "Branding actualizado correctamente",
+      "editBrandingError": "Error al actualizar el branding"
     },
     "headerSubtitle": "Tus plantillas subidas y clonadas."
   },

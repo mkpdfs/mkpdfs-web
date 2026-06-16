@@ -406,7 +406,10 @@
     },
     "preview": {
       "templateCode": "Template Code",
-      "loadingTemplate": "Loading template..."
+      "loadingTemplate": "Loading template...",
+      "editBranding": "Edit branding",
+      "editBrandingSuccess": "Branding updated successfully",
+      "editBrandingError": "Failed to update branding"
     },
     "headerSubtitle": "Your uploaded and cloned templates."
   },
