@@ -168,7 +168,7 @@ export function CodeSnippets({ templateId, jsonData }: CodeSnippetsProps) {
 
         <p className="text-xs text-muted-foreground">
           Replace <code className="rounded bg-muted px-1 py-0.5">YOUR_API_KEY</code> with your API key from the{' '}
-          <a href="/en/api-keys" className="text-primary hover:underline">
+          <a href="/api-keys" className="text-primary hover:underline">
             API Keys
           </a>{' '}
           page.

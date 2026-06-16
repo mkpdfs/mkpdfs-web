@@ -28,7 +28,7 @@ export default function CallbackClient() {
         console.info('[Callback] OAuth successful, user:', user.userId, attributes.email)
 
         // Redirect to the preserved destination, or dashboard by default
-        router.replace(redirectTargetRef.current ?? '/en/dashboard')
+        router.replace(redirectTargetRef.current ?? '/dashboard')
       } catch (err) {
         console.error('[Callback] Auth check failed:', err)
         // If no user yet, wait for the Hub event
@@ -47,7 +47,7 @@ export default function CallbackClient() {
         case 'signInWithRedirect_failure':
           console.error('[Callback] Sign in redirect failed:', payload.data)
           setError('Failed to sign in with Google. Please try again.')
-          setTimeout(() => router.replace('/en/login'), 3000)
+          setTimeout(() => router.replace('/login'), 3000)
           break
         case 'customOAuthState': {
           console.info('[Callback] Custom OAuth state:', payload.data)

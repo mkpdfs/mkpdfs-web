@@ -1,7 +1,13 @@
 import { MetadataRoute } from 'next'
-import { locales } from '@/i18n/config'
+import { locales, defaultLocale } from '@/i18n/config'
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://mkpdfs.com'
+
+// as-needed: default locale lives at the root with no prefix; others are prefixed
+const localizedUrl = (locale: string, path: string) =>
+  locale === defaultLocale
+    ? `${BASE_URL}${path}`
+    : `${BASE_URL}/${locale}${path}`
 
 export default function sitemap(): MetadataRoute.Sitemap {
   // Public pages that should be indexed
@@ -29,14 +35,17 @@ export default function sitemap(): MetadataRoute.Sitemap {
   locales.forEach((locale) => {
     allPages.forEach((page) => {
       entries.push({
-        url: `${BASE_URL}/${locale}${page.path}`,
+        url: localizedUrl(locale, page.path),
         lastModified: new Date(),
         changeFrequency: page.changeFrequency,
         priority: page.priority,
         alternates: {
-          languages: Object.fromEntries(
-            locales.map((l) => [l, `${BASE_URL}/${l}${page.path}`])
-          ),
+          languages: {
+            ...Object.fromEntries(
+              locales.map((l) => [l, localizedUrl(l, page.path)])
+            ),
+            'x-default': localizedUrl(defaultLocale, page.path),
+          },
         },
       })
     })

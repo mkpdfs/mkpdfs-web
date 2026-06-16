@@ -52,10 +52,12 @@ export async function middleware(request: NextRequest) {
     console.log('[Middleware] Authenticated:', authenticated)
 
     if (authenticated) {
-      // Get the locale from the path or default to 'en'
-      const locale = normalizedPath.startsWith('/es') ? 'es' : 'en'
+      // Default locale (en) is served unprefixed under as-needed; only prefix es
+      const dashboardPath = normalizedPath.startsWith('/es')
+        ? '/es/dashboard'
+        : '/dashboard'
       console.log('[Middleware] Redirecting to dashboard')
-      return NextResponse.redirect(new URL(`/${locale}/dashboard`, request.url))
+      return NextResponse.redirect(new URL(dashboardPath, request.url))
     }
   }
 

@@ -10,7 +10,7 @@ export default function LogoutClient() {
   useEffect(() => {
     // OAuth sign-out redirect lands here
     // Simply redirect to login page
-    router.replace('/en/login')
+    router.replace('/login')
   }, [router])
 
   return <PageLoader message="Signing out..." />
