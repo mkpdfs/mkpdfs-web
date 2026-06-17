@@ -10,6 +10,7 @@ import { BrandingWizardBody } from '@/components/theme/BrandingWizardBody'
 import { useTemplate, useUpdateTemplateTheme, useMarketplaceTemplatePreview } from '@/hooks/useApi'
 import { draftToThemeInput, type WizardDraft } from '@/lib/theme/draft'
 import { toast } from '@/hooks/useToast'
+import { useApiError } from '@/hooks/useApiError'
 
 export default function TemplateBrandingPage() {
   const params = useParams()
@@ -17,6 +18,7 @@ export default function TemplateBrandingPage() {
   const t = useTranslations('branding')
   const tTemplates = useTranslations('templates')
   const router = useRouter()
+  const notifyApiError = useApiError()
 
   const [isApplying, setIsApplying] = useState(false)
 
@@ -48,11 +50,7 @@ export default function TemplateBrandingPage() {
       toast({ title: tTemplates('preview.editBrandingSuccess') })
       router.push('/templates')
     } catch (err) {
-      toast({
-        title: tTemplates('preview.editBrandingError'),
-        description: err instanceof Error ? err.message : undefined,
-        variant: 'destructive',
-      })
+      notifyApiError(err, { title: tTemplates('preview.editBrandingError') })
     } finally {
       setIsApplying(false)
     }

@@ -661,7 +661,8 @@
     "forbidden": "No tienes permiso para acceder a este recurso.",
     "networkError": "Error de red. Por favor verifica tu conexión.",
     "serverError": "Error del servidor. Por favor intenta más tarde.",
-    "validationError": "Por favor verifica tu entrada e intenta de nuevo."
+    "validationError": "Por favor verifica tu entrada e intenta de nuevo.",
+    "insufficientCredits": "Créditos insuficientes"
   },
   "aiGenerate": {
     "title": "Generar con IA",

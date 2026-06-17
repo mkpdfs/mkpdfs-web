@@ -12,7 +12,8 @@ const RIGHT_ALIGNED = new Set(['pages', 'duration', 'when'])
 
 export default function UsagePage() {
   const t = useTranslations('usage.requests')
-  const { data: usage, isLoading } = useUsage()
+  const errors = useTranslations('errors')
+  const { data: usage, isLoading, error } = useUsage()
 
   const pages = usage?.usage?.pagesGenerated ?? 0
   const spend = (pages * PRICE_PER_PAGE).toFixed(2)
@@ -25,6 +26,8 @@ export default function UsagePage() {
           <h1 className="mb-1.5 text-[26px] font-bold tracking-[-0.025em]">{t('title')}</h1>
           {isLoading ? (
             <Spinner size="sm" />
+          ) : error ? (
+            <p className="text-[14.5px] text-destructive">{errors('generic')}</p>
           ) : (
             <p className="text-[14.5px] text-fg-muted">
               {t.rich('subtitle', {

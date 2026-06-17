@@ -10,6 +10,7 @@ import { BrandingWizardBody } from '@/components/theme/BrandingWizardBody'
 import { useCopyMarketplaceTemplate, useMarketplaceTemplatePreview } from '@/hooks/useApi'
 import { draftToThemeInput, type WizardDraft } from '@/lib/theme/draft'
 import { toast } from '@/hooks/useToast'
+import { useApiError } from '@/hooks/useApiError'
 
 export default function MarketplaceCustomizePage() {
   const params = useParams()
@@ -17,6 +18,7 @@ export default function MarketplaceCustomizePage() {
   const t = useTranslations('branding')
   const tMarketplace = useTranslations('marketplace')
   const router = useRouter()
+  const notifyApiError = useApiError()
 
   const [isApplying, setIsApplying] = useState(false)
 
@@ -42,11 +44,7 @@ export default function MarketplaceCustomizePage() {
       })
       router.push('/templates')
     } catch (err) {
-      toast({
-        title: tMarketplace('useError'),
-        description: err instanceof Error ? err.message : undefined,
-        variant: 'destructive',
-      })
+      notifyApiError(err, { title: tMarketplace('useError') })
     } finally {
       setIsApplying(false)
     }
