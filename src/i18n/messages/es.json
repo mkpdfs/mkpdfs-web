@@ -26,7 +26,11 @@
     "upload": "Subir",
     "perMonth": "/mes",
     "creditsRequired": "Esta función requiere saldo de créditos. Compra un paquete para desbloquearla.",
-    "buyCredits": "Comprar créditos"
+    "buyCredits": "Comprar créditos",
+    "errorTitle": "Algo salió mal",
+    "errorBody": "Ocurrió un error inesperado. Por favor intenta de nuevo.",
+    "tryAgain": "Reintentar",
+    "goHome": "Ir al inicio"
   },
   "metadata": {
     "title": "mkpdfs - API de Generación de PDFs para Developers",

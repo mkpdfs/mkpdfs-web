@@ -389,11 +389,17 @@ export async function isAuthenticated(): Promise<boolean> {
 }
 
 /**
- * Get ID token for API calls
+ * Get ID token for API calls.
+ *
+ * @param forceRefresh when true, bypasses Amplify's cached token and refreshes
+ * from Cognito. Used by the API client to recover from a 401 caused by a token
+ * that expired (or went stale) mid-session.
  */
-export async function getIdToken(): Promise<string | null> {
+export async function getIdToken(forceRefresh = false): Promise<string | null> {
   try {
-    const session = await fetchAuthSession()
+    const session = await fetchAuthSession(
+      forceRefresh ? { forceRefresh: true } : undefined
+    )
     return session.tokens?.idToken?.toString() || null
   } catch {
     return null
