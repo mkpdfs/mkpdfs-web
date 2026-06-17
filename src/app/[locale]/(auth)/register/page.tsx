@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { OG_IMAGE, TWITTER_CARD } from '@/lib/seo'
 import RegisterClient from './RegisterClient'
 
 export const metadata: Metadata = {
@@ -7,6 +8,13 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Create Account | mkpdfs',
     description: 'Create your free mkpdfs account to start generating professional PDFs at scale.',
+    images: [OG_IMAGE],
+  },
+  twitter: {
+    card: TWITTER_CARD,
+    title: 'Create Account | mkpdfs',
+    description: 'Create your free mkpdfs account to start generating professional PDFs at scale.',
+    images: [OG_IMAGE.url],
   },
   robots: {
     index: true,
