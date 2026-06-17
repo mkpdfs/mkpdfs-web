@@ -489,7 +489,7 @@
     "createKey": "Crear clave",
     "table": {
       "name": "Nombre",
-      "key": "ID de clave",
+      "key": "Key",
       "created": "Creada",
       "lastUsed": "Último uso"
     }

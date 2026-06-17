@@ -67,6 +67,7 @@ export interface TemplateWithContent extends Template {
 // API Token types
 export interface ApiToken {
   tokenId: string
+  keyHint?: string
   name: string
   createdAt: string
   lastUsed?: string

@@ -216,7 +216,7 @@ export default function ApiKeysPage() {
               </div>
               <div>
                 <span className="inline-flex max-w-full items-center truncate rounded-md border border-ink/[0.08] bg-ink/[0.05] px-[9px] py-[3px] font-geist-mono text-[11.5px] text-fg-muted">
-                  {maskTokenId(token.tokenId)}
+                  {token.keyHint ?? maskTokenId(token.tokenId)}
                 </span>
               </div>
               <div className="text-[13px] text-fg-dim">
