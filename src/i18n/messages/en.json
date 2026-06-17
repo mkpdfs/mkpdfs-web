@@ -1008,5 +1008,23 @@
     "credits": "Credits",
     "pagesLeft": "≈ {pages} pages left",
     "topUp": "Top up"
+  },
+  "branding": {
+    "adoptTitle": "Adopt template",
+    "editTitle": "Edit branding",
+    "brandColor": "Brand color",
+    "accentColor": "Accent color",
+    "preview": "Preview",
+    "cancel": "Cancel",
+    "useAsIs": "Use as-is",
+    "applyTheme": "Apply theme",
+    "apply": "Apply",
+    "logo": "Logo",
+    "removeLogo": "Remove",
+    "existingLogo": "Existing logo kept",
+    "uploadTab": "Upload",
+    "urlTab": "URL",
+    "dropOrClick": "Drop file or click to upload",
+    "urlMustBeHttps": "URL must start with https://"
   }
 }

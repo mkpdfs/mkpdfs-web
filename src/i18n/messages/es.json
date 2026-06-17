@@ -1008,5 +1008,23 @@
     "credits": "Créditos",
     "pagesLeft": "≈ {pages} páginas restantes",
     "topUp": "Recargar"
+  },
+  "branding": {
+    "adoptTitle": "Adoptar plantilla",
+    "editTitle": "Editar marca",
+    "brandColor": "Color principal",
+    "accentColor": "Color de acento",
+    "preview": "Vista previa",
+    "cancel": "Cancelar",
+    "useAsIs": "Usar tal cual",
+    "applyTheme": "Aplicar tema",
+    "apply": "Aplicar",
+    "logo": "Logo",
+    "removeLogo": "Eliminar",
+    "existingLogo": "Logo existente conservado",
+    "uploadTab": "Subir",
+    "urlTab": "URL",
+    "dropOrClick": "Arrastra un archivo o haz clic para subir",
+    "urlMustBeHttps": "La URL debe comenzar con https://"
   }
 }
