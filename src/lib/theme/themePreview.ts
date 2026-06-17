@@ -44,7 +44,7 @@ function registerHelpers() {
   Handlebars.registerHelper('ifEq', function (this: unknown, a: unknown, b: unknown, o: Handlebars.HelperOptions) {
     return a == b ? o.fn(this) : o.inverse(this)
   })
-  Handlebars.registerHelper('gt', (a: unknown, b: unknown) => Number(a) > Number(b))
+  Handlebars.registerHelper('gt', (a: unknown, b: unknown) => (a as number) > (b as number)) // raw compare, matches backend
   Handlebars.registerHelper('formatDate', (d: unknown) => { try { return new Date(d as never).toLocaleDateString() } catch { return String(d) } })
   Handlebars.registerHelper('formatCurrency', (a: unknown) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(Number(a)))
   Handlebars.registerHelper('mkpdfsLogo', function (name: unknown, o: Handlebars.HelperOptions) {
