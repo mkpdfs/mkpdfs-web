@@ -57,7 +57,7 @@ export default function MarketplaceCustomizePage() {
   }
 
   return (
-    <div className="flex h-[calc(100vh-var(--dashboard-header-h,64px))] flex-col">
+    <div className="flex flex-col">
       {/* Header */}
       <div className="flex flex-shrink-0 items-center gap-4 border-b border-border px-6 py-4">
         <Link
@@ -77,7 +77,7 @@ export default function MarketplaceCustomizePage() {
 
       {/* Body */}
       {isLoading ? (
-        <div className="flex flex-1 items-center justify-center">
+        <div className="flex items-center justify-center py-24">
           <Spinner size="lg" className="text-[#8C6CFF]" />
         </div>
       ) : (

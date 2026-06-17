@@ -66,8 +66,10 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   // Match all pathnames except for
-  // - … if they start with `/api`, `/_next` or `/_vercel`
+  // - … if they are under `/api/`, `/_next/` or `/_vercel/`
+  //   (scope to `api/`, NOT bare `api` — bare `api` also matches routes like
+  //    `/api-keys`, skipping their locale handling → 404)
   // - … the ones containing a dot (e.g. `favicon.ico`)
   // - … /callback and /logout (OAuth routes)
-  matcher: ['/', '/((?!api|_next|_vercel|callback|logout|.*\\..*).*)'],
+  matcher: ['/', '/((?!api/|_next/|_vercel/|callback|logout|.*\\..*).*)'],
 }

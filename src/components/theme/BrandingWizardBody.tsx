@@ -65,11 +65,11 @@ export function BrandingWizardBody({
   }
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col">
-      {/* Two-pane body */}
-      <div className="flex min-h-0 flex-1 flex-col sm:flex-row">
+    <div className="flex flex-col">
+      {/* Two-pane body — natural height; the scrolling dashboard <main> handles overflow */}
+      <div className="flex flex-col gap-6 p-6 lg:flex-row lg:items-start">
         {/* Left panel — controls */}
-        <div className="flex w-full flex-col gap-5 overflow-y-auto border-b border-border p-6 sm:w-80 sm:flex-shrink-0 sm:border-b-0 sm:border-r">
+        <div className="flex w-full flex-col gap-5 lg:w-80 lg:flex-shrink-0">
           <ColorField label={t('brandColor')} value={brand} onChange={setBrand} />
           <ColorField label={t('accentColor')} value={accent} onChange={setAccent} />
           <FontSelect value={fontKey} onChange={setFontKey} />
@@ -77,7 +77,7 @@ export function BrandingWizardBody({
         </div>
 
         {/* Right panel — preview */}
-        <div className="relative flex min-h-[400px] flex-1 flex-col bg-muted/30 sm:min-h-0">
+        <div className="relative flex min-w-0 flex-1 flex-col overflow-hidden rounded-xl border border-border bg-muted/30">
           <div className="flex-shrink-0 border-b border-border bg-muted/50 px-4 py-2">
             <p className="text-xs font-medium text-muted-foreground">{t('preview')}</p>
           </div>
@@ -86,13 +86,13 @@ export function BrandingWizardBody({
             sampleData={sampleData}
             theme={previewTheme}
             logoPreviewUrl={logoPreviewUrl}
-            className="h-full w-full flex-1 border-0"
+            className="w-full"
           />
         </div>
       </div>
 
-      {/* Footer */}
-      <div className="flex items-center justify-end gap-3 border-t border-border px-6 py-4">
+      {/* Footer — sticky so the actions stay visible regardless of scroll */}
+      <div className="sticky bottom-0 z-10 flex items-center justify-end gap-3 border-t border-border bg-surface/95 px-6 py-4 backdrop-blur supports-[backdrop-filter]:bg-surface/80">
         {mode === 'adopt' ? (
           <>
             <Button
