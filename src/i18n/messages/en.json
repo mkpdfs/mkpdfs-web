@@ -26,7 +26,11 @@
     "upload": "Upload",
     "perMonth": "/mo",
     "creditsRequired": "This feature requires a positive credit balance. Buy a credit pack to unlock it.",
-    "buyCredits": "Buy credits"
+    "buyCredits": "Buy credits",
+    "errorTitle": "Something went wrong",
+    "errorBody": "An unexpected error occurred. Please try again.",
+    "tryAgain": "Try again",
+    "goHome": "Go to homepage"
   },
   "metadata": {
     "title": "mkpdfs - PDF Generation API for Developers",

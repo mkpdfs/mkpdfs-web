@@ -15,7 +15,6 @@ import type {
   GeneratePdfRequest,
   GeneratePdfResponse,
   MkpdfsUser,
-  ApiResponse,
   GenerateAITemplateRequest,
   GenerateAITemplateResponse,
   MarketplaceTemplate,
@@ -27,31 +26,59 @@ import type {
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'
 
 /**
- * Base fetch function with authentication
+ * Error carrying the HTTP status + backend error code so callers can branch
+ * (e.g. 402 -> "buy credits", 403 -> forbidden) instead of string-matching.
+ */
+export class ApiError extends Error {
+  status: number
+  code?: string
+  constructor(message: string, status: number, code?: string) {
+    super(message)
+    this.name = 'ApiError'
+    this.status = status
+    this.code = code
+  }
+}
+
+/**
+ * Base fetch function with authentication.
+ *
+ * On a 401 it force-refreshes the Cognito session once and retries — Amplify's
+ * cached ID token can lag the server (expiry/clock skew), and without this a
+ * still-logged-in user hits a spurious error mid-session.
  */
 async function authFetch<T>(
   endpoint: string,
   options: RequestInit = {}
 ): Promise<T> {
+  const send = (token: string | null) => {
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      ...(options.headers as Record<string, string>),
+    }
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`
+    }
+    return fetch(`${API_URL}${endpoint}`, { ...options, headers })
+  }
+
   const idToken = await getIdToken()
+  let response = await send(idToken)
 
-  const headers: Record<string, string> = {
-    'Content-Type': 'application/json',
-    ...(options.headers as Record<string, string>),
+  if (response.status === 401 && idToken) {
+    const refreshed = await getIdToken(true)
+    if (refreshed && refreshed !== idToken) {
+      response = await send(refreshed)
+    }
   }
-
-  if (idToken) {
-    headers['Authorization'] = `Bearer ${idToken}`
-  }
-
-  const response = await fetch(`${API_URL}${endpoint}`, {
-    ...options,
-    headers,
-  })
 
   if (!response.ok) {
     const error = await response.json().catch(() => ({}))
-    throw new Error(error.message || `API Error: ${response.status}`)
+    throw new ApiError(
+      error.message || `API Error: ${response.status}`,
+      response.status,
+      error.code
+    )
   }
 
   // Handle empty responses
