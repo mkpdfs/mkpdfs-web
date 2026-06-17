@@ -1,37 +1,26 @@
 'use client'
 
 import { useState, useMemo } from 'react'
-import dynamic from 'next/dynamic'
-import { useMarketplaceTemplates, useCopyMarketplaceTemplate, useTemplates } from '@/hooks/useApi'
+import { useRouter } from '@/i18n/routing'
+import { useMarketplaceTemplates, useTemplates } from '@/hooks/useApi'
 import { Spinner } from '@/components/ui'
 import { CategoryTabs, TemplateCard, TemplatePreviewModal } from '@/components/marketplace'
 import { ContactLink } from '@/components/landing'
-import { toast } from '@/hooks/useToast'
-import { getMarketplaceTemplatePreview } from '@/lib/api'
-import { draftToThemeInput, type WizardDraft } from '@/lib/theme/draft'
 import { Search, Plus } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import type { MarketplaceTemplate } from '@/types'
 
-const BrandingWizardModal = dynamic(
-  () => import('@/components/theme/BrandingWizardModal').then((m) => m.BrandingWizardModal),
-  { ssr: false }
-)
-
 export default function MarketplacePage() {
   const t = useTranslations('marketplace')
   const errors = useTranslations('errors')
+  const router = useRouter()
 
   const [category, setCategory] = useState('all')
   const [searchQuery, setSearchQuery] = useState('')
   const [previewTemplate, setPreviewTemplate] = useState<MarketplaceTemplate | null>(null)
-  const [loadingTemplateId, setLoadingTemplateId] = useState<string | null>(null)
-  const [wizard, setWizard] = useState<{ templateId: string; name: string; content: string; sampleData: Record<string, unknown> } | null>(null)
-  const [isApplying, setIsApplying] = useState(false)
 
   const { data: templates, isLoading, error } = useMarketplaceTemplates(category)
   const { data: userTemplates } = useTemplates()
-  const copyTemplate = useCopyMarketplaceTemplate()
 
   // Build a set of marketplace template IDs that the user has already added
   const addedMarketplaceIds = useMemo(() => {
@@ -50,55 +39,9 @@ export default function MarketplacePage() {
       template.tags?.some((tag) => tag.toLowerCase().includes(searchQuery.toLowerCase()))
   )
 
-  const handleUseTemplate = async (template: MarketplaceTemplate) => {
-    setLoadingTemplateId(template.templateId)
-    try {
-      const preview = await getMarketplaceTemplatePreview(template.templateId)
-      let sampleData: Record<string, unknown> = {}
-      try { sampleData = preview.sampleDataJson ? JSON.parse(preview.sampleDataJson) : {} } catch { sampleData = {} }
-      setWizard({ templateId: template.templateId, name: template.name, content: preview.content ?? '', sampleData })
-      setPreviewTemplate(null)
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : errors('generic')
-      toast({
-        title: t('useError'),
-        description: errorMessage,
-        variant: 'destructive',
-      })
-    } finally {
-      setLoadingTemplateId(null)
-    }
-  }
-
-  const onApply = async (draft: WizardDraft | null) => {
-    if (!wizard) return
-    setIsApplying(true)
-    try {
-      const theme = draft ? await draftToThemeInput(draft) : undefined
-      await copyTemplate.mutateAsync({ templateId: wizard.templateId, theme })
-      toast({
-        title: t('useSuccess'),
-        description: `"${wizard.name}" has been added to your templates.`,
-      })
-      setWizard(null)
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : errors('generic')
-      if (errorMessage.includes('limit')) {
-        toast({
-          title: t('limitReached'),
-          description: errorMessage,
-          variant: 'destructive',
-        })
-      } else {
-        toast({
-          title: t('useError'),
-          description: errorMessage,
-          variant: 'destructive',
-        })
-      }
-    } finally {
-      setIsApplying(false)
-    }
+  const handleUseTemplate = (template: MarketplaceTemplate) => {
+    setPreviewTemplate(null)
+    router.push(`/marketplace/${template.templateId}/customize`)
   }
 
   return (
@@ -151,7 +94,7 @@ export default function MarketplacePage() {
               template={template}
               onPreview={setPreviewTemplate}
               onUse={handleUseTemplate}
-              isLoading={loadingTemplateId === template.templateId}
+              isLoading={false}
               isAdded={addedMarketplaceIds.has(template.templateId)}
             />
           ))}
@@ -172,22 +115,9 @@ export default function MarketplacePage() {
         template={previewTemplate}
         onClose={() => setPreviewTemplate(null)}
         onUse={handleUseTemplate}
-        isUseLoading={previewTemplate ? loadingTemplateId === previewTemplate.templateId : false}
+        isUseLoading={false}
         isAdded={previewTemplate ? addedMarketplaceIds.has(previewTemplate.templateId) : false}
       />
-
-      {/* Branding Wizard Modal */}
-      {wizard && (
-        <BrandingWizardModal
-          open={!!wizard}
-          mode="adopt"
-          templateContent={wizard.content}
-          sampleData={wizard.sampleData}
-          isSubmitting={isApplying}
-          onApply={onApply}
-          onClose={() => setWizard(null)}
-        />
-      )}
     </div>
   )
 }

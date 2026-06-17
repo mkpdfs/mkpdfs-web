@@ -1,22 +1,13 @@
 'use client'
 
-import { useState } from 'react'
 import Image from 'next/image'
-import dynamic from 'next/dynamic'
+import { useRouter } from '@/i18n/routing'
 import { Spinner } from '@/components/ui/Spinner'
 import { X, FileText, Trash2, Code, Palette } from 'lucide-react'
 import type { Template } from '@/types'
-import { useTemplate, useUpdateTemplateTheme } from '@/hooks/useApi'
+import { useTemplate } from '@/hooks/useApi'
 import { useTranslations } from 'next-intl'
 import { formatDate } from '@/lib/utils'
-import { toast } from '@/hooks/useToast'
-import { draftToThemeInput, type WizardDraft } from '@/lib/theme/draft'
-import { getMarketplaceTemplatePreview } from '@/lib/api'
-
-const BrandingWizardModal = dynamic(
-  () => import('@/components/theme/BrandingWizardModal').then((m) => m.BrandingWizardModal),
-  { ssr: false }
-)
 
 interface UserTemplatePreviewModalProps {
   template: Template | null
@@ -33,55 +24,16 @@ export function UserTemplatePreviewModal({
 }: UserTemplatePreviewModalProps) {
   const t = useTranslations('templates')
   const common = useTranslations('common')
-
-  const [editOpen, setEditOpen] = useState(false)
-  const [isApplying, setIsApplying] = useState(false)
-  const [sampleData, setSampleData] = useState<Record<string, unknown> | null>(null)
+  const router = useRouter()
 
   const { data: templateWithContent, isLoading } = useTemplate(template?.id || '')
-  const updateTheme = useUpdateTemplateTheme()
 
   if (!template) return null
 
-  const handleEditBranding = async () => {
-    // Fetch sample data from marketplace source if available
-    if (template.sourceMarketplaceId && sampleData === null) {
-      try {
-        const preview = await getMarketplaceTemplatePreview(template.sourceMarketplaceId)
-        let parsed: Record<string, unknown> = {}
-        try { parsed = preview.sampleDataJson ? JSON.parse(preview.sampleDataJson) : {} } catch { parsed = {} }
-        setSampleData(parsed)
-      } catch {
-        setSampleData({})
-      }
-    } else if (!template.sourceMarketplaceId && sampleData === null) {
-      setSampleData({})
-    }
-    setEditOpen(true)
+  const handleEditBranding = () => {
+    onClose()
+    router.push(`/templates/${template.id}/branding`)
   }
-
-  const onApply = async (draft: WizardDraft | null) => {
-    if (!draft) return
-    setIsApplying(true)
-    try {
-      const theme = await draftToThemeInput(draft)
-      await updateTheme.mutateAsync({ templateId: template.id, theme })
-      toast({ title: t('preview.editBrandingSuccess') })
-      setEditOpen(false)
-    } catch (e) {
-      toast({
-        title: t('preview.editBrandingError'),
-        description: (e as Error).message,
-        variant: 'destructive',
-      })
-    } finally {
-      setIsApplying(false)
-    }
-  }
-
-  const initialTheme = template.theme
-    ? { brand: template.theme.brand, accent: template.theme.accent, fontKey: template.theme.fontKey }
-    : undefined
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
@@ -184,21 +136,6 @@ export function UserTemplatePreviewModal({
           </div>
         </div>
       </div>
-
-      {/* Branding Wizard Modal */}
-      {editOpen && (
-        <BrandingWizardModal
-          open={editOpen}
-          mode="edit"
-          templateContent={templateWithContent?.content ?? ''}
-          sampleData={sampleData ?? {}}
-          initialTheme={initialTheme}
-          existingLogoKey={template.theme?.logoKey}
-          isSubmitting={isApplying}
-          onApply={onApply}
-          onClose={() => setEditOpen(false)}
-        />
-      )}
     </div>
   )
 }
