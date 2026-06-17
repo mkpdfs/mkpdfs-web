@@ -343,6 +343,18 @@
     },
     "quickActions": {
       "title": "Quick Actions",
+      "marketplace": {
+        "name": "Marketplace",
+        "description": "Pick a ready-made template"
+      },
+      "createOwn": {
+        "name": "Create your own",
+        "description": "Upload your Handlebars template"
+      },
+      "requestOne": {
+        "name": "Request one",
+        "description": "Ask us to generate it with AI"
+      },
       "generatePdf": {
         "name": "Generate PDF",
         "description": "Create a PDF from your templates"

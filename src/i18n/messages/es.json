@@ -343,6 +343,18 @@
     },
     "quickActions": {
       "title": "Acciones Rápidas",
+      "marketplace": {
+        "name": "Marketplace",
+        "description": "Elige una plantilla lista"
+      },
+      "createOwn": {
+        "name": "Crea una",
+        "description": "Sube tu plantilla Handlebars"
+      },
+      "requestOne": {
+        "name": "Pide una",
+        "description": "Pídenos generarla con IA"
+      },
       "generatePdf": {
         "name": "Generar PDF",
         "description": "Crea un PDF desde tus plantillas"

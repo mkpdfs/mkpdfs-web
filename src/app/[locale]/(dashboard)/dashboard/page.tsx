@@ -11,7 +11,7 @@ import {
   FileText,
   LayoutDashboard,
   Key,
-  Zap,
+  Store,
   Upload,
   Sparkles,
   Check,
@@ -119,20 +119,20 @@ export default function DashboardPage() {
 
   const quickActions = [
     {
-      name: t('quickActions.generatePdf.name'),
-      description: t('quickActions.generatePdf.description'),
-      icon: Zap,
-      href: '/integration',
+      name: t('quickActions.marketplace.name'),
+      description: t('quickActions.marketplace.description'),
+      icon: Store,
+      href: '/marketplace',
     },
     {
-      name: t('quickActions.uploadTemplate.name'),
-      description: t('quickActions.uploadTemplate.description'),
+      name: t('quickActions.createOwn.name'),
+      description: t('quickActions.createOwn.description'),
       icon: Upload,
       href: '/templates',
     },
     {
-      name: t('quickActions.aiGenerate.name'),
-      description: t('quickActions.aiGenerate.description'),
+      name: t('quickActions.requestOne.name'),
+      description: t('quickActions.requestOne.description'),
       icon: Sparkles,
       href: '/ai-generate',
     },
