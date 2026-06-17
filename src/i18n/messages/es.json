@@ -11,6 +11,8 @@
     "create": "Crear",
     "copy": "Copiar",
     "copied": "¡Copiado!",
+    "show": "Mostrar",
+    "hide": "Ocultar",
     "close": "Cerrar",
     "back": "Atrás",
     "next": "Siguiente",
@@ -472,6 +474,17 @@
       "error": "Error al crear clave API"
     },
     "warning": "¡Guarda esta clave ahora - no se mostrará de nuevo!",
+    "reveal": {
+      "title": "Tu nueva API key",
+      "warning": "Cópiala ahora y guárdala en un lugar seguro. Por seguridad esta key se muestra una sola vez y no se puede recuperar — si la pierdes, tendrás que crear una nueva.",
+      "copyKey": "Copiar key",
+      "download": "Descargar .json",
+      "done": "Listo, ya la guardé"
+    },
+    "revokeDialog": {
+      "title": "¿Revocar API key?",
+      "body": "¿Revocar \"{name}\"? Cualquier app que use esta key perderá acceso de inmediato. No se puede deshacer."
+    },
     "subtitleScoped": "Tokens revocables y con permisos acotados para acceso servidor a servidor.",
     "createKey": "Crear clave",
     "table": {

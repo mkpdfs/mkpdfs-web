@@ -149,10 +149,16 @@ export async function createToken(
   name: string,
   expiresInDays?: number
 ): Promise<CreateTokenResponse> {
-  return authFetch<CreateTokenResponse>('/user/tokens', {
-    method: 'POST',
-    body: JSON.stringify({ name, expiresInDays }),
-  })
+  // Backend wraps the payload as { success, data: { token, name, expiresAt } }.
+  // The raw token (shown once) lives in `.data` — unwrap it or the reveal never gets a token.
+  const response = await authFetch<{ success: boolean; data: CreateTokenResponse }>(
+    '/user/tokens',
+    {
+      method: 'POST',
+      body: JSON.stringify({ name, expiresInDays }),
+    }
+  )
+  return response.data
 }
 
 export async function deleteToken(tokenId: string): Promise<void> {

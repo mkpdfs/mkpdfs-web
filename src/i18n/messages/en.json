@@ -11,6 +11,8 @@
     "create": "Create",
     "copy": "Copy",
     "copied": "Copied!",
+    "show": "Show",
+    "hide": "Hide",
     "close": "Close",
     "back": "Back",
     "next": "Next",
@@ -472,6 +474,17 @@
       "error": "Failed to create API key"
     },
     "warning": "Save this key now - it won't be shown again!",
+    "reveal": {
+      "title": "Your new API key",
+      "warning": "Copy it now and store it somewhere safe. For security this key is shown only once and can't be recovered — if you lose it, you'll have to create a new one.",
+      "copyKey": "Copy key",
+      "download": "Download .json",
+      "done": "Done — I saved it"
+    },
+    "revokeDialog": {
+      "title": "Revoke API key?",
+      "body": "Revoke \"{name}\"? Any app using this key will immediately lose access. This can't be undone."
+    },
     "subtitleScoped": "Scoped, revocable tokens for server-to-server access.",
     "createKey": "Create key",
     "table": {

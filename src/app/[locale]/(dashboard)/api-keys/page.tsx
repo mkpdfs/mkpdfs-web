@@ -6,7 +6,7 @@ import { useTokens, useCreateToken, useDeleteToken, useProfile } from '@/hooks/u
 import { Spinner } from '@/components/ui'
 import { formatDate } from '@/lib/utils'
 import { toast } from '@/hooks/useToast'
-import { Key, Plus, Trash2, Copy, Eye, EyeOff, X } from 'lucide-react'
+import { Key, Plus, Trash2, Copy, Eye, EyeOff, X, AlertTriangle, Download } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 
 const gradientButtonClass =
@@ -33,6 +33,7 @@ export default function ApiKeysPage() {
   const [newTokenName, setNewTokenName] = useState('')
   const [newToken, setNewToken] = useState<string | null>(null)
   const [showToken, setShowToken] = useState(false)
+  const [revokeTarget, setRevokeTarget] = useState<{ tokenId: string; name: string } | null>(null)
 
   const keyCount = tokens?.length ?? 0
   const keyLimit = profile?.subscriptionLimits?.apiTokensAllowed ?? 3
@@ -50,7 +51,7 @@ export default function ApiKeysPage() {
     try {
       const result = await createToken.mutateAsync({ name: newTokenName.trim() })
       setNewToken(result.token)
-      setShowToken(false)
+      setShowToken(true)
       setNewTokenName('')
       setDialogOpen(false)
       toast({
@@ -68,27 +69,34 @@ export default function ApiKeysPage() {
     }
   }
 
-  const handleDelete = async (tokenId: string, tokenName: string) => {
-    if (!confirm(t('card.revokeConfirm'))) return
-
+  const confirmRevoke = async () => {
+    if (!revokeTarget) return
+    const { tokenId, name } = revokeTarget
     try {
       await deleteToken.mutateAsync(tokenId)
-      toast({
-        title: t('card.revoke'),
-        description: `"${tokenName}"`,
-      })
+      toast({ title: t('card.revoke'), description: `"${name}"` })
     } catch (err) {
-      toast({
-        title: common('error'),
-        description: errors('generic'),
-        variant: 'destructive',
-      })
+      toast({ title: common('error'), description: errors('generic'), variant: 'destructive' })
+    } finally {
+      setRevokeTarget(null)
     }
   }
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text)
     toast({ title: common('copied') })
+  }
+
+  const downloadKey = (token: string) => {
+    const payload = JSON.stringify({ apiKey: token, createdAt: new Date().toISOString() }, null, 2)
+    const url = URL.createObjectURL(new Blob([payload], { type: 'application/json' }))
+    const a = document.createElement('a')
+    a.href = url
+    a.download = 'mkpdfs-api-key.json'
+    document.body.appendChild(a)
+    a.click()
+    a.remove()
+    URL.revokeObjectURL(url)
   }
 
   return (
@@ -110,10 +118,14 @@ export default function ApiKeysPage() {
         </button>
       </div>
 
-      {/* New key reveal — shown once */}
+      {/* New key reveal — shown ONCE; the secret is hashed server-side and cannot be recovered */}
       {newToken && (
-        <div className="mb-6 rounded-[14px] border border-[#8C6CFF]/30 bg-[#8C6CFF]/[0.08] p-5">
-          <p className="mb-3 text-sm font-medium text-brand-strong">{t('warning')}</p>
+        <div className="mb-6 rounded-[14px] border border-[#8C6CFF]/40 bg-[#8C6CFF]/[0.08] p-5">
+          <div className="mb-1.5 flex items-center gap-2">
+            <AlertTriangle className="h-[17px] w-[17px] shrink-0 text-brand-strong" strokeWidth={2.2} />
+            <p className="text-[15px] font-semibold text-brand-strong">{t('reveal.title')}</p>
+          </div>
+          <p className="mb-4 text-[13px] leading-relaxed text-fg-muted">{t('reveal.warning')}</p>
           <div className="flex items-center gap-2">
             <code className="min-w-0 flex-1 truncate rounded-[9px] border border-ink/10 bg-ink/[0.05] px-3.5 py-2.5 font-geist-mono text-[13px] text-fg">
               {showToken ? newToken : '••••••••••••••••••••••••'}
@@ -122,17 +134,35 @@ export default function ApiKeysPage() {
               type="button"
               onClick={() => setShowToken(!showToken)}
               className={ghostIconButtonClass}
-              aria-label={showToken ? 'Hide' : 'Show'}
+              aria-label={showToken ? common('hide') : common('show')}
+              title={showToken ? common('hide') : common('show')}
             >
               {showToken ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
             </button>
             <button
               type="button"
               onClick={() => copyToClipboard(newToken)}
-              className={ghostIconButtonClass}
-              aria-label={t('card.copy')}
+              className={gradientButtonClass}
             >
-              <Copy className="h-4 w-4" />
+              <Copy className="h-4 w-4" strokeWidth={2.1} />
+              {t('reveal.copyKey')}
+            </button>
+          </div>
+          <div className="mt-4 flex items-center justify-between">
+            <button
+              type="button"
+              onClick={() => downloadKey(newToken)}
+              className="inline-flex h-[34px] items-center gap-2 rounded-[9px] border border-ink/[0.12] bg-ink/[0.04] px-3.5 text-[13px] font-medium text-fg-muted transition-colors hover:bg-ink/[0.08] hover:text-fg"
+            >
+              <Download className="h-[15px] w-[15px]" />
+              {t('reveal.download')}
+            </button>
+            <button
+              type="button"
+              onClick={() => setNewToken(null)}
+              className="text-[13px] font-medium text-fg-muted transition-colors hover:text-fg"
+            >
+              {t('reveal.done')}
             </button>
           </div>
         </div>
@@ -206,7 +236,7 @@ export default function ApiKeysPage() {
               <div className="sm:justify-self-end">
                 <button
                   type="button"
-                  onClick={() => handleDelete(token.tokenId, token.name)}
+                  onClick={() => setRevokeTarget({ tokenId: token.tokenId, name: token.name })}
                   className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-[rgb(var(--danger-soft)/0.35)] bg-[rgb(var(--danger-soft)/0.1)] px-3 text-[12.5px] font-medium text-danger-soft transition-colors hover:bg-[rgb(var(--danger-soft)/0.18)]"
                 >
                   <Trash2 className="h-[13px] w-[13px]" strokeWidth={2} />
@@ -271,6 +301,50 @@ export default function ApiKeysPage() {
                 </button>
               </div>
             </form>
+
+            <DialogPrimitive.Close
+              aria-label={common('close')}
+              className="absolute right-4 top-4 flex h-[30px] w-[30px] items-center justify-center rounded-lg text-fg-dim transition-colors hover:bg-ink/[0.06] hover:text-fg"
+            >
+              <X className="h-[15px] w-[15px]" />
+            </DialogPrimitive.Close>
+          </DialogPrimitive.Content>
+        </DialogPrimitive.Portal>
+      </DialogPrimitive.Root>
+
+      {/* Revoke confirmation dialog (styled — replaces window.confirm) */}
+      <DialogPrimitive.Root open={!!revokeTarget} onOpenChange={(open) => !open && setRevokeTarget(null)}>
+        <DialogPrimitive.Portal>
+          <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=closed]:animate-out data-[state=closed]:fade-out-0" />
+          <DialogPrimitive.Content className="fixed left-1/2 top-1/2 z-50 w-[calc(100%-32px)] max-w-[420px] -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-ink/10 bg-surface-card p-6 text-fg shadow-[0_24px_60px_rgba(0,0,0,0.55)] duration-200 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95">
+            <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-xl border border-[rgb(var(--danger-soft)/0.3)] bg-[rgb(var(--danger-soft)/0.12)] text-danger-soft">
+              <Trash2 className="h-5 w-5" strokeWidth={1.9} />
+            </div>
+            <DialogPrimitive.Title className="text-[17px] font-semibold tracking-[-0.015em]">
+              {t('revokeDialog.title')}
+            </DialogPrimitive.Title>
+            <DialogPrimitive.Description className="mt-1.5 text-[13.5px] leading-relaxed text-fg-muted">
+              {revokeTarget ? t('revokeDialog.body', { name: revokeTarget.name }) : ''}
+            </DialogPrimitive.Description>
+
+            <div className="mt-6 flex justify-end gap-2.5">
+              <button
+                type="button"
+                onClick={() => setRevokeTarget(null)}
+                className="inline-flex h-[38px] items-center rounded-[10px] border border-ink/[0.12] bg-ink/[0.04] px-4 text-sm font-medium text-fg-muted transition-colors hover:bg-ink/[0.08] hover:text-fg"
+              >
+                {common('cancel')}
+              </button>
+              <button
+                type="button"
+                onClick={confirmRevoke}
+                disabled={deleteToken.isPending}
+                className="inline-flex h-[38px] items-center gap-2 rounded-[10px] bg-[rgb(var(--danger-soft))] px-[18px] text-sm font-semibold text-white shadow-[0_6px_20px_rgb(var(--danger-soft)/0.35)] transition-all hover:-translate-y-px disabled:pointer-events-none disabled:opacity-60"
+              >
+                {deleteToken.isPending && <Spinner size="sm" className="text-white" />}
+                {t('card.revoke')}
+              </button>
+            </div>
 
             <DialogPrimitive.Close
               aria-label={common('close')}
