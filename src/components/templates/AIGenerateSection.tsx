@@ -7,6 +7,7 @@ import { FloatingChatWidget, type ChatMessage, QuestionForm } from '@/components
 import { FullScreenPreview } from '@/components/ai'
 import { useProfile, useSubmitAIGeneration, useAIJobStatus, useUploadTemplate, useGeneratePdf, useUploadAIImage } from '@/hooks/useApi'
 import { toast } from '@/hooks/useToast'
+import { useApiError } from '@/hooks/useApiError'
 import { useTranslations } from 'next-intl'
 import type { StructuredQuestion, QuestionAnswer, ImageAnalysis } from '@/lib/api'
 
@@ -28,10 +29,10 @@ type FlowStep = 'prompt' | 'analyzing' | 'questions' | 'generating' | 'complete'
 const EXAMPLE_KEYS = ['invoice', 'deliveryNote', 'monthlyReport', 'certificate', 'rentalContract'] as const
 
 export function AIGenerateSection({ onSaveComplete }: AIGenerateSectionProps) {
-  const t = useTranslations('templates')
   const common = useTranslations('common')
   const errors = useTranslations('errors')
   const ai = useTranslations('ai')
+  const notifyApiError = useApiError()
 
   const { data: profile } = useProfile()
   const submitAIGeneration = useSubmitAIGeneration()
@@ -392,11 +393,7 @@ export function AIGenerateSection({ onSaveComplete }: AIGenerateSectionProps) {
           : msg
       ))
 
-      toast({
-        title: ai('generateError'),
-        description: err instanceof Error ? err.message : errors('generic'),
-        variant: 'destructive',
-      })
+      notifyApiError(err, { title: ai('generateError') })
 
       aiMessageIdRef.current = null
     }
@@ -407,6 +404,7 @@ export function AIGenerateSection({ onSaveComplete }: AIGenerateSectionProps) {
     conversationContext,
     ai,
     errors,
+    notifyApiError,
     MAX_BASE64_SIZE,
   ])
 
@@ -492,16 +490,12 @@ export function AIGenerateSection({ onSaveComplete }: AIGenerateSectionProps) {
           : msg
       ))
 
-      toast({
-        title: ai('generateError'),
-        description: err instanceof Error ? err.message : errors('generic'),
-        variant: 'destructive',
-      })
+      notifyApiError(err, { title: ai('generateError') })
 
       setFlowStep('questions')
       aiMessageIdRef.current = null
     }
-  }, [analysisJobId, conversationContext, submitAIGeneration, ai, errors])
+  }, [analysisJobId, conversationContext, submitAIGeneration, ai, errors, notifyApiError])
 
   // Handle back from questions to prompt
   const handleBackToPrompt = useCallback(() => {
@@ -553,13 +547,9 @@ export function AIGenerateSection({ onSaveComplete }: AIGenerateSectionProps) {
 
       onSaveComplete?.()
     } catch (err) {
-      toast({
-        title: ai('saveError'),
-        description: err instanceof Error ? err.message : errors('generic'),
-        variant: 'destructive',
-      })
+      notifyApiError(err, { title: ai('saveError') })
     }
-  }, [generatedTemplate, editedTemplate, uploadTemplate, ai, errors, onSaveComplete])
+  }, [generatedTemplate, editedTemplate, uploadTemplate, ai, errors, onSaveComplete, notifyApiError])
 
   if (!hasAccess) {
     return <UpgradePrompt feature={ai('featureName')} />

@@ -6,6 +6,7 @@ import { useTokens, useCreateToken, useDeleteToken, useProfile } from '@/hooks/u
 import { Spinner } from '@/components/ui'
 import { formatDate } from '@/lib/utils'
 import { toast } from '@/hooks/useToast'
+import { useApiError } from '@/hooks/useApiError'
 import { Key, Plus, Trash2, Copy, Eye, EyeOff, X, AlertTriangle, Download } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 
@@ -28,6 +29,7 @@ export default function ApiKeysPage() {
   const t = useTranslations('apiKeys')
   const common = useTranslations('common')
   const errors = useTranslations('errors')
+  const notifyApiError = useApiError()
 
   const [dialogOpen, setDialogOpen] = useState(false)
   const [newTokenName, setNewTokenName] = useState('')
@@ -59,13 +61,11 @@ export default function ApiKeysPage() {
         description: t('warning'),
       })
     } catch (err) {
-      const message = err instanceof Error ? err.message : t('createDialog.error')
-      const isLimitError = message.toLowerCase().includes('limit')
-      toast({
-        title: isLimitError ? errors('limitReached') : common('error'),
-        description: message,
-        variant: 'destructive',
-      })
+      // The backend message is always English (server-side), so matching on it
+      // here is locale-safe; the user-facing description is localized.
+      const isLimitError =
+        err instanceof Error && err.message.toLowerCase().includes('limit')
+      notifyApiError(err, isLimitError ? { title: errors('limitReached') } : undefined)
     }
   }
 
@@ -76,7 +76,7 @@ export default function ApiKeysPage() {
       await deleteToken.mutateAsync(tokenId)
       toast({ title: t('card.revoke'), description: `"${name}"` })
     } catch (err) {
-      toast({ title: common('error'), description: errors('generic'), variant: 'destructive' })
+      notifyApiError(err)
     } finally {
       setRevokeTarget(null)
     }

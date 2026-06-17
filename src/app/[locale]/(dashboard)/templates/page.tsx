@@ -7,6 +7,7 @@ import { useTemplates, useDeleteTemplate, useUploadTemplate, useProfile } from '
 import { Spinner, Dialog, DialogContent, DialogHeader, DialogFooter, DialogTitle, DialogDescription } from '@/components/ui'
 import { formatDate } from '@/lib/utils'
 import { toast } from '@/hooks/useToast'
+import { useApiError } from '@/hooks/useApiError'
 import { FileText, Trash2, Search, Upload, X, Eye } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { UserTemplatePreviewModal } from '@/components/templates/UserTemplatePreviewModal'
@@ -105,6 +106,7 @@ export default function TemplatesPage() {
   const t = useTranslations('templates')
   const common = useTranslations('common')
   const errors = useTranslations('errors')
+  const notifyApiError = useApiError()
 
   const [searchQuery, setSearchQuery] = useState('')
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false)
@@ -146,11 +148,7 @@ export default function TemplatesPage() {
       })
       handleCloseModal()
     } catch (err) {
-      toast({
-        title: t('uploadDialog.error'),
-        description: err instanceof Error ? err.message : errors('generic'),
-        variant: 'destructive',
-      })
+      notifyApiError(err, { title: t('uploadDialog.error') })
     }
   }
 
@@ -176,11 +174,7 @@ export default function TemplatesPage() {
         setPreviewTemplate(null)
       }
     } catch (err) {
-      toast({
-        title: common('error'),
-        description: errors('generic'),
-        variant: 'destructive',
-      })
+      notifyApiError(err)
     } finally {
       setTemplateToDelete(null)
     }

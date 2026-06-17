@@ -22,6 +22,7 @@ import {
 import { Link } from '@/i18n/routing'
 import { useTranslations } from 'next-intl'
 import { toast } from '@/hooks/useToast'
+import { useApiError } from '@/hooks/useApiError'
 import {
   Code,
   Copy,
@@ -551,6 +552,7 @@ function CreateApiKeyModal({
   const t = useTranslations('apiKeys')
   const common = useTranslations('common')
   const errors = useTranslations('errors')
+  const notifyApiError = useApiError()
   const createToken = useCreateToken()
 
   const [name, setName] = useState('')
@@ -575,13 +577,10 @@ function CreateApiKeyModal({
         description: t('warning'),
       })
     } catch (err) {
-      const message = err instanceof Error ? err.message : t('createDialog.error')
-      const isLimitError = message.toLowerCase().includes('limit')
-      toast({
-        title: isLimitError ? errors('limitReached') : common('error'),
-        description: message,
-        variant: 'destructive',
-      })
+      // Backend message is English server-side, so this match is locale-safe.
+      const isLimitError =
+        err instanceof Error && err.message.toLowerCase().includes('limit')
+      notifyApiError(err, isLimitError ? { title: errors('limitReached') } : undefined)
     }
   }
 
@@ -683,6 +682,7 @@ export default function IntegrationPage() {
   const t = useTranslations('integration')
   const common = useTranslations('common')
   const errors = useTranslations('errors')
+  const notifyApiError = useApiError()
 
   const { data: templates, isLoading: templatesLoading } = useTemplates()
   const { data: tokens, isLoading: tokensLoading } = useTokens()
@@ -911,17 +911,16 @@ export default function IntegrationPage() {
         }
       }
     } catch (err) {
+      // Keep the raw backend message in the developer-facing response/test panel
+      // (this is an API explorer — devs want the real payload)...
       const message = err instanceof Error ? err.message : errors('generic')
       setRawResponse(JSON.stringify({ error: message }, null, 2))
       setTestResult({
         type: 'error',
         message,
       })
-      toast({
-        title: t('test.error'),
-        description: message,
-        variant: 'destructive',
-      })
+      // ...but surface a localized toast (and the buy-credits action on 402).
+      notifyApiError(err, { title: t('test.error') })
     } finally {
       setIsTestLoading(false)
     }
