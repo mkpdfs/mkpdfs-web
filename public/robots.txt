@@ -2,12 +2,23 @@
 User-agent: *
 Allow: /
 
-# Disallow private/auth-only paths
+# Disallow private/auth-only paths.
+# Patterns are doubled because the default locale (en) is served unprefixed
+# (e.g. /settings) while other locales are prefixed (e.g. /es/settings).
 Disallow: /api/
 Disallow: /callback
-Disallow: /*/billing/success
-Disallow: /*/billing/cancel
+Disallow: /logout
+Disallow: /dashboard
+Disallow: /*/dashboard
+Disallow: /settings
 Disallow: /*/settings
+Disallow: /billing
+Disallow: /*/billing
+Disallow: /api-keys
+Disallow: /*/api-keys
+Disallow: /usage
+Disallow: /*/usage
+Disallow: /explainer.html
 
 # Sitemap
 Sitemap: https://mkpdfs.com/sitemap.xml

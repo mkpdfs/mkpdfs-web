@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import { Inter } from 'next/font/google'
 import { getLocale } from 'next-intl/server'
+import { OG_IMAGE, TWITTER_CARD } from '@/lib/seo'
 import './globals.css'
 
 const inter = Inter({
@@ -34,21 +35,14 @@ export const metadata: Metadata = {
     title: 'mkpdfs - PDF Generation at Scale',
     description:
       'Generate beautiful PDFs at scale. Upload Handlebars templates, call our API, and get professional PDFs instantly.',
-    images: [
-      {
-        url: '/og-image.png',
-        width: 1200,
-        height: 630,
-        alt: 'mkpdfs - PDF Generation at Scale',
-      },
-    ],
+    images: [OG_IMAGE],
   },
   twitter: {
-    card: 'summary_large_image',
+    card: TWITTER_CARD,
     title: 'mkpdfs - PDF Generation at Scale',
     description:
       'Generate beautiful PDFs at scale. Upload Handlebars templates, call our API, and get professional PDFs instantly.',
-    images: ['/og-image.png'],
+    images: [OG_IMAGE.url],
   },
   robots: {
     index: true,
@@ -61,14 +55,10 @@ export const metadata: Metadata = {
       'max-snippet': -1,
     },
   },
-  alternates: {
-    canonical: BASE_URL,
-    languages: {
-      'en': `${BASE_URL}/en`,
-      'es': `${BASE_URL}/es`,
-      'x-default': `${BASE_URL}/en`,
-    },
-  },
+  // No global `alternates.canonical` here: a root-level canonical is inherited
+  // by every sub-page (login, /es, …), making them all declare themselves
+  // duplicates of the homepage. Canonical + hreflang are set per-locale in
+  // each page's generateMetadata instead (auto-canonical applies elsewhere).
   verification: {
     // Add your verification codes when available
     // google: 'your-google-verification-code',
@@ -112,15 +102,15 @@ const jsonLd = {
     'Template marketplace',
     'AI-powered template generation',
   ],
-  screenshot: 'https://mkpdfs.com/og-image.png',
+  screenshot: `${BASE_URL}/og-image.png`,
 }
 
 const organizationJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
   name: 'mkpdfs',
-  url: 'https://mkpdfs.com',
-  logo: 'https://mkpdfs.com/logo.png',
+  url: BASE_URL,
+  logo: `${BASE_URL}/og-image.png`,
   sameAs: [],
 }
 

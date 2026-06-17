@@ -36,7 +36,6 @@ async function isAuthenticated(
 }
 
 export async function middleware(request: NextRequest) {
-  console.log('[Middleware] Running for:', request.nextUrl.pathname)
   const { pathname } = request.nextUrl
   // Normalize path by removing trailing slash (except for root)
   const normalizedPath = pathname === '/' ? '/' : pathname.replace(/\/$/, '')
@@ -46,17 +45,13 @@ export async function middleware(request: NextRequest) {
 
   // Check if this is a route where we should redirect authenticated users
   if (AUTH_REDIRECT_ROUTES.includes(normalizedPath)) {
-    console.log('[Middleware] Checking auth for path:', normalizedPath)
-
     const authenticated = await isAuthenticated(request, intlResponse)
-    console.log('[Middleware] Authenticated:', authenticated)
 
     if (authenticated) {
       // Default locale (en) is served unprefixed under as-needed; only prefix es
       const dashboardPath = normalizedPath.startsWith('/es')
         ? '/es/dashboard'
         : '/dashboard'
-      console.log('[Middleware] Redirecting to dashboard')
       return NextResponse.redirect(new URL(dashboardPath, request.url))
     }
   }
