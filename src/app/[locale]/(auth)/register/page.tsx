@@ -1,25 +1,22 @@
 import type { Metadata } from 'next'
-import { OG_IMAGE, TWITTER_CARD } from '@/lib/seo'
+import { getTranslations } from 'next-intl/server'
+import { pageMetadata } from '@/lib/seo'
 import RegisterClient from './RegisterClient'
 
-export const metadata: Metadata = {
-  title: 'Create Account',
-  description: 'Create your free mkpdfs account to start generating professional PDFs at scale. Get started with our free tier today.',
-  openGraph: {
-    title: 'Create Account | mkpdfs',
-    description: 'Create your free mkpdfs account to start generating professional PDFs at scale.',
-    images: [OG_IMAGE],
-  },
-  twitter: {
-    card: TWITTER_CARD,
-    title: 'Create Account | mkpdfs',
-    description: 'Create your free mkpdfs account to start generating professional PDFs at scale.',
-    images: [OG_IMAGE.url],
-  },
-  robots: {
-    index: true,
-    follow: true,
-  },
+type Props = { params: Promise<{ locale: string }> }
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale } = await params
+  const t = await getTranslations({ locale, namespace: 'auth.register' })
+  return {
+    ...pageMetadata({
+      locale,
+      path: '/register',
+      title: t('metaTitle'),
+      description: t('metaDescription'),
+    }),
+    robots: { index: true, follow: true },
+  }
 }
 
 export default function RegisterPage() {
