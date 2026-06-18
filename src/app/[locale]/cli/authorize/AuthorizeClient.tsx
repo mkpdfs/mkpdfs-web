@@ -4,18 +4,21 @@ import { useEffect, useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { useRouter } from '@/i18n/routing'
 import { useAuth } from '@/providers'
-import { Button } from '@/components/ui/Button'
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/Card'
+  AuthCard,
+  AuthCardHeader,
+  AuthCardTitle,
+  AuthCardDescription,
+  AuthBrandMark,
+  AuthButton,
+  AuthAlert,
+  AuthLoader,
+} from '@/components/auth/primitives'
 import { approveCliDevice } from '@/lib/cliAuth'
 
 export default function AuthorizeClient() {
   const t = useTranslations('cli.authorize')
+  const tc = useTranslations('common')
   const router = useRouter()
   const { isAuthenticated, isInitializing, isLoading } = useAuth()
   const [code, setCode] = useState('')
@@ -24,11 +27,17 @@ export default function AuthorizeClient() {
   >('idle')
 
   useEffect(() => {
-    if (!isInitializing && !isLoading && !isAuthenticated)
-      router.push('/login?redirect=/cli/authorize')
+    if (!isInitializing && !isLoading && !isAuthenticated) {
+      // Preserve any query params the CLI may attach so they survive the
+      // login round-trip (pathname is always /cli/authorize for this page).
+      const here = '/cli/authorize' + window.location.search
+      router.push(`/login?redirect=${encodeURIComponent(here)}`)
+    }
   }, [isAuthenticated, isInitializing, isLoading, router])
 
-  if (isInitializing || isLoading || !isAuthenticated) return null
+  if (isInitializing || isLoading || !isAuthenticated) {
+    return <AuthLoader message={tc('loading')} />
+  }
 
   const act = async (action: 'approve' | 'deny') => {
     setState('submitting')
@@ -42,56 +51,57 @@ export default function AuthorizeClient() {
 
   if (state === 'done' || state === 'denied') {
     return (
-      <Card className="max-w-md mx-auto mt-16">
-        <CardHeader>
-          <CardTitle>
+      <AuthCard>
+        <AuthCardHeader>
+          <AuthBrandMark />
+          <AuthCardTitle>
             {state === 'done' ? t('successTitle') : t('deniedTitle')}
-          </CardTitle>
-          <CardDescription>{t('returnToTerminal')}</CardDescription>
-        </CardHeader>
-      </Card>
+          </AuthCardTitle>
+          <AuthCardDescription>{t('returnToTerminal')}</AuthCardDescription>
+        </AuthCardHeader>
+      </AuthCard>
     )
   }
 
   const valid = code.replace(/[^a-zA-Z0-9]/g, '').length === 8
   return (
-    <Card className="max-w-md mx-auto mt-16">
-      <CardHeader>
-        <CardTitle>{t('title')}</CardTitle>
-        <CardDescription>{t('subtitle')}</CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-4">
+    <AuthCard>
+      <AuthCardHeader>
+        <AuthBrandMark />
+        <AuthCardTitle>{t('title')}</AuthCardTitle>
+        <AuthCardDescription>{t('subtitle')}</AuthCardDescription>
+      </AuthCardHeader>
+
+      <div className="space-y-4">
         <input
           autoFocus
           value={code}
           onChange={(e) => setCode(e.target.value.toUpperCase())}
           placeholder="XXXX-XXXX"
-          className="w-full text-center text-2xl font-mono tracking-widest rounded-md border border-border bg-background p-3"
+          className="w-full rounded-[10px] border border-ink/10 bg-surface p-3 text-center font-geist-mono text-2xl tracking-widest text-fg outline-none transition placeholder:text-fg-faint focus:border-brand/60 focus:ring-2 focus:ring-brand/25"
           maxLength={9}
         />
-        <p className="text-sm text-muted-foreground">{t('warning')}</p>
-        {state === 'error' && (
-          <p className="text-sm text-destructive">{t('error')}</p>
-        )}
+        <p className="text-sm text-fg-muted">{t('warning')}</p>
+        {state === 'error' && <AuthAlert>{t('error')}</AuthAlert>}
         <div className="flex gap-3">
-          <Button
-            variant="destructive"
+          <AuthButton
+            variant="danger"
             className="flex-1"
             disabled={!valid || state === 'submitting'}
             onClick={() => act('deny')}
           >
             {t('deny')}
-          </Button>
-          <Button
+          </AuthButton>
+          <AuthButton
             className="flex-1"
             disabled={!valid || state === 'submitting'}
             isLoading={state === 'submitting'}
             onClick={() => act('approve')}
           >
             {t('approve')}
-          </Button>
+          </AuthButton>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </AuthCard>
   )
 }

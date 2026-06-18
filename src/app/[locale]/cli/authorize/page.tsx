@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { AuthShell } from '@/components/auth/AuthShell'
 import AuthorizeClient from './AuthorizeClient'
 
 export const metadata: Metadata = {
@@ -6,5 +7,9 @@ export const metadata: Metadata = {
 }
 
 export default function CliAuthorizePage() {
-  return <AuthorizeClient />
+  return (
+    <AuthShell>
+      <AuthorizeClient />
+    </AuthShell>
+  )
 }
