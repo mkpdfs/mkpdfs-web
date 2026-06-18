@@ -3,6 +3,11 @@ import { locales, defaultLocale } from '@/i18n/config'
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://mkpdfs.com'
 
+// Fixed lastmod for the (rarely-changing) public pages. Using `new Date()` made
+// every URL look freshly modified on each crawl, which crawlers learn to ignore.
+// Bump this when the public marketing/auth pages get a meaningful content change.
+const LAST_MODIFIED = new Date('2026-06-18')
+
 // as-needed: default locale lives at the root with no prefix; others are prefixed
 const localizedUrl = (locale: string, path: string) =>
   locale === defaultLocale
@@ -26,7 +31,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     allPages.forEach((page) => {
       entries.push({
         url: localizedUrl(locale, page.path),
-        lastModified: new Date(),
+        lastModified: LAST_MODIFIED,
         changeFrequency: page.changeFrequency,
         priority: page.priority,
         alternates: {

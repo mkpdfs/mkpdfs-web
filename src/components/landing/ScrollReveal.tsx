@@ -16,6 +16,7 @@ export function ScrollReveal({
   threshold = 0.1,
 }: ScrollRevealProps) {
   const ref = useRef<HTMLDivElement>(null)
+  const timeoutRef = useRef<ReturnType<typeof setTimeout>>()
   const [isVisible, setIsVisible] = useState(false)
 
   useEffect(() => {
@@ -31,7 +32,7 @@ export function ScrollReveal({
         if (entry.isIntersecting) {
           // Use timeout for stagger delay
           if (delay > 0) {
-            setTimeout(() => setIsVisible(true), delay)
+            timeoutRef.current = setTimeout(() => setIsVisible(true), delay)
           } else {
             setIsVisible(true)
           }
@@ -45,7 +46,10 @@ export function ScrollReveal({
       observer.observe(ref.current)
     }
 
-    return () => observer.disconnect()
+    return () => {
+      observer.disconnect()
+      if (timeoutRef.current) clearTimeout(timeoutRef.current)
+    }
   }, [threshold, delay])
 
   return (

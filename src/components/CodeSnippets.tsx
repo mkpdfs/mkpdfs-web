@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui'
 import { Copy, Check, Code } from 'lucide-react'
 
@@ -106,13 +106,21 @@ const languages: { id: Language; label: string }[] = [
 export function CodeSnippets({ templateId, jsonData }: CodeSnippetsProps) {
   const [selectedLang, setSelectedLang] = useState<Language>('curl')
   const [copied, setCopied] = useState(false)
+  const copyTimeoutRef = useRef<ReturnType<typeof setTimeout>>()
+
+  useEffect(
+    () => () => {
+      if (copyTimeoutRef.current) clearTimeout(copyTimeoutRef.current)
+    },
+    []
+  )
 
   const snippet = generateSnippet(selectedLang, templateId, jsonData)
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(snippet)
     setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
+    copyTimeoutRef.current = setTimeout(() => setCopied(false), 2000)
   }
 
   return (

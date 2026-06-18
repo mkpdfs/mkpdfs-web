@@ -73,9 +73,10 @@ function StatCard({
 
 export default function DashboardPage() {
   const { user } = useAuth()
-  const { data: usage, isLoading: usageLoading } = useUsage()
-  const { data: profile, isLoading: profileLoading } = useProfile()
+  const { data: usage, isLoading: usageLoading, error: usageError } = useUsage()
+  const { data: profile, isLoading: profileLoading, error: profileError } = useProfile()
   const t = useTranslations('dashboard')
+  const errors = useTranslations('errors')
   const [onboardingDismissed, setOnboardingDismissed] = useState(true) // Default true to prevent flash
 
   useEffect(() => {
@@ -171,6 +172,12 @@ export default function DashboardPage() {
         </h1>
         <p className="text-[14.5px] text-fg-muted">{t('subtitle')}</p>
       </div>
+
+      {(usageError || profileError) && (
+        <div className="mb-6 rounded-[12px] border border-destructive/30 bg-destructive/[0.06] px-4 py-3 text-[13.5px] text-destructive">
+          {errors('generic')}
+        </div>
+      )}
 
       {/* Stats */}
       <div className="mb-9 grid grid-cols-1 gap-4 sm:grid-cols-3">

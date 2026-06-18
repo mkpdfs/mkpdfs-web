@@ -14,6 +14,7 @@ export default function CallbackClient() {
   // Post-login destination carried through the OAuth round-trip via
   // customState (set by LoginClient as a locale-prefixed path).
   const redirectTargetRef = useRef<string | null>(null)
+  const redirectTimeoutRef = useRef<ReturnType<typeof setTimeout>>()
 
   useEffect(() => {
     // Initialize auth if not already done
@@ -47,7 +48,7 @@ export default function CallbackClient() {
         case 'signInWithRedirect_failure':
           console.error('[Callback] Sign in redirect failed:', payload.data)
           setError('Failed to sign in with Google. Please try again.')
-          setTimeout(() => router.replace('/login'), 3000)
+          redirectTimeoutRef.current = setTimeout(() => router.replace('/login'), 3000)
           break
         case 'customOAuthState': {
           console.info('[Callback] Custom OAuth state:', payload.data)
@@ -68,7 +69,10 @@ export default function CallbackClient() {
     // Check if already authenticated (in case event was missed)
     checkAuth()
 
-    return () => unsubscribe()
+    return () => {
+      unsubscribe()
+      if (redirectTimeoutRef.current) clearTimeout(redirectTimeoutRef.current)
+    }
   }, [router])
 
   if (error) {
