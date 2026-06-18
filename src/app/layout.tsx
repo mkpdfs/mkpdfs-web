@@ -25,6 +25,7 @@ export const metadata: Metadata = {
   publisher: 'mkpdfs',
   icons: {
     icon: '/favicon.ico',
+    apple: '/logo.png',
   },
   openGraph: {
     type: 'website',
@@ -110,7 +111,7 @@ const organizationJsonLd = {
   '@type': 'Organization',
   name: 'mkpdfs',
   url: BASE_URL,
-  logo: `${BASE_URL}/og-image.png`,
+  logo: `${BASE_URL}/logo.png`,
   sameAs: [],
 }
 
