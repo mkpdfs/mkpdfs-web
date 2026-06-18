@@ -254,6 +254,8 @@
   },
   "auth": {
     "login": {
+      "metaTitle": "Iniciar sesión",
+      "metaDescription": "Inicia sesión en tu cuenta de mkpdfs para gestionar tus plantillas PDF, generar documentos y acceder a tus claves de API.",
       "title": "Bienvenido de nuevo",
       "subtitle": "Inicia sesión en tu cuenta mkpdfs",
       "email": "Correo electrónico",
@@ -269,6 +271,8 @@
       "continueWithGoogle": "Continuar con Google"
     },
     "register": {
+      "metaTitle": "Crear cuenta",
+      "metaDescription": "Crea tu cuenta gratuita de mkpdfs y empieza a generar PDFs profesionales a escala. Comienza en minutos.",
       "title": "Crear una cuenta",
       "subtitle": "Comienza a generar PDFs en minutos",
       "name": "Nombre completo",

@@ -2,8 +2,14 @@ import type { Metadata } from 'next'
 import { setRequestLocale, getTranslations } from 'next-intl/server'
 import { GeistSans } from 'geist/font/sans'
 import { GeistMono } from 'geist/font/mono'
-import { locales, defaultLocale } from '@/i18n/config'
-import { OG_IMAGE, TWITTER_CARD } from '@/lib/seo'
+import { locales } from '@/i18n/config'
+import {
+  OG_IMAGE,
+  TWITTER_CARD,
+  localizedUrl,
+  ogLocaleFor,
+  languageAlternates,
+} from '@/lib/seo'
 import {
   LandingNav,
   LandingHero,
@@ -22,14 +28,6 @@ type Props = {
   params: Promise<{ locale: string }>
 }
 
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://mkpdfs.com'
-
-// as-needed routing: default locale lives at the root with no prefix.
-const localizedUrl = (locale: string, path = '') =>
-  locale === defaultLocale ? `${BASE_URL}${path}` : `${BASE_URL}/${locale}${path}`
-
-const ogLocale: Record<string, string> = { en: 'en_US', es: 'es_ES' }
-
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
   const t = await getTranslations({ locale, namespace: 'metadata' })
@@ -42,21 +40,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     // "%s | mkpdfs" template to avoid "mkpdfs … | mkpdfs" on the homepage.
     title: { absolute: title },
     description,
-    alternates: {
-      canonical,
-      languages: {
-        ...Object.fromEntries(locales.map((l) => [l, localizedUrl(l)])),
-        'x-default': localizedUrl(defaultLocale),
-      },
-    },
+    alternates: { canonical, languages: languageAlternates() },
     openGraph: {
       type: 'website',
       siteName: 'mkpdfs',
       title,
       description,
       url: canonical,
-      locale: ogLocale[locale] ?? 'en_US',
-      alternateLocale: locales.filter((l) => l !== locale).map((l) => ogLocale[l] ?? l),
+      locale: ogLocaleFor(locale),
+      alternateLocale: locales.filter((l) => l !== locale).map((l) => ogLocaleFor(l)),
       images: [OG_IMAGE],
     },
     twitter: { card: TWITTER_CARD, title, description, images: [OG_IMAGE.url] },
