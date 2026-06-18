@@ -3,8 +3,18 @@
 import { useState } from 'react'
 import { Link } from '@/i18n/routing'
 import { forgotPassword } from '@/lib/auth'
-import { Button, Input, Label, Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui'
-import { FileText, ArrowLeft, Mail } from 'lucide-react'
+import {
+  AuthCard,
+  AuthCardHeader,
+  AuthCardTitle,
+  AuthCardDescription,
+  AuthBrandMark,
+  AuthButton,
+  AuthInput,
+  AuthLabel,
+  AuthAlert,
+} from '@/components/auth/primitives'
+import { ArrowLeft, Mail } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 
 export default function ForgotPasswordClient() {
@@ -31,92 +41,74 @@ export default function ForgotPasswordClient() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 to-secondary-50 dark:from-primary-950/30 dark:to-secondary-950/30 px-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-primary to-secondary">
-            {isSuccess ? (
-              <Mail className="h-6 w-6 text-white" />
-            ) : (
-              <FileText className="h-6 w-6 text-white" />
-            )}
+    <AuthCard>
+      <AuthCardHeader>
+        <AuthBrandMark icon={isSuccess ? Mail : undefined} />
+        <AuthCardTitle>
+          {isSuccess ? t('successTitle') : t('title')}
+        </AuthCardTitle>
+        <AuthCardDescription>
+          {isSuccess ? t('successSubtitle', { email }) : t('subtitle')}
+        </AuthCardDescription>
+      </AuthCardHeader>
+
+      {!isSuccess ? (
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {error && <AuthAlert>{error}</AuthAlert>}
+
+          <div className="space-y-2">
+            <AuthLabel htmlFor="email">{t('email')}</AuthLabel>
+            <AuthInput
+              id="email"
+              type="email"
+              placeholder={t('emailPlaceholder')}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              autoComplete="email"
+            />
           </div>
-          <CardTitle className="text-2xl">
-            {isSuccess ? t('successTitle') : t('title')}
-          </CardTitle>
-          <CardDescription>
-            {isSuccess
-              ? t('successSubtitle', { email })
-              : t('subtitle')}
-          </CardDescription>
-        </CardHeader>
 
-        {!isSuccess ? (
-          <form onSubmit={handleSubmit}>
-            <CardContent className="space-y-4">
-              {error && (
-                <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
-                  {error}
-                </div>
-              )}
+          <div className="flex flex-col space-y-4 pt-2">
+            <AuthButton
+              type="submit"
+              className="w-full"
+              isLoading={isSubmitting}
+              disabled={!email}
+            >
+              {t('submit')}
+            </AuthButton>
 
-              <div className="space-y-2">
-                <Label htmlFor="email">{t('email')}</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder={t('emailPlaceholder')}
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  autoComplete="email"
-                />
-              </div>
-            </CardContent>
+            <Link
+              href="/login"
+              className="flex items-center justify-center gap-2 text-sm text-fg-muted hover:text-fg"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              {t('backToLogin')}
+            </Link>
+          </div>
+        </form>
+      ) : (
+        <div className="space-y-4">
+          <AuthAlert tone="ok" className="text-center">
+            {t('checkInbox')}
+          </AuthAlert>
 
-            <CardFooter className="flex flex-col space-y-4">
-              <Button
-                type="submit"
-                className="w-full"
-                isLoading={isSubmitting}
-                disabled={!email}
-              >
-                {t('submit')}
-              </Button>
+          <div className="flex flex-col gap-3">
+            <Link href={`/reset-password?email=${encodeURIComponent(email)}`}>
+              <AuthButton className="w-full">{t('enterCode')}</AuthButton>
+            </Link>
 
-              <Link
-                href="/login"
-                className="flex items-center justify-center gap-2 text-sm text-muted-foreground hover:text-foreground"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                {t('backToLogin')}
-              </Link>
-            </CardFooter>
-          </form>
-        ) : (
-          <CardContent className="space-y-4">
-            <div className="rounded-md bg-success/10 p-4 text-center text-sm text-success">
-              {t('checkInbox')}
-            </div>
-
-            <div className="flex flex-col gap-3">
-              <Link href={`/reset-password?email=${encodeURIComponent(email)}`}>
-                <Button className="w-full">
-                  {t('enterCode')}
-                </Button>
-              </Link>
-
-              <Link
-                href="/login"
-                className="flex items-center justify-center gap-2 text-sm text-muted-foreground hover:text-foreground"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                {t('backToLogin')}
-              </Link>
-            </div>
-          </CardContent>
-        )}
-      </Card>
-    </div>
+            <Link
+              href="/login"
+              className="flex items-center justify-center gap-2 text-sm text-fg-muted hover:text-fg"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              {t('backToLogin')}
+            </Link>
+          </div>
+        </div>
+      )}
+    </AuthCard>
   )
 }
