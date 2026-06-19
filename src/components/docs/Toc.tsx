@@ -1,15 +1,21 @@
 import type { Heading } from '@/lib/docs/compile'
+import type { Locale } from '@/lib/docs/nav'
 
-export function Toc({ headings }: { headings: Heading[] }) {
+const tocLabel: Record<Locale, string> = {
+  en: 'On this page',
+  es: 'En esta página',
+}
+
+export function Toc({ headings, locale }: { headings: Heading[]; locale: Locale }) {
   if (!headings.length) return null
   return (
     <aside
       className="hidden shrink-0 w-48 xl:block"
-      aria-label="On this page"
+      aria-label={tocLabel[locale]}
     >
       <div className="sticky top-10">
         <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-fg-muted">
-          On this page
+          {tocLabel[locale]}
         </p>
         <ul className="space-y-1">
           {headings.map((h) => (

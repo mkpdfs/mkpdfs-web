@@ -52,7 +52,7 @@ export default async function DocPage(
         {Content({ components: mdxComponents })}
         <Pager locale={locale as Locale} slug={resolved} />
       </article>
-      <Toc headings={headings} />
+      <Toc headings={headings} locale={locale as Locale} />
     </div>
   )
 }

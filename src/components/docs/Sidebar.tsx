@@ -1,12 +1,17 @@
-import { Link } from '@/i18n/routing'
+'use client'
+
+import { Link, usePathname } from '@/i18n/routing'
 import { docsNav, type Locale } from '@/lib/docs/nav'
 
 interface SidebarProps {
   locale: Locale
-  activeSlug?: string
 }
 
-export function Sidebar({ locale, activeSlug }: SidebarProps) {
+export function Sidebar({ locale }: SidebarProps) {
+  const pathname = usePathname()
+  // pathname is locale-stripped by next-intl's usePathname, e.g. /docs/quickstart
+  const activeSlug = pathname.replace(/^\/docs\/?/, '') || ''
+
   return (
     <nav
       className="hidden shrink-0 w-56 lg:block"
