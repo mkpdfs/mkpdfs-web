@@ -1,0 +1,75 @@
+---
+title: Quickstart
+description: Generate your first PDF in under two minutes.
+---
+
+This guide takes you from zero to a working PDF URL in three steps.
+
+## Step 1 — Create an account
+
+Go to [mkpdfs.com](https://mkpdfs.com) and sign up. Your account starts with **10 welcome credits** — enough to generate 10 single-page PDFs right away, no payment required.
+
+## Step 2 — Create an API key
+
+Open the dashboard and navigate to **API Keys**. Click **New API Key**, give it a name, and copy the key — it starts with `tlfy_`. You will not be able to see it again after closing the dialog.
+
+> **Keep your API key secret.** It grants full access to your account and templates. Do not commit it to source control.
+
+## Step 3 — Generate a PDF
+
+Use any template from the marketplace, or [upload your own](/docs/api-reference/templates). For this quickstart, substitute a real template ID from your dashboard.
+
+```bash
+curl -X POST https://apis.mkpdfs.com/v1/pdf/generate \
+  -H "x-api-key: tlfy_..." \
+  -H "Content-Type: application/json" \
+  -d '{"templateId":"<your-template-id>","data":{"name":"World"}}'
+```
+
+A successful response looks like this:
+
+```json
+{
+  "success": true,
+  "pdfUrl": "https://...",
+  "expiresIn": "5 days",
+  "size": 42318,
+  "pagesGenerated": 1
+}
+```
+
+Open `pdfUrl` in your browser to download the PDF. The link is pre-signed and expires in 5 days.
+
+## Multi-page PDFs
+
+Pass an array in `data` to generate a multi-page document. Each element in the array becomes one page, and **one credit is deducted per page**.
+
+```bash
+curl -X POST https://apis.mkpdfs.com/v1/pdf/generate \
+  -H "x-api-key: tlfy_..." \
+  -H "Content-Type: application/json" \
+  -d '{
+    "templateId": "<your-template-id>",
+    "data": [
+      {"name": "Alice"},
+      {"name": "Bob"}
+    ]
+  }'
+```
+
+The response includes `"pagesGenerated": 2`.
+
+## Parameters
+
+| Parameter | Type | Description |
+|---|---|---|
+| `templateId` | string | **Required.** The ID of the template to render. |
+| `data` | object \| array | **Required.** Variables merged into the template. Array = one page per element. |
+| `async` | boolean | Submit for background processing instead of waiting for the response. Default `false`. Combine with `sendEmail` to receive the finished PDF by email. |
+| `sendEmail` | string[] | One or more email addresses to receive the finished PDF. |
+
+## Next steps
+
+- [API Reference — Generate PDF](/docs/api-reference/generate-pdf) for the full endpoint specification and error codes.
+- [Templates](/docs/api-reference/templates) to learn how to upload and manage your own Handlebars templates.
+- [Install the CLI](/docs/getting-started/cli-install) to manage everything from your terminal.

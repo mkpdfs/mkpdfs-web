@@ -1,0 +1,195 @@
+---
+title: Plantillas
+description: API CRUD para gestionar plantillas Handlebars — listar, obtener, subir, actualizar y eliminar.
+---
+
+Las plantillas son archivos Handlebars (`.hbs`) que mkpdfs compila con tus datos en el momento de generar el PDF. Todos los endpoints de plantillas están bajo `/v1/templates` y requieren una clave de API. Consulta [Autenticación](/docs/api-reference/authentication).
+
+## Listar plantillas
+
+```
+GET https://apis.mkpdfs.com/v1/templates
+```
+
+Devuelve todas las plantillas de tu cuenta.
+
+```bash
+curl https://apis.mkpdfs.com/v1/templates \
+  -H "x-api-key: tlfy_tu_clave_aqui"
+```
+
+**Respuesta — 200 OK**
+
+```json
+{
+  "templates": [
+    {
+      "userId": "us-east-1:...",
+      "templateId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+      "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+      "name": "Factura v2",
+      "description": "Plantilla de factura estándar",
+      "s3Key": "users/.../templates/a1b2c3d4....hbs",
+      "fileSize": 3847,
+      "contentVersion": "...",
+      "createdAt": "2026-06-01T12:00:00.000Z",
+      "updatedAt": "2026-06-10T09:15:00.000Z",
+      "thumbnailUrl": null
+    }
+  ]
+}
+```
+
+## Obtener una plantilla
+
+```
+GET https://apis.mkpdfs.com/v1/templates/{templateId}
+```
+
+Devuelve los metadatos de la plantilla y su código fuente Handlebars completo.
+
+```bash
+curl https://apis.mkpdfs.com/v1/templates/a1b2c3d4-e5f6-7890-abcd-ef1234567890 \
+  -H "x-api-key: tlfy_tu_clave_aqui"
+```
+
+**Respuesta — 200 OK**
+
+```json
+{
+  "template": {
+    "userId": "us-east-1:...",
+    "templateId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "name": "Factura v2",
+    "description": "Plantilla de factura estándar",
+    "s3Key": "users/.../templates/a1b2c3d4....hbs",
+    "fileSize": 3847,
+    "contentVersion": "...",
+    "createdAt": "2026-06-01T12:00:00.000Z",
+    "updatedAt": "2026-06-10T09:15:00.000Z",
+    "content": "<!DOCTYPE html>\n<html>..."
+  }
+}
+```
+
+El campo `content` contiene el código fuente Handlebars sin procesar.
+
+## Subir una plantilla
+
+```
+POST https://apis.mkpdfs.com/v1/templates/upload
+```
+
+Crea una nueva plantilla. Envía el código fuente Handlebars como una cadena codificada en base64 en el cuerpo JSON.
+
+**Cuerpo**
+
+| Campo | Tipo | Obligatorio | Descripción |
+|---|---|---|---|
+| `name` | string | Sí | Nombre de visualización de la plantilla. |
+| `content` | string | Sí | Código fuente Handlebars codificado en base64. |
+| `contentEncoding` | string | Sí | Debe ser `"base64"`. |
+| `description` | string | No | Descripción opcional. |
+
+```bash
+# Codifica tu archivo de plantilla
+CONTENIDO=$(base64 -i factura.hbs)
+
+curl -X POST https://apis.mkpdfs.com/v1/templates/upload \
+  -H "x-api-key: tlfy_tu_clave_aqui" \
+  -H "Content-Type: application/json" \
+  -d "{
+    \"name\": \"Factura v2\",
+    \"description\": \"Plantilla de factura estándar\",
+    \"content\": \"$CONTENIDO\",
+    \"contentEncoding\": \"base64\"
+  }"
+```
+
+> El límite de carga útil de API Gateway es de aproximadamente **6,5 MiB**. Las plantillas más grandes deben reducirse antes de subirlas.
+
+El código fuente Handlebars se valida en el servidor. Si la plantilla contiene un error de sintaxis, la solicitud devuelve `400` con un campo `error` que contiene el mensaje del compilador.
+
+**Respuesta — 201 Created**
+
+```json
+{
+  "userId": "us-east-1:...",
+  "templateId": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
+  "id": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
+  "name": "Factura v2",
+  "description": "Plantilla de factura estándar",
+  "s3Key": "users/.../templates/b2c3d4e5....hbs",
+  "fileSize": 3847,
+  "contentVersion": "...",
+  "createdAt": "2026-06-18T10:00:00.000Z",
+  "updatedAt": "2026-06-18T10:00:00.000Z"
+}
+```
+
+## Actualizar una plantilla
+
+```
+PUT https://apis.mkpdfs.com/v1/templates/{templateId}
+```
+
+Reemplaza el contenido de la plantilla en su lugar. El `templateId` no cambia, por lo que cualquier llamada existente de generación de PDFs que haga referencia a este ID usará inmediatamente la nueva plantilla. Los campos de metadatos son opcionales — omítelos para conservar sus valores actuales.
+
+**Cuerpo**
+
+| Campo | Tipo | Obligatorio | Descripción |
+|---|---|---|---|
+| `content` | string | Sí | Nuevo código fuente Handlebars, codificado en base64. |
+| `contentEncoding` | string | Sí | Debe ser `"base64"`. |
+| `name` | string | No | Nuevo nombre de visualización. Se conserva el nombre existente si se omite. |
+| `description` | string | No | Nueva descripción. |
+
+```bash
+NUEVO_CONTENIDO=$(base64 -i factura-v3.hbs)
+
+curl -X PUT https://apis.mkpdfs.com/v1/templates/b2c3d4e5-f6a7-8901-bcde-f12345678901 \
+  -H "x-api-key: tlfy_tu_clave_aqui" \
+  -H "Content-Type: application/json" \
+  -d "{
+    \"name\": \"Factura v3\",
+    \"content\": \"$NUEVO_CONTENIDO\",
+    \"contentEncoding\": \"base64\"
+  }"
+```
+
+**Respuesta — 200 OK**
+
+Devuelve el objeto de plantilla actualizado completo (misma forma que la respuesta de subida).
+
+## Eliminar una plantilla
+
+```
+DELETE https://apis.mkpdfs.com/v1/templates/{templateId}
+```
+
+Elimina permanentemente los metadatos de la plantilla y su archivo almacenado. Las URLs de PDF generadas antes de la eliminación siguen siendo válidas durante su ventana original de 5 días.
+
+```bash
+curl -X DELETE https://apis.mkpdfs.com/v1/templates/b2c3d4e5-f6a7-8901-bcde-f12345678901 \
+  -H "x-api-key: tlfy_tu_clave_aqui"
+```
+
+**Respuesta — 200 OK**
+
+```json
+{
+  "message": "Template deleted successfully",
+  "templateId": "b2c3d4e5-f6a7-8901-bcde-f12345678901"
+}
+```
+
+## Límites del plan
+
+El plan predeterminado permite hasta **500 plantillas**. Si se intenta subir una plantilla cuando se ha alcanzado el límite, se devuelve `429`. Las cuentas empresariales tienen plantillas ilimitadas.
+
+## Páginas relacionadas
+
+- [Autenticación](/docs/api-reference/authentication)
+- [Generar un PDF](/docs/api-reference/generate-pdf)
+- [Errores](/docs/api-reference/errors)

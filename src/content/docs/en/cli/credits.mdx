@@ -1,0 +1,90 @@
+---
+title: CLI Credits
+description: Check your credit balance, view the ledger, configure auto-recharge, and buy more credits from the terminal.
+---
+
+mkpdfs runs on prepaid credits: **$10 = 1,000 credits, 1 credit = 1 PDF page**. Credits never expire. When your balance hits zero, PDF generation returns a `402` until you top up.
+
+The `mkp credits` command lets you manage everything from the terminal.
+
+> **Browser login required.** All `credits` commands authenticate with your Cognito session. They do not work with `--api-key`. Run `mkp auth login` first if you have not already.
+
+## Check your balance
+
+```bash
+mkp credits
+```
+
+Prints your current credit balance and auto-recharge status at a glance.
+
+## View the ledger
+
+```bash
+mkp credits ledger
+```
+
+Shows the 50 most recent ledger entries — purchases, page debits, refunds, and welcome credits. Use `--json` to parse the output programmatically:
+
+```bash
+mkp credits ledger --json | jq '.[] | select(.kind == "debit")'
+```
+
+## Auto-recharge
+
+Auto-recharge tops up your balance automatically when it falls below a threshold, so you never get blocked mid-batch.
+
+### View current setting
+
+```bash
+mkp credits auto-recharge
+```
+
+### Enable auto-recharge
+
+```bash
+mkp credits auto-recharge --enable
+```
+
+Enables auto-recharge with the default threshold of 100 credits. When your balance drops below the threshold, mkpdfs charges your saved card for 1,000 credits ($10) and adds them to your account.
+
+Set a custom threshold:
+
+```bash
+mkp credits auto-recharge --enable --threshold 250
+```
+
+The threshold can be any integer from 1 to 1,000.
+
+### Disable auto-recharge
+
+```bash
+mkp credits auto-recharge --disable
+```
+
+### What happens on a card decline
+
+If the auto-recharge payment fails, mkpdfs disables auto-recharge and sets an error flag on your account. The dashboard shows a banner prompting you to update your payment method. Re-enable auto-recharge after updating your card.
+
+## Buy credits
+
+```bash
+mkp credits buy
+```
+
+Opens the Stripe checkout page in your browser. After a successful purchase, 1,000 credits ($10) are added to your balance immediately. You can run `mkp credits` again to confirm the new balance.
+
+## Usage stats
+
+For a broader view of the current month (API calls, templates created, AI generations used):
+
+```bash
+mkp usage
+```
+
+`usage` is stats-only and does not affect your credit balance.
+
+## Next steps
+
+- [CLI — Overview](/docs/cli/overview) — command tree, global flags, and config location.
+- [CLI — Templates](/docs/cli/templates) — manage your Handlebars templates from the terminal.
+- [API Reference — Generate PDF](/docs/api-reference/generate-pdf) — the REST endpoint used under the hood.

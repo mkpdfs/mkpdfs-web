@@ -35,6 +35,12 @@ export async function LandingNav() {
               {link.label}
             </a>
           ))}
+          <Link
+            href="/docs"
+            className="text-[14.5px] font-medium text-fg-muted transition-colors hover:text-fg"
+          >
+            {nav('docs')}
+          </Link>
         </div>
 
         <div className="flex items-center gap-[18px]">

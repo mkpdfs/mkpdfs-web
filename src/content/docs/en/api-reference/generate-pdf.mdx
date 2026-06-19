@@ -1,0 +1,119 @@
+---
+title: Generate a PDF
+description: POST /v1/pdf/generate — full reference for the PDF generation endpoint.
+---
+
+`POST /v1/pdf/generate` is the core endpoint. Send your template ID and data, receive a pre-signed URL to download the generated PDF.
+
+## Request
+
+```
+POST https://apis.mkpdfs.com/v1/pdf/generate
+```
+
+**Headers**
+
+| Header | Value |
+|---|---|
+| `x-api-key` | `tlfy_...` — required. See [Authentication](/docs/api-reference/authentication). |
+| `Content-Type` | `application/json` |
+
+**Body**
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `templateId` | string | Yes | The UUID of the template to render. |
+| `data` | object \| array | Yes | Variables merged into the Handlebars template. Pass an array to generate a multi-page PDF — each element becomes one page. Maximum 50 elements per request. |
+| `async` | boolean | No | Submit for background processing instead of waiting for the response — the API returns immediately. Default `false`. Combine with `sendEmail` (recipient addresses) to receive the finished PDF by email. |
+| `sendEmail` | string[] | No | One or more email addresses to receive the finished PDF. |
+
+## curl example
+
+```bash
+curl -X POST https://apis.mkpdfs.com/v1/pdf/generate \
+  -H "x-api-key: tlfy_your_key_here" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "templateId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "data": {
+      "customerName": "Acme Corp",
+      "invoiceNumber": "INV-0042",
+      "total": "1,200.00"
+    }
+  }'
+```
+
+## Multi-page example
+
+Pass an array in `data` to produce one page per element:
+
+```bash
+curl -X POST https://apis.mkpdfs.com/v1/pdf/generate \
+  -H "x-api-key: tlfy_your_key_here" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "templateId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "data": [
+      {"name": "Alice", "score": 98},
+      {"name": "Bob",   "score": 87}
+    ]
+  }'
+```
+
+## Success response — 200 OK
+
+```json
+{
+  "success": true,
+  "pdfUrl": "https://mkpdfs-prod-bucket.s3.amazonaws.com/users/.../pdfs/....pdf?...",
+  "expiresIn": "5 days",
+  "size": 84213,
+  "pagesGenerated": 1
+}
+```
+
+| Field | Type | Description |
+|---|---|---|
+| `success` | boolean | Always `true` on a 200. |
+| `pdfUrl` | string | Pre-signed S3 URL. Open or download within 5 days. |
+| `expiresIn` | string | Human-readable URL lifetime: `"5 days"`. |
+| `size` | number | PDF size in bytes. |
+| `pagesGenerated` | number | Number of pages rendered. |
+
+## Async response — 200 OK
+
+When `async: true`:
+
+```json
+{
+  "success": true,
+  "message": "PDF generation started. You will receive an email when ready.",
+  "async": true,
+  "pagesGenerated": 2
+}
+```
+
+## Credits
+
+**One credit is deducted per page generated.** If `data` is an object, `pagesGenerated` is 1 and 1 credit is deducted. If `data` is an array of N elements, N credits are deducted. Credits are deducted after a successful 200 response; a failed request does not consume credits.
+
+If your account has insufficient credits the API returns `402 INSUFFICIENT_CREDITS`. See [Errors](/docs/api-reference/errors) or visit the [dashboard](https://mkpdfs.com/billing) to buy credits.
+
+## Limits
+
+| Limit | Value |
+|---|---|
+| Pages per request | 50 |
+| Request timeout | 29 seconds (sync) |
+| Use `async: true` for large documents that may exceed the timeout. | |
+
+## Error codes
+
+See the [Errors](/docs/api-reference/errors) page for the full list. Common cases:
+
+| Status | Meaning |
+|---|---|
+| 401 | Missing or invalid `x-api-key`. |
+| 402 | Insufficient credits — buy more at mkpdfs.com/billing. |
+| 404 | `templateId` not found or does not belong to your account. |
+| 400 | Request body validation failed (e.g. `data` array exceeds 50 items). |

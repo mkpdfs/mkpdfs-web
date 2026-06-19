@@ -1,0 +1,222 @@
+/* docs.css — styles for .mk-docs MDX content + rehype-pretty-code output
+   No @tailwindcss/typography / prose class. Brand tokens from globals.css.
+*/
+
+/* ── base prose ─────────────────────────────────────────────────────────── */
+.mk-docs {
+  color: rgb(var(--fg));
+  font-size: 0.9375rem;   /* 15px */
+  line-height: 1.75;
+}
+
+.mk-docs h1 {
+  font-size: 1.875rem;   /* 30px */
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+  margin-bottom: 1rem;
+  color: rgb(var(--fg));
+}
+
+.mk-docs h2 {
+  font-size: 1.375rem;   /* 22px */
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1.3;
+  margin-top: 2.5rem;
+  margin-bottom: 0.75rem;
+  color: rgb(var(--fg));
+  padding-bottom: 0.35rem;
+  border-bottom: 1px solid rgb(var(--surface-overlay));
+}
+
+.mk-docs h3 {
+  font-size: 1.125rem;   /* 18px */
+  font-weight: 600;
+  line-height: 1.4;
+  margin-top: 1.75rem;
+  margin-bottom: 0.5rem;
+  color: rgb(var(--fg));
+}
+
+.mk-docs h2 a,
+.mk-docs h3 a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.mk-docs h2 a:hover,
+.mk-docs h3 a:hover {
+  color: rgb(var(--brand));
+}
+
+.mk-docs p {
+  margin-bottom: 1rem;
+  color: rgb(var(--fg-muted));
+}
+
+.mk-docs strong {
+  font-weight: 600;
+  color: rgb(var(--fg));
+}
+
+.mk-docs em {
+  color: rgb(var(--fg-muted));
+}
+
+.mk-docs a {
+  color: rgb(var(--brand-text));
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: rgb(var(--brand) / 0.4);
+  transition: color 0.15s, text-decoration-color 0.15s;
+}
+
+.mk-docs a:hover {
+  color: rgb(var(--brand));
+  text-decoration-color: rgb(var(--brand) / 0.8);
+}
+
+.mk-docs ul,
+.mk-docs ol {
+  margin-bottom: 1rem;
+  padding-left: 1.5rem;
+  color: rgb(var(--fg-muted));
+}
+
+.mk-docs ul {
+  list-style-type: disc;
+}
+
+.mk-docs ol {
+  list-style-type: decimal;
+}
+
+.mk-docs li {
+  margin-bottom: 0.35rem;
+}
+
+.mk-docs hr {
+  border: none;
+  border-top: 1px solid rgb(var(--surface-overlay));
+  margin: 2rem 0;
+}
+
+/* ── inline code ─────────────────────────────────────────────────────────── */
+.mk-docs :not(pre) > code {
+  font-family: var(--font-geist-mono, ui-monospace, monospace);
+  font-size: 0.83em;
+  font-weight: 500;
+  padding: 0.15em 0.4em;
+  border-radius: 0.3rem;
+  background: rgb(var(--surface-overlay));
+  color: rgb(var(--brand-text));
+  border: 1px solid rgb(var(--surface-overlay));
+}
+
+/* ── tables ──────────────────────────────────────────────────────────────── */
+.mk-docs table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  margin-bottom: 1.5rem;
+}
+
+.mk-docs thead tr {
+  border-bottom: 2px solid rgb(var(--surface-overlay));
+}
+
+.mk-docs th {
+  text-align: left;
+  padding: 0.5rem 0.75rem;
+  font-weight: 600;
+  color: rgb(var(--fg));
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.mk-docs td {
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid rgb(var(--surface-overlay));
+  color: rgb(var(--fg-muted));
+}
+
+.mk-docs tr:last-child td {
+  border-bottom: none;
+}
+
+/* ── rehype-pretty-code blocks ───────────────────────────────────────────── */
+.mk-docs pre {
+  font-family: var(--font-geist-mono, ui-monospace, monospace);
+  font-size: 0.8125rem;  /* 13px */
+  line-height: 1.65;
+  overflow-x: auto;
+  border-radius: 0.5rem;
+  border: 1px solid rgb(var(--surface-overlay));
+  /* Fixed dark background so github-dark shiki tokens always render on a dark
+     panel regardless of the app color scheme — prevents low contrast in light mode. */
+  background: #0d1117;
+  color: #e6edf3;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+  tab-size: 2;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* rehype-pretty-code sets keepBackground: false — we provide the background above */
+.mk-docs pre code {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: inherit;
+  color: inherit;
+}
+
+/* per-line highlighting */
+.mk-docs [data-line] {
+  display: inline-block;
+  width: 100%;
+  padding: 0 0.25rem;
+  border-radius: 2px;
+}
+
+.mk-docs [data-highlighted-line] {
+  background: rgb(var(--brand) / 0.08);
+  border-left: 2px solid rgb(var(--brand) / 0.7);
+  padding-left: calc(0.25rem - 2px);
+}
+
+/* language badge shown by rehype-pretty-code */
+.mk-docs [data-rehype-pretty-code-title] {
+  font-family: var(--font-geist-mono, ui-monospace, monospace);
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: rgb(var(--fg-muted));
+  background: rgb(var(--surface-raised));
+  border: 1px solid rgb(var(--surface-overlay));
+  border-bottom: none;
+  border-radius: 0.5rem 0.5rem 0 0;
+  padding: 0.35rem 1rem;
+}
+
+.mk-docs [data-rehype-pretty-code-title] + pre {
+  border-radius: 0 0 0.5rem 0.5rem;
+}
+
+/* dark theme adjustments */
+.dark .mk-docs pre {
+  /* Keep the same fixed dark background as light mode — github-dark tokens need it. */
+  background: #0d1117;
+  border-color: rgb(var(--surface-overlay));
+}
+
+.dark .mk-docs :not(pre) > code {
+  background: rgb(var(--surface-overlay));
+  border-color: rgb(var(--surface-overlay));
+}
+
+.dark .mk-docs [data-rehype-pretty-code-title] {
+  background: rgb(var(--surface-raised));
+  border-color: rgb(var(--surface-overlay));
+}

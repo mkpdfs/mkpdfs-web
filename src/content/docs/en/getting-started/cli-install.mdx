@@ -1,0 +1,64 @@
+---
+title: Install the CLI
+description: Install the mkpdfs CLI on macOS, Linux, or Windows.
+---
+
+The `mkp` CLI lets you manage templates, check your credit balance, and generate PDFs directly from your terminal. It is written in Go and distributed via Homebrew.
+
+## Install
+
+```bash
+brew install mkpdfs/mkpdfs/mkpdfs
+```
+
+Verify the installation:
+
+```bash
+mkp --version
+```
+
+## Log in
+
+`mkp` uses a device-flow login — your browser handles authentication so you never paste a password into the terminal.
+
+```bash
+mkp auth login
+```
+
+The CLI prints a short code and opens `mkpdfs.com/cli/authorize` in your browser. Approve the request, and the CLI stores a token in `~/Library/Application Support/mkpdfs/config.json`. From that point on every `mkp` command uses your account automatically.
+
+## Generate your first PDF
+
+Once logged in, grab a template ID from the dashboard and create `data.json` with the following content:
+
+```json
+{ "name": "World" }
+```
+
+Then generate the PDF:
+
+```bash
+mkp pdf generate -t <your-template-id> -d data.json
+```
+
+The CLI prints the pre-signed URL to the generated PDF.
+
+## Working with templates
+
+Pull a template from the cloud to your local filesystem:
+
+```bash
+mkp templates pull <template-id>
+```
+
+Edit the `.hbs` file locally, then push it back:
+
+```bash
+mkp templates push <template-id> template.hbs
+```
+
+## Next steps
+
+- [CLI — Overview](/docs/cli/overview) for the full list of commands and flags.
+- [CLI — Templates](/docs/cli/templates) for the complete template management reference.
+- [CLI — Credits](/docs/cli/credits) to check your balance and view usage from the terminal.

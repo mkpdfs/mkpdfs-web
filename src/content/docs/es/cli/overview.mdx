@@ -1,0 +1,160 @@
+---
+title: Resumen del CLI
+description: Instala mkp, inicia sesión con el flujo de dispositivo del navegador y aprende cada comando y opción global.
+---
+
+El CLI `mkp` te da control completo de mkpdfs desde tu terminal: autenticación, gestión de plantillas Handlebars, generación de PDFs, consulta de créditos y configuración de tokens API — todo sin necesidad del navegador después del primer inicio de sesión.
+
+## Instalar
+
+```bash
+brew install mkpdfs/mkpdfs/mkpdfs
+```
+
+Esto coloca el binario `mkp` en tu `PATH` (macOS y Linux, Intel y Apple Silicon).
+
+Verifica la instalación:
+
+```bash
+mkp --version
+```
+
+### Compilar desde el código fuente
+
+Requiere Go 1.21+.
+
+```bash
+git clone https://github.com/sim4gh/mkpdfs-cli
+cd mkpdfs-cli
+make build       # genera ./mkp-cli
+make dev-link    # enlace simbólico ./mkp-cli → /opt/homebrew/bin/mkp-cli
+```
+
+El binario de desarrollo local se llama `mkp-cli` intencionalmente para no sobreescribir el binario `mkp` de Homebrew.
+
+## Iniciar sesión
+
+`mkp` usa un flujo de inicio de sesión por dispositivo — el navegador maneja la autenticación para que nunca tengas que escribir una contraseña en la terminal.
+
+```bash
+mkp auth login
+```
+
+El CLI muestra un código de 8 caracteres y abre `mkpdfs.com/cli/authorize` en tu navegador. Aprueba la solicitud ahí, y el CLI guarda un token en el archivo de configuración automáticamente. Todos los comandos posteriores usan tu cuenta sin pasos adicionales.
+
+Iniciar sesión en el entorno de desarrollo:
+
+```bash
+mkp auth login --env dev
+```
+
+Puedes estar autenticado en ambos entornos simultáneamente — las credenciales se guardan por separado por entorno.
+
+Otros comandos de autenticación:
+
+```bash
+mkp auth logout     # eliminar credenciales del entorno actual
+mkp auth whoami     # mostrar tu email, plan y entorno activo
+```
+
+## Entornos
+
+mkpdfs tiene dos entornos: `prod` (predeterminado) y `dev`.
+
+Sobrescribir el entorno para un solo comando:
+
+```bash
+mkp --env dev templates list
+```
+
+Configurar un entorno predeterminado persistente en tu máquina:
+
+```bash
+mkp config set environment dev
+mkp config get environment
+```
+
+## Opciones globales
+
+Estas opciones funcionan en todos los comandos:
+
+| Opción | Descripción |
+|---|---|
+| `--env dev\|prod` | Sobrescribir el entorno activo para esta invocación |
+| `--json` | Salida JSON legible por máquinas |
+| `--yes` | Asumir "sí" en todas las confirmaciones interactivas |
+| `--verbose` / `-v` | Salida detallada |
+
+`--json` es útil para canalizar la salida a `jq` u otras herramientas. `--yes` es conveniente en scripts donde quieres omitir las confirmaciones interactivas.
+
+## Ubicación del archivo de configuración
+
+El archivo de configuración se almacena en la ubicación estándar del sistema operativo:
+
+| SO | Ruta |
+|----|------|
+| macOS | `~/Library/Application Support/mkpdfs/config.json` |
+| Linux | `~/.config/mkpdfs/config.json` (o `$XDG_CONFIG_HOME/mkpdfs/config.json`) |
+| Windows | `%APPDATA%\mkpdfs\config.json` |
+
+El archivo se escribe con permisos `0600`. Imprime la ruta para tu máquina actual:
+
+```bash
+mkp config path
+```
+
+## Árbol de comandos
+
+```
+mkp
+├── auth
+│   ├── login       Iniciar sesión via navegador (flujo de código de dispositivo)
+│   ├── logout      Eliminar credenciales del entorno
+│   └── whoami      Mostrar email, plan y entorno actuales
+│
+├── templates (alias: tpl)
+│   ├── list        Listar todas las plantillas (tabla o --json)
+│   ├── get <id>    Mostrar metadatos y variables Handlebars detectadas
+│   ├── pull <id>   Descargar contenido de la plantilla a un archivo .hbs local
+│   ├── push <file> Crear o actualizar una plantilla desde un archivo .hbs
+│   └── delete <id> Eliminar una plantilla (con confirmación)
+│
+├── pdf
+│   └── generate    Generar un PDF desde una plantilla y un archivo de datos JSON
+│       -t <id|file>    ID de plantilla o archivo .hbs local (requerido)
+│       -d <file>       Archivo de datos JSON (requerido)
+│       -o <path>       Ruta del PDF de salida
+│       --open          Abrir el PDF después de descargarlo
+│       --api-key       Usar la ruta servidor a servidor con tu clave API tlfy_
+│
+├── tokens
+│   ├── list        Listar tokens API
+│   ├── create      Crear un nuevo token API (--name requerido; --save para guardar)
+│   └── revoke <id> Revocar un token API
+│
+├── credits         Mostrar saldo de créditos y estado de recarga automática
+│   ├── ledger      Mostrar entradas recientes del libro mayor (últimas 50)
+│   ├── auto-recharge   Mostrar configuración, o --enable [--threshold N] / --disable
+│   └── buy         Comprar un paquete de créditos (abre Stripe en tu navegador)
+│
+├── usage           Mostrar estadísticas de uso del mes actual y saldo de créditos
+│
+└── config
+    ├── list        Listar configuración (secretos enmascarados)
+    ├── get <key>   Obtener un valor de configuración
+    ├── set <key> <value>  Establecer un valor de configuración
+    └── path        Imprimir la ruta del archivo de configuración
+```
+
+## Códigos de salida
+
+| Código | Significado |
+|--------|-------------|
+| `0` | Éxito |
+| `1` | Error en tiempo de ejecución (fallo de API, error de auth, error de I/O) |
+| `2` | Error de uso (opciones incorrectas, argumento requerido faltante, fallo de validación) |
+
+## Siguientes pasos
+
+- [CLI — Plantillas](/docs/cli/templates) — descargar, subir y gestionar tus plantillas Handlebars.
+- [CLI — Créditos](/docs/cli/credits) — consultar tu saldo, ver el libro mayor y configurar la recarga automática.

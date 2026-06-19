@@ -1,0 +1,54 @@
+---
+title: Authentication
+description: How to authenticate API requests to mkpdfs using API keys.
+---
+
+All server-to-server API requests authenticate with an API key sent in the `x-api-key` header. The key format is `tlfy_` followed by a 32-byte random string.
+
+```bash
+curl -X POST https://apis.mkpdfs.com/v1/pdf/generate \
+  -H "x-api-key: tlfy_your_key_here" \
+  -H "Content-Type: application/json" \
+  -d '{"templateId":"<template-id>","data":{"name":"World"}}'
+```
+
+## Creating an API key
+
+**From the dashboard:** Open [mkpdfs.com](https://mkpdfs.com), go to **API Keys**, click **New API Key**, give it a name, and copy the full value. You will only see the raw key once — copy it before closing the dialog.
+
+**From the CLI:** If you have the `mkp` CLI installed, run:
+
+```bash
+mkp tokens create --name "my-service"
+```
+
+The key is printed once and never shown again.
+
+## Key scope
+
+API keys are full-account keys. A key can call every `/v1/*` endpoint (generate PDFs, list templates, upload templates, etc.) under the account that created it. There are no per-endpoint or read-only scopes at this time.
+
+## Server-to-server routes only
+
+The `/v1/*` routes (e.g. `POST /v1/pdf/generate`, `GET /v1/templates`) have **no API Gateway authorizer**. This is intentional: these routes are designed for server-to-server use only.
+
+- Send `x-api-key: tlfy_...` — always accepted.
+- `Authorization: Bearer <JWT>` is **rejected** on `/v1/*`. The backend validates JWT signatures only when an API Gateway authorizer is present; without one, accepting Bearer tokens would allow signature forgery. Do not send JWTs to these endpoints.
+
+Dashboard-facing endpoints (`/templates`, `/billing`, `/usage`, etc.) use Cognito JWT authentication and are consumed by the mkpdfs web app — not by your backend code.
+
+## Rotating a key
+
+To rotate a key, create a new one in the dashboard or with `mkp tokens create`, update your environment variables, then delete the old key from the dashboard or with `mkp tokens revoke <token-id>`. Keys deactivated in the dashboard are immediately rejected by the API.
+
+## Security checklist
+
+- Store keys in environment variables or a secrets manager — never commit them to source control.
+- Rotate keys if they are accidentally exposed.
+- Delete keys that are no longer in use.
+
+## Related pages
+
+- [Generate a PDF](/docs/api-reference/generate-pdf)
+- [Templates](/docs/api-reference/templates)
+- [Errors](/docs/api-reference/errors)

@@ -1,0 +1,131 @@
+---
+title: CLI Templates
+description: List, pull, push, and delete Handlebars templates with the mkp CLI — including headless CI with an API key.
+---
+
+The `templates` subcommand (alias `tpl`) manages your Handlebars templates from the terminal. It supports both interactive use (browser login) and headless CI (API key).
+
+## List templates
+
+```bash
+mkp templates list
+```
+
+Returns a table of all your templates: ID, name, size, and last-modified date. Use `--json` to pipe to `jq`:
+
+```bash
+mkp templates list --json | jq '.[].id'
+```
+
+## Get template metadata
+
+```bash
+mkp templates get <templateId>
+```
+
+Prints template metadata and the list of Handlebars variables detected in the template content.
+
+## Pull a template
+
+Download a template's content to a local `.hbs` file:
+
+```bash
+mkp templates pull <templateId>
+```
+
+The file is saved as `<templateName>.hbs` in the current directory. The local file is registered in `.mkpdfs.json` so subsequent `push` calls know which remote template to update.
+
+## Push a template
+
+Create a new template or update an existing one:
+
+```bash
+mkp templates push invoice.hbs
+```
+
+On first push, a new template is created and its ID is written to `.mkpdfs.json`. On subsequent pushes, the file in `.mkpdfs.json` is updated in place.
+
+### `.mkpdfs.json` mapping file
+
+`.mkpdfs.json` records the mapping between local `.hbs` files and remote template IDs:
+
+```json
+{
+  "templates": {
+    "invoice.hbs": "tpl_abc123",
+    "receipt.hbs": "tpl_def456"
+  }
+}
+```
+
+Commit this file to source control. It is the source of truth for which local file corresponds to which remote template, and it is required by `push` (unless you pass `--new`).
+
+### Size limit
+
+Templates are capped at approximately **6.5 MiB**. Uploads exceeding this limit are rejected by the API.
+
+### Conflict guard
+
+If you pull a template and another user edits it remotely before you push, the CLI detects the conflict and prompts you to confirm before overwriting. Use `--yes` to skip the prompt in scripts.
+
+### Environment guard
+
+`push` warns you if your local `.mkpdfs.json` was populated against a different environment (e.g. you pulled from `dev` and are about to push to `prod`). Pass `--yes` to override.
+
+## Delete a template
+
+```bash
+mkp templates delete <templateId>
+```
+
+Asks for confirmation before deleting. Use `--yes` to skip:
+
+```bash
+mkp templates delete <templateId> --yes
+```
+
+## Headless CI with an API key
+
+`templates` (list, get, pull, push, delete) supports the `--api-key` flag for use in CI pipelines without a browser login.
+
+Set your API key as an environment variable:
+
+```bash
+export MKPDFS_API_KEY=tlfy_...
+```
+
+Then run template commands without logging in:
+
+```bash
+mkp templates list --api-key
+mkp templates pull <templateId> --api-key
+mkp templates push invoice.hbs --api-key         # requires a checked-in .mkpdfs.json entry
+mkp templates push invoice.hbs --api-key --new   # create a brand-new template headless
+```
+
+The `--new` flag skips the `.mkpdfs.json` lookup and always creates a new remote template. The new template ID is printed to stdout (or returned in `--json` output) so you can capture it.
+
+> **Note:** `tokens`, `auth`, `usage`, and `credits` always require a browser login (Cognito JWT). Only `templates` and `pdf generate` support `--api-key`.
+
+## PDF generation
+
+Generate a PDF directly from a local `.hbs` file or a remote template ID:
+
+```bash
+# from a local file (uses .mkpdfs.json to resolve the template ID)
+mkp pdf generate -t invoice.hbs -d data.json --open
+
+# from a remote template ID
+mkp pdf generate -t tpl_abc123 -d data.json -o output.pdf
+
+# headless with an API key
+MKPDFS_API_KEY=tlfy_... mkp pdf generate --api-key -t tpl_abc123 -d data.json -o output.pdf
+```
+
+See [CLI — Overview](/docs/cli/overview) for the full `pdf generate` flag reference.
+
+## Next steps
+
+- [CLI — Overview](/docs/cli/overview) — command tree, global flags, and config location.
+- [CLI — Credits](/docs/cli/credits) — check your credit balance before running large batch jobs.
+- [API Reference — Templates](/docs/api-reference/templates) — REST endpoints for template management.
