@@ -43,11 +43,15 @@ Locale routing exists at `src/app/[locale]/…` (`locales = ['en','es']`, defaul
 - **Route** (branded, catch-all): `src/app/[locale]/docs/[[...slug]]/page.tsx`. It calls
   `setRequestLocale(locale)` first, resolves the MDX for `locale` + `slug` via `src/lib/docs`,
   and renders the compiled component with branded MDX components. **`generateStaticParams`**
-  enumerates every slug × locale and **`export const dynamicParams = false`** → all docs pages
-  prerendered at build, unknown slugs 404. A bare `/docs` (empty catch-all) **renders the
-  getting-started landing directly** (no redirect).
+  enumerates **`slug: []` (the `/docs` landing) PLUS every nav slug, × locale**, and
+  **`export const dynamicParams = false`** → all docs pages prerendered at build, unknown slugs
+  404. A bare `/docs` (empty catch-all, `slug: []`) **renders the getting-started landing
+  directly** (no redirect) — landing = the first nav page.
 - **MDX compilation**: in `src/lib/docs`, compile the MDX source string with **`@mdx-js/mdx`**
-  (`compile`/`evaluate` against `react/jsx-runtime`, runs in RSC at build time). remark/rehype
+  (`compile`/`evaluate` against `react/jsx-runtime`). This runs at build time **only because the
+  docs render path stays fully static** — it must NOT touch `cookies()`/`headers()`/`searchParams`
+  or any request-time data, or it would slide into per-request compilation under standalone
+  hosting. remark/rehype
   plugins are passed **here, in the compile call** (not `next.config.mjs`): `remark-gfm`,
   `rehype-slug`, `rehype-autolink-headings`, and **`rehype-pretty-code` (shiki)** for build-time
   syntax highlighting. New deps: `@mdx-js/mdx`, `remark-gfm`, `rehype-slug`,
@@ -65,8 +69,10 @@ Locale routing exists at `src/app/[locale]/…` (`locales = ['en','es']`, defaul
    (read MDX file, `gray-matter` frontmatter, compile via `@mdx-js/mdx`), `getAllDocSlugs()`
    (from `nav.ts`), `getNavTree(locale)`. Pure/testable.
 3. **`src/app/[locale]/docs/[[...slug]]/page.tsx`** + **`layout.tsx`** — render + chrome; both
-   call `setRequestLocale(locale)`; `generateMetadata` (title/description from frontmatter, plus
-   canonical + hreflang) also calls it.
+   call `setRequestLocale(locale)` (required for static rendering before any intl API).
+   `generateMetadata` derives title/description from frontmatter + canonical/hreflang and takes
+   `locale` explicitly (match the repo's existing metadata-helper pattern; only call
+   `setRequestLocale` there if it actually uses request-scoped intl APIs).
 4. **`src/components/docs/`** — `Sidebar`, `Toc`, `MdxComponents` (h1–h3 w/ anchor, code,
    table, `Callout`), `Pager`, **`CodeBlock`** (generic copyable code, brand-styled — replaces
    any `CodeSnippets` reuse). Internal doc links in MDX use the locale-aware `Link` from
@@ -106,7 +112,7 @@ verified during #2.
 ## Testing
 
 - `next build` succeeds and **prerenders every doc page × 2 locales** (assert
-  `generateStaticParams` count == slugs × 2; `dynamicParams = false`).
+  `generateStaticParams` count == (nav slugs + 1 landing `slug: []`) × 2; `dynamicParams = false`).
 - **Locale-parity check** (build/test): every `nav.ts` slug has an MDX file in both `en` and `es`
   — fails otherwise.
 - Unit-test `src/lib/docs/` (nav ordering, `getDoc` frontmatter parse + compile, slug enumeration)
@@ -122,9 +128,10 @@ The other session works in `mkpdfs-web` via PRs (recent: auth-surface re-skin, S
 This work is isolated on `feat/docs-section` → **PR to `main`** (the repo's flow). Collision
 risk is low (almost all new files under `src/content/docs`, `src/app/[locale]/docs`,
 `src/components/docs`, `src/lib/docs`). **Shared-file touchpoints to watch / call out in the PR:**
-`next.config.mjs` (MDX plugin wiring), `package.json` (new MDX/remark deps), and the site
-top-nav/header if we add a "Docs" link. Rebase on `origin/main` before opening the PR; note the
-docs work in the backend `COORDINATION.md` so the other session expects the PR.
+`package.json` (new MDX/remark deps), `src/app/sitemap.ts` (docs URLs), and the site
+top-nav/header if we add a "Docs" link. (No `next.config.mjs` change — MDX plugins live in the
+compile call, not config.) Rebase on `origin/main` before opening the PR; note the docs work in
+the backend `COORDINATION.md` so the other session expects the PR.
 
 ## Out of scope (v1)
 
