@@ -20,6 +20,27 @@
 - `nav.ts` is the single source of truth for section/page order, slugs, and bilingual labels. Frontmatter holds page metadata only (`title`, `description`).
 - Do NOT reuse `src/components/CodeSnippets.tsx` (dashboard widget, wrong endpoint) — build a generic `CodeBlock`.
 - No test runner exists in this repo. Verification = `npx tsc --noEmit`, `npm run lint`, `npm run build` (compiles MDX + runs `generateStaticParams` for all slugs×locales; build fails on MDX errors or parity violations), and visual screenshots of `/docs` + `/es/docs`.
+### Binding corrections (codex review, 2026-06-18) — apply throughout
+
+- **Lib must not import React components.** Split into `src/lib/docs/source.ts` (fs, gray-matter
+  frontmatter, `assertLocaleParity`, slug validation — no React) and `src/lib/docs/compile.ts`
+  (MDX `evaluate` + heading collector). `compileDoc(body)` returns **`{ Content, headings }`**
+  (NOT a pre-rendered element); the **page** renders `Content({ components: mdxComponents })`.
+  Pass `baseUrl: import.meta.url` to `evaluate`.
+- **TOC via a rehype heading collector** in the same compile pass (after `rehypeSlug`, before
+  `rehypeAutolinkHeadings`): visit `h2`/`h3`, read `node.properties.id` + text (`hast-util-to-string`),
+  collect into `headings: {id,text,depth}[]`, return from `compileDoc`, render `<Toc headings={headings} />`.
+- **No `prose`/`@tailwindcss/typography`** (not installed). Style via `MdxComponents` element map +
+  a `.mk-docs` container class + explicit CSS for `rehype-pretty-code` output (`pre`, `[data-line]`,
+  horizontal overflow, border, background; `keepBackground: false` in the plugin opts).
+- **Route validation:** invalid locale → `notFound()` (not `return null`); validate the resolved
+  slug against `allDocSlugs` before reading disk.
+- **Metadata:** reuse `pageMetadata({ locale, path, title, description })` from `src/lib/seo.ts`
+  (gives canonical + hreflang + OG/twitter) — do not hand-roll alternates.
+- **CodeBlock** copies via a `pre` ref's `innerText` (pretty-code emits nested spans, not raw string
+  children).
+- Node runtime only (no Edge); no request-time APIs in the docs path.
+
 - API facts for content (verified live during #2): auth header `x-api-key: tlfy_*`; `POST /v1/pdf/generate`; `/v1/templates` (GET list), `/v1/templates/{id}` (GET/PUT/DELETE), `/v1/templates/upload` (POST); errors 401 (auth), 402 `INSUFFICIENT_CREDITS`, 403; template size limit ~6.5 MiB. CLI: `brew install mkpdfs/mkpdfs/mkpdfs`, `mkp auth login`, `mkp templates pull/push [--api-key]`, `mkp pdf generate`, `mkp credits`, `mkp tokens/usage/config`.
 
 ---
@@ -29,19 +50,21 @@
 **Files:**
 - Modify: `package.json` (add deps)
 - Create: `src/lib/docs/nav.ts`
-- Create: `src/lib/docs/content.ts`
+- Create: `src/lib/docs/source.ts` (fs/frontmatter/parity/slug validation — NO React)
+- Create: `src/lib/docs/compile.ts` (MDX evaluate + heading collector)
 
 **Interfaces:**
 - Produces:
-  - `nav.ts`: `type DocPage = { slug: string; label: Record<'en'|'es', string> }`; `type DocSection = { id: string; label: Record<'en'|'es', string>; pages: DocPage[] }`; `export const docsNav: DocSection[]`; `export const allDocSlugs: string[]` (flattened, in nav order; first entry is the landing).
-  - `content.ts`: `getDocSource(locale, slug): { title: string; description: string; body: string }` (reads `src/content/docs/<locale>/<slug>.mdx`, parses frontmatter via gray-matter); `compileDoc(body): Promise<ReactElement>` (compile MDX via `@mdx-js/mdx` `evaluate` with `react/jsx-runtime` + plugins + the `mdxComponents` map); `assertLocaleParity(): void` (throws if any `allDocSlugs` MDX file is missing in en or es — called from the route's `generateStaticParams`).
+  - `nav.ts`: `type Locale = 'en'|'es'`; `type DocPage = { slug: string; label: Record<Locale,string> }`; `type DocSection = { id: string; label: Record<Locale,string>; pages: DocPage[] }`; `export const docsNav: DocSection[]`; `export const allDocSlugs: string[]` (flattened, nav order); `export const landingSlug: string` (first slug).
+  - `source.ts`: `getDocSource(locale, slug): { title: string; description: string; body: string }` (reads `src/content/docs/<locale>/<slug>.mdx`, gray-matter); `isValidSlug(slug): boolean` (in `allDocSlugs`); `assertLocaleParity(): void` (throws if any `allDocSlugs` MDX missing in en or es — called from `generateStaticParams`). No React imports.
+  - `compile.ts`: `type Heading = { id: string; text: string; depth: 2|3 }`; `compileDoc(body): Promise<{ Content: MDXContent; headings: Heading[] }>` (compile via `@mdx-js/mdx` `evaluate` with `react/jsx-runtime`, `baseUrl: import.meta.url`, plugins incl. a `collectHeadings` rehype plugin). Does NOT import `mdxComponents` — the page passes them at render: `Content({ components: mdxComponents })`.
 
 - [ ] **Step 1: Add dependencies**
 
 Run:
 ```bash
 cd mkpdfs-web
-npm install @mdx-js/mdx@^3 gray-matter@^4 remark-gfm@^4 rehype-slug@^6 rehype-autolink-headings@^7 rehype-pretty-code@^0.13 shiki@^1
+npm install @mdx-js/mdx@^3 gray-matter@^4 remark-gfm@^4 rehype-slug@^6 rehype-autolink-headings@^7 rehype-pretty-code@^0.13 shiki@^1 hast-util-to-string@^3 unist-util-visit@^5
 ```
 Expected: installs, updates `package.json` + `package-lock.json`, no peer-dep errors (all support React 18 / Next 14).
 
@@ -91,50 +114,28 @@ export const allDocSlugs: string[] = docsNav.flatMap((s) => s.pages.map((p) => p
 export const landingSlug = allDocSlugs[0]
 ```
 
-- [ ] **Step 3: Create the content loader + MDX compiler + parity guard**
+- [ ] **Step 3: Create the source loader + parity guard (no React)**
 
-`src/lib/docs/content.ts`:
+`src/lib/docs/source.ts`:
 ```ts
 import fs from 'node:fs'
 import path from 'node:path'
 import matter from 'gray-matter'
-import { evaluate } from '@mdx-js/mdx'
-import * as runtime from 'react/jsx-runtime'
-import remarkGfm from 'remark-gfm'
-import rehypeSlug from 'rehype-slug'
-import rehypeAutolinkHeadings from 'rehype-autolink-headings'
-import rehypePrettyCode from 'rehype-pretty-code'
-import type { ReactElement } from 'react'
 import { allDocSlugs, type Locale } from './nav'
-import { mdxComponents } from '@/components/docs/MdxComponents'
 
 const DOCS_DIR = path.join(process.cwd(), 'src/content/docs')
+const filePath = (locale: Locale, slug: string) =>
+  path.join(DOCS_DIR, locale, `${slug}.mdx`)
 
-function filePath(locale: Locale, slug: string) {
-  return path.join(DOCS_DIR, locale, `${slug}.mdx`)
-}
+export const isValidSlug = (slug: string) => allDocSlugs.includes(slug)
 
 export function getDocSource(locale: Locale, slug: string) {
-  const raw = fs.readFileSync(filePath(locale, slug), 'utf8')
-  const { data, content } = matter(raw)
+  const { data, content } = matter(fs.readFileSync(filePath(locale, slug), 'utf8'))
   return {
     title: (data.title as string) ?? '',
     description: (data.description as string) ?? '',
     body: content,
   }
-}
-
-export async function compileDoc(body: string): Promise<ReactElement> {
-  const { default: Content } = await evaluate(body, {
-    ...runtime,
-    remarkPlugins: [remarkGfm],
-    rehypePlugins: [
-      rehypeSlug,
-      [rehypeAutolinkHeadings, { behavior: 'wrap' }],
-      [rehypePrettyCode, { theme: 'github-dark' }],
-    ],
-  })
-  return Content({ components: mdxComponents }) as ReactElement
 }
 
 // Build-time guard: every nav slug must exist in BOTH locales. Called from
@@ -152,17 +153,60 @@ export function assertLocaleParity(): void {
 }
 ```
 
-- [ ] **Step 4: Typecheck + lint**
+- [ ] **Step 4: Create the MDX compiler + heading collector (no component import)**
+
+`src/lib/docs/compile.ts`:
+```ts
+import { evaluate, type MDXContent } from '@mdx-js/mdx'
+import * as runtime from 'react/jsx-runtime'
+import remarkGfm from 'remark-gfm'
+import rehypeSlug from 'rehype-slug'
+import rehypeAutolinkHeadings from 'rehype-autolink-headings'
+import rehypePrettyCode from 'rehype-pretty-code'
+import { visit } from 'unist-util-visit'
+import { toString } from 'hast-util-to-string'
+
+export type Heading = { id: string; text: string; depth: 2 | 3 }
+
+// rehype plugin: collect h2/h3 (after rehype-slug has set ids) into `sink`.
+const collectHeadings = (sink: Heading[]) => () => (tree: any) => {
+  visit(tree, 'element', (node: any) => {
+    if (node.tagName === 'h2' || node.tagName === 'h3') {
+      const id = node.properties?.id
+      if (id) sink.push({ id, text: toString(node), depth: node.tagName === 'h2' ? 2 : 3 })
+    }
+  })
+}
+
+export async function compileDoc(body: string): Promise<{ Content: MDXContent; headings: Heading[] }> {
+  const headings: Heading[] = []
+  const { default: Content } = await evaluate(body, {
+    ...runtime,
+    baseUrl: import.meta.url,
+    remarkPlugins: [remarkGfm],
+    rehypePlugins: [
+      rehypeSlug,
+      collectHeadings(headings),
+      [rehypeAutolinkHeadings, { behavior: 'wrap' }],
+      [rehypePrettyCode, { theme: 'github-dark', keepBackground: false }],
+    ],
+  })
+  return { Content, headings }
+}
+```
+(The page calls `Content({ components: mdxComponents })` — `compile.ts` never imports components, so the lib has no React dependency and Task 1 typechecks standalone.)
+
+- [ ] **Step 5: Typecheck + lint**
 
 Run: `cd mkpdfs-web && npx tsc --noEmit && npm run lint`
-Expected: PASS. (`@/components/docs/MdxComponents` is created in Task 2; if tsc fails only on that import, proceed — Task 2 adds it. To keep Task 1 self-contained, create a temporary stub `src/components/docs/MdxComponents.tsx` exporting `export const mdxComponents = {}` and replace it in Task 2.)
+Expected: PASS (lib is self-contained; no forward dependency on Task 2).
 
-- [ ] **Step 5: Commit**
+- [ ] **Step 6: Commit**
 
 ```bash
 cd mkpdfs-web
-git add package.json package-lock.json src/lib/docs src/components/docs/MdxComponents.tsx
-git commit -m "feat(docs): MDX deps + content lib + nav config (single source of truth)"
+git add package.json package-lock.json src/lib/docs
+git commit -m "feat(docs): MDX deps + content lib (nav/source/compile, single source of truth)"
 ```
 
 ---
@@ -172,7 +216,8 @@ git commit -m "feat(docs): MDX deps + content lib + nav config (single source of
 **Files:**
 - Create: `src/app/[locale]/docs/layout.tsx`
 - Create: `src/app/[locale]/docs/[[...slug]]/page.tsx`
-- Create: `src/components/docs/MdxComponents.tsx` (replaces Task 1 stub)
+- Create: `src/components/docs/MdxComponents.tsx`
+- Create: `src/styles/docs.css` (or a CSS module) — styling for MDX prose + `rehype-pretty-code` output
 - Create: `src/components/docs/CodeBlock.tsx`
 - Create: `src/components/docs/Sidebar.tsx`
 - Create: `src/components/docs/Toc.tsx`
@@ -220,9 +265,13 @@ export default async function DocsLayout({
 ```tsx
 import { setRequestLocale } from 'next-intl/server'
 import type { Metadata } from 'next'
+import { notFound } from 'next/navigation'
 import { routing } from '@/i18n/routing'
 import { allDocSlugs, landingSlug, type Locale } from '@/lib/docs/nav'
-import { getDocSource, compileDoc, assertLocaleParity } from '@/lib/docs/content'
+import { getDocSource, isValidSlug, assertLocaleParity } from '@/lib/docs/source'
+import { compileDoc } from '@/lib/docs/compile'
+import { pageMetadata } from '@/lib/seo'
+import { mdxComponents } from '@/components/docs/MdxComponents'
 import { Pager } from '@/components/docs/Pager'
 import { Toc } from '@/components/docs/Toc'
 
@@ -238,44 +287,44 @@ export function generateStaticParams() {
   return params
 }
 
-function resolveSlug(slug?: string[]): string {
-  return slug && slug.length ? slug.join('/') : landingSlug
-}
+const resolveSlug = (slug?: string[]) => (slug && slug.length ? slug.join('/') : landingSlug)
 
 export async function generateMetadata(
   { params }: { params: Promise<{ locale: string; slug?: string[] }> },
 ): Promise<Metadata> {
   const { locale, slug } = await params
-  const { title, description } = getDocSource(locale as Locale, resolveSlug(slug))
-  const base = process.env.NEXT_PUBLIC_SITE_URL || 'https://mkpdfs.com'
+  const resolved = resolveSlug(slug)
+  if (!isValidSlug(resolved)) return {}
+  const { title, description } = getDocSource(locale as Locale, resolved)
   const path = `/docs${slug && slug.length ? '/' + slug.join('/') : ''}`
-  const url = (l: string) => (l === 'en' ? `${base}${path}` : `${base}/${l}${path}`)
-  return {
-    title: `${title} — mkpdfs docs`,
-    description,
-    alternates: { canonical: url(locale), languages: { en: url('en'), es: url('es') } },
-  }
+  return pageMetadata({ locale, path, title: `${title} — mkpdfs docs`, description })
 }
 
 export default async function DocPage(
   { params }: { params: Promise<{ locale: string; slug?: string[] }> },
 ) {
   const { locale, slug } = await params
-  if (!routing.locales.includes(locale as any)) return null
+  if (!routing.locales.includes(locale as any)) notFound()
   setRequestLocale(locale)
   const resolved = resolveSlug(slug)
+  if (!isValidSlug(resolved)) notFound()
   const { title, body } = getDocSource(locale as Locale, resolved)
-  const content = await compileDoc(body)
+  const { Content, headings } = await compileDoc(body)
   return (
-    <article className="prose prose-invert max-w-none">
-      <h1>{title}</h1>
-      {content}
-      <Pager locale={locale as Locale} slug={resolved} />
-      <Toc />
-    </article>
+    <div className="mk-docs flex gap-8">
+      <article className="min-w-0 flex-1">
+        <h1>{title}</h1>
+        {Content({ components: mdxComponents })}
+        <Pager locale={locale as Locale} slug={resolved} />
+      </article>
+      <Toc headings={headings} />
+    </div>
   )
 }
 ```
+`Content({ components: mdxComponents })` renders the evaluated MDX with the branded component
+map (codex-confirmed pattern for evaluated MDX). The `.mk-docs` class + `docs.css` carry styling
+(no `prose`/typography plugin). `<Toc headings={headings} />` consumes the collector output.
 
 - [ ] **Step 4: Create stub MDX for every nav slug (both locales) so the build passes**
 
