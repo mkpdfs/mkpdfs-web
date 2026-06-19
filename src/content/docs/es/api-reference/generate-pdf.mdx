@@ -24,7 +24,7 @@ POST https://apis.mkpdfs.com/v1/pdf/generate
 |---|---|---|---|
 | `templateId` | string | Sí | El UUID de la plantilla que se va a renderizar. |
 | `data` | object \| array | Sí | Variables que se fusionan con la plantilla Handlebars. Pasa un array para generar un PDF de varias páginas — cada elemento se convierte en una página. Máximo 50 elementos por solicitud. |
-| `async` | boolean | No | Envía para procesamiento en segundo plano. Por defecto `false`. Cuando es `true`, la API responde de inmediato y envía el PDF por correo cuando esté listo. |
+| `async` | boolean | No | Envía para procesamiento en segundo plano en lugar de esperar la respuesta — la API responde de inmediato. Por defecto `false`. Combínalo con `sendEmail` (direcciones de destino) para recibir el PDF terminado por correo. |
 | `sendEmail` | string[] | No | Una o más direcciones de correo que recibirán el PDF terminado. |
 
 ## Ejemplo con curl
