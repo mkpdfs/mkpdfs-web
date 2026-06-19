@@ -1,6 +1,131 @@
 ---
-title: "Plantillas con CLI"
-description: "Descarga y sube plantillas con el CLI de mkp."
+title: CLI Plantillas
+description: Lista, descarga, sube y elimina plantillas Handlebars con el CLI mkp — incluyendo uso headless en CI con clave API.
 ---
 
-Esta página estará disponible próximamente. El contenido completo se agregará en una actualización futura.
+El subcomando `templates` (alias `tpl`) gestiona tus plantillas Handlebars desde la terminal. Admite tanto uso interactivo (inicio de sesión en el navegador) como CI sin interfaz gráfica (clave API).
+
+## Listar plantillas
+
+```bash
+mkp templates list
+```
+
+Devuelve una tabla con todas tus plantillas: ID, nombre, tamaño y fecha de última modificación. Usa `--json` para canalizar a `jq`:
+
+```bash
+mkp templates list --json | jq '.[].id'
+```
+
+## Obtener metadatos de una plantilla
+
+```bash
+mkp templates get <templateId>
+```
+
+Imprime los metadatos de la plantilla y la lista de variables Handlebars detectadas en el contenido.
+
+## Descargar una plantilla
+
+Descarga el contenido de una plantilla a un archivo `.hbs` local:
+
+```bash
+mkp templates pull <templateId>
+```
+
+El archivo se guarda como `<nombrePlantilla>.hbs` en el directorio actual. El archivo local se registra en `.mkpdfs.json` para que los comandos `push` posteriores sepan qué plantilla remota actualizar.
+
+## Subir una plantilla
+
+Crear una nueva plantilla o actualizar una existente:
+
+```bash
+mkp templates push factura.hbs
+```
+
+En la primera subida se crea una nueva plantilla y su ID se escribe en `.mkpdfs.json`. En las subidas posteriores, el archivo registrado en `.mkpdfs.json` se actualiza en el lugar.
+
+### Archivo de mapeo `.mkpdfs.json`
+
+`.mkpdfs.json` registra la correspondencia entre archivos `.hbs` locales e IDs de plantillas remotas:
+
+```json
+{
+  "templates": {
+    "factura.hbs": "tpl_abc123",
+    "recibo.hbs": "tpl_def456"
+  }
+}
+```
+
+Confirma este archivo en el control de versiones. Es la fuente de verdad sobre qué archivo local corresponde a qué plantilla remota, y `push` lo requiere (a menos que pases `--new`).
+
+### Límite de tamaño
+
+Las plantillas tienen un límite de aproximadamente **6.5 MiB**. Las subidas que superan este límite son rechazadas por la API.
+
+### Guarda de conflictos
+
+Si descargas una plantilla y otro usuario la edita remotamente antes de que la subas, el CLI detecta el conflicto y te pide confirmación antes de sobrescribir. Usa `--yes` para omitir la confirmación en scripts.
+
+### Guarda de entornos
+
+`push` te advierte si tu `.mkpdfs.json` local fue creado contra un entorno diferente (por ejemplo, descargaste desde `dev` y estás a punto de subir a `prod`). Pasa `--yes` para confirmar.
+
+## Eliminar una plantilla
+
+```bash
+mkp templates delete <templateId>
+```
+
+Pide confirmación antes de eliminar. Usa `--yes` para omitirla:
+
+```bash
+mkp templates delete <templateId> --yes
+```
+
+## CI sin interfaz gráfica con clave API
+
+`templates` (list, get, pull, push, delete) admite la opción `--api-key` para usar en pipelines de CI sin inicio de sesión en el navegador.
+
+Configura tu clave API como variable de entorno:
+
+```bash
+export MKPDFS_API_KEY=tlfy_...
+```
+
+Luego ejecuta comandos de plantillas sin iniciar sesión:
+
+```bash
+mkp templates list --api-key
+mkp templates pull <templateId> --api-key
+mkp templates push factura.hbs --api-key         # requiere una entrada en .mkpdfs.json
+mkp templates push factura.hbs --api-key --new   # crea una nueva plantilla sin interfaz gráfica
+```
+
+La opción `--new` omite la búsqueda en `.mkpdfs.json` y siempre crea una nueva plantilla remota. El ID de la nueva plantilla se imprime en stdout (o se devuelve en la salida `--json`) para que puedas capturarlo.
+
+> **Nota:** `tokens`, `auth`, `usage` y `credits` siempre requieren inicio de sesión en el navegador (JWT de Cognito). Solo `templates` y `pdf generate` admiten `--api-key`.
+
+## Generación de PDFs
+
+Genera un PDF directamente desde un archivo `.hbs` local o un ID de plantilla remota:
+
+```bash
+# desde un archivo local (usa .mkpdfs.json para resolver el ID de la plantilla)
+mkp pdf generate -t factura.hbs -d datos.json --open
+
+# desde un ID de plantilla remota
+mkp pdf generate -t tpl_abc123 -d datos.json -o salida.pdf
+
+# sin interfaz gráfica con clave API
+MKPDFS_API_KEY=tlfy_... mkp pdf generate --api-key -t tpl_abc123 -d datos.json -o salida.pdf
+```
+
+Consulta [CLI — Resumen](/docs/cli/overview) para la referencia completa de opciones de `pdf generate`.
+
+## Siguientes pasos
+
+- [CLI — Resumen](/docs/cli/overview) — árbol de comandos, opciones globales y ubicación de la configuración.
+- [CLI — Créditos](/docs/cli/credits) — consulta tu saldo de créditos antes de ejecutar grandes lotes.
+- [Referencia API — Plantillas](/docs/api-reference/templates) — endpoints REST para la gestión de plantillas.

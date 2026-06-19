@@ -1,6 +1,90 @@
 ---
-title: "Créditos con CLI"
-description: "Consulta tu saldo de créditos y uso desde la terminal."
+title: CLI Créditos
+description: Consulta tu saldo de créditos, ve el libro mayor, configura la recarga automática y compra más créditos desde la terminal.
 ---
 
-Esta página estará disponible próximamente. El contenido completo se agregará en una actualización futura.
+mkpdfs funciona con créditos prepagados: **$10 = 1,000 créditos, 1 crédito = 1 página de PDF**. Los créditos no expiran. Cuando tu saldo llega a cero, la generación de PDFs devuelve un error `402` hasta que recargas.
+
+El comando `mkp credits` te permite gestionar todo desde la terminal.
+
+> **Requiere inicio de sesión en el navegador.** Todos los comandos de `credits` se autentican con tu sesión de Cognito. No funcionan con `--api-key`. Ejecuta `mkp auth login` primero si aún no lo has hecho.
+
+## Consultar tu saldo
+
+```bash
+mkp credits
+```
+
+Imprime tu saldo de créditos actual y el estado de la recarga automática de un vistazo.
+
+## Ver el libro mayor
+
+```bash
+mkp credits ledger
+```
+
+Muestra las 50 entradas más recientes del libro mayor — compras, débitos por páginas, reembolsos y créditos de bienvenida. Usa `--json` para analizar la salida mediante programación:
+
+```bash
+mkp credits ledger --json | jq '.[] | select(.kind == "debit")'
+```
+
+## Recarga automática
+
+La recarga automática añade créditos a tu saldo automáticamente cuando cae por debajo de un umbral, para que nunca te quedes bloqueado a mitad de un lote.
+
+### Ver la configuración actual
+
+```bash
+mkp credits auto-recharge
+```
+
+### Activar la recarga automática
+
+```bash
+mkp credits auto-recharge --enable
+```
+
+Activa la recarga automática con el umbral predeterminado de 100 créditos. Cuando tu saldo cae por debajo del umbral, mkpdfs cobra a tu tarjeta guardada 1,000 créditos ($10) y los añade a tu cuenta.
+
+Establece un umbral personalizado:
+
+```bash
+mkp credits auto-recharge --enable --threshold 250
+```
+
+El umbral puede ser cualquier entero entre 1 y 1,000.
+
+### Desactivar la recarga automática
+
+```bash
+mkp credits auto-recharge --disable
+```
+
+### Qué ocurre si la tarjeta es rechazada
+
+Si el pago de recarga automática falla, mkpdfs desactiva la recarga automática y establece un indicador de error en tu cuenta. El panel muestra un aviso que te pide actualizar tu método de pago. Vuelve a activar la recarga automática después de actualizar tu tarjeta.
+
+## Comprar créditos
+
+```bash
+mkp credits buy
+```
+
+Abre la página de pago de Stripe en tu navegador. Después de una compra exitosa, 1,000 créditos ($10) se añaden a tu saldo inmediatamente. Puedes ejecutar `mkp credits` de nuevo para confirmar el nuevo saldo.
+
+## Estadísticas de uso
+
+Para una vista más amplia del mes actual (llamadas a la API, plantillas creadas, generaciones de IA usadas):
+
+```bash
+mkp usage
+```
+
+`usage` es solo estadísticas y no afecta tu saldo de créditos.
+
+## Siguientes pasos
+
+- [CLI — Resumen](/docs/cli/overview) — árbol de comandos, opciones globales y ubicación de la configuración.
+- [CLI — Plantillas](/docs/cli/templates) — gestiona tus plantillas Handlebars desde la terminal.
+- [Referencia API — Generar PDF](/docs/api-reference/generate-pdf) — el endpoint REST utilizado internamente.

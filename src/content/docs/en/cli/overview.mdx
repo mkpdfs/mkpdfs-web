@@ -1,6 +1,160 @@
 ---
 title: CLI Overview
-description: The mkp command-line tool — commands, flags, and configuration.
+description: Install the mkp CLI, log in with a browser device flow, and learn every command and global flag.
 ---
 
-The `mkp` CLI provides commands for authentication, template management, PDF generation, and credit inspection — all from your terminal. _(Full content coming.)_
+The `mkp` CLI gives you full control of mkpdfs from your terminal: authenticate, manage Handlebars templates, generate PDFs, inspect credits, and configure API tokens — no browser required after the initial login.
+
+## Install
+
+```bash
+brew install mkpdfs/mkpdfs/mkpdfs
+```
+
+This places the `mkp` binary on your `PATH` (macOS and Linux, Intel and Apple Silicon).
+
+Verify the installation:
+
+```bash
+mkp --version
+```
+
+### Build from source
+
+Requires Go 1.21+.
+
+```bash
+git clone https://github.com/sim4gh/mkpdfs-cli
+cd mkpdfs-cli
+make build       # produces ./mkp-cli
+make dev-link    # symlinks ./mkp-cli → /opt/homebrew/bin/mkp-cli
+```
+
+The local dev build is named `mkp-cli` intentionally so it never shadows the Homebrew `mkp` binary.
+
+## Log in
+
+`mkp` uses a device-flow login — your browser handles authentication so you never type a password into the terminal.
+
+```bash
+mkp auth login
+```
+
+The CLI prints an 8-character code and opens `mkpdfs.com/cli/authorize` in your browser. Approve the request there, and the CLI stores a token in the config file automatically. Every subsequent `mkp` command uses your account without any extra steps.
+
+Log in to the development environment:
+
+```bash
+mkp auth login --env dev
+```
+
+You can be logged in to both environments simultaneously — credentials are stored separately per environment.
+
+Other auth commands:
+
+```bash
+mkp auth logout     # clear stored credentials for the current environment
+mkp auth whoami     # show your email, plan, and active environment
+```
+
+## Environments
+
+mkpdfs has two environments: `prod` (default) and `dev`.
+
+Override the environment for a single command:
+
+```bash
+mkp --env dev templates list
+```
+
+Set a persistent default for your machine:
+
+```bash
+mkp config set environment dev
+mkp config get environment
+```
+
+## Global flags
+
+These flags work on every command:
+
+| Flag | Description |
+|---|---|
+| `--env dev\|prod` | Override the active environment for this invocation |
+| `--json` | Machine-readable JSON output |
+| `--yes` | Assume yes for all confirmation prompts |
+| `--verbose` / `-v` | Verbose output |
+
+`--json` is useful for piping output to `jq` or other tools. `--yes` is handy in scripts where you want to skip interactive confirmations.
+
+## Config file location
+
+The config file is stored in the OS-standard location:
+
+| OS | Path |
+|----|------|
+| macOS | `~/Library/Application Support/mkpdfs/config.json` |
+| Linux | `~/.config/mkpdfs/config.json` (or `$XDG_CONFIG_HOME/mkpdfs/config.json`) |
+| Windows | `%APPDATA%\mkpdfs\config.json` |
+
+The file is written with mode `0600`. Print the path for your current machine:
+
+```bash
+mkp config path
+```
+
+## Command tree
+
+```
+mkp
+├── auth
+│   ├── login       Log in via browser (device-code flow)
+│   ├── logout      Clear stored credentials for the environment
+│   └── whoami      Show current email, plan, and environment
+│
+├── templates (alias: tpl)
+│   ├── list        List all templates (table or --json)
+│   ├── get <id>    Show metadata and detected Handlebars variables
+│   ├── pull <id>   Download template content to a local .hbs file
+│   ├── push <file> Create or update a template from a .hbs file
+│   └── delete <id> Delete a template (with confirmation)
+│
+├── pdf
+│   └── generate    Generate a PDF from a template and JSON data file
+│       -t <id|file>    template ID or local .hbs file (required)
+│       -d <file>       JSON data file (required)
+│       -o <path>       output PDF path
+│       --open          open the PDF after download
+│       --api-key       use server-to-server route with your tlfy_ API key
+│
+├── tokens
+│   ├── list        List API tokens
+│   ├── create      Create a new API token (--name required; --save to store in config)
+│   └── revoke <id> Revoke an API token
+│
+├── credits         Show credit balance and auto-recharge status
+│   ├── ledger      Show recent credit ledger entries (most recent 50)
+│   ├── auto-recharge   Show settings, or --enable [--threshold N] / --disable
+│   └── buy         Buy a credit pack (opens Stripe checkout in your browser)
+│
+├── usage           Show current-month usage stats and credit balance
+│
+└── config
+    ├── list        List configuration (secrets masked)
+    ├── get <key>   Get a config value
+    ├── set <key> <value>  Set a config value
+    └── path        Print the config file path
+```
+
+## Exit codes
+
+| Code | Meaning |
+|------|---------|
+| `0` | Success |
+| `1` | Runtime error (API failure, auth error, I/O error) |
+| `2` | Usage error (bad flags, missing required argument, validation failure) |
+
+## Next steps
+
+- [CLI — Templates](/docs/cli/templates) — pull, push, and manage your Handlebars templates.
+- [CLI — Credits](/docs/cli/credits) — check your balance, view the ledger, and configure auto-recharge.
