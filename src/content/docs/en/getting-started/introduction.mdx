@@ -3,4 +3,30 @@ title: Introduction
 description: What mkpdfs is and how the docs are organized.
 ---
 
-mkpdfs turns Handlebars templates into PDFs via API, CLI, or web dashboard. _(Full content coming.)_
+## What is mkpdfs?
+
+mkpdfs is a PDF generation service built around [Handlebars](https://handlebarsjs.com/) templates. You write an HTML/CSS template with `{{variable}}` placeholders, upload it once, and then generate pixel-perfect PDFs on demand by sending your data to the API.
+
+It is designed for developers who need to generate invoices, reports, certificates, or any other document at scale — without managing a headless browser yourself.
+
+## Three ways to use mkpdfs
+
+**REST API** — the core interface. Send a `POST` request with your template ID and data, get back a time-limited URL to a PDF. Authenticate with an API key (`x-api-key: tlfy_...`). Works from any language or runtime.
+
+**CLI (`mkp`)** — a Go-based command-line tool for local workflows. Push and pull templates, generate PDFs from JSON files, and manage your account from the terminal. Install it with Homebrew.
+
+**Web dashboard** — the visual way to manage templates, create API keys, view usage, and buy credits. Available at [mkpdfs.com](https://mkpdfs.com).
+
+## Credits
+
+mkpdfs uses a prepaid credits model. **$10 buys 1,000 credits; one credit generates one PDF page.** Credits never expire. Every new account receives **10 welcome credits** so you can try the service before buying.
+
+## What's in these docs
+
+| Section | What you'll find |
+|---|---|
+| **Getting Started** | Sign up, first API call, CLI installation |
+| **API Reference** | Every endpoint — request shape, response fields, error codes |
+| **CLI** | All `mkp` commands and flags |
+
+Start with [Quickstart](/docs/getting-started/quickstart) if you want to generate your first PDF in the next two minutes, or jump straight to [API Reference](/docs/api-reference/generate-pdf) if you already know what you need.

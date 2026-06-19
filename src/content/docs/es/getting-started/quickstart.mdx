@@ -3,4 +3,73 @@ title: "Inicio rápido"
 description: "Genera tu primer PDF en menos de dos minutos."
 ---
 
-Esta página estará disponible próximamente. El contenido completo se agregará en una actualización futura.
+Esta guía te lleva de cero a una URL de PDF funcionando en tres pasos.
+
+## Paso 1 — Crea una cuenta
+
+Ve a [mkpdfs.com](https://mkpdfs.com) y regístrate. Tu cuenta comienza con **10 créditos de bienvenida** — suficientes para generar 10 PDFs de una sola página de inmediato, sin necesidad de pago.
+
+## Paso 2 — Crea una clave de API
+
+Abre el panel de control y ve a **API Keys**. Haz clic en **New API Key**, ponle un nombre y copia la clave — comienza con `tlfy_`. No podrás verla de nuevo después de cerrar el diálogo.
+
+> **Mantén tu clave de API en secreto.** Otorga acceso completo a tu cuenta y plantillas. No la guardes en control de versiones.
+
+## Paso 3 — Genera un PDF
+
+Usa cualquier plantilla del mercado o [sube la tuya propia](/es/docs/api-reference/templates). Para este inicio rápido, reemplaza el ID de plantilla con uno real de tu panel de control.
+
+```bash
+curl -X POST https://apis.mkpdfs.com/v1/pdf/generate \
+  -H "x-api-key: tlfy_..." \
+  -H "Content-Type: application/json" \
+  -d '{"templateId":"<tu-template-id>","data":{"name":"Mundo"}}'
+```
+
+Una respuesta exitosa tiene este aspecto:
+
+```json
+{
+  "success": true,
+  "pdfUrl": "https://...",
+  "expiresIn": "5 days",
+  "size": 42318,
+  "pagesGenerated": 1
+}
+```
+
+Abre `pdfUrl` en tu navegador para descargar el PDF. El enlace es pre-firmado y expira en 5 días.
+
+## PDFs de múltiples páginas
+
+Pasa un array en `data` para generar un documento de varias páginas. Cada elemento del array se convierte en una página, y **se descuenta un crédito por página**.
+
+```bash
+curl -X POST https://apis.mkpdfs.com/v1/pdf/generate \
+  -H "x-api-key: tlfy_..." \
+  -H "Content-Type: application/json" \
+  -d '{
+    "templateId": "<tu-template-id>",
+    "data": [
+      {"name": "Alicia"},
+      {"name": "Roberto"}
+    ]
+  }'
+```
+
+La respuesta incluirá `"pagesGenerated": 2`.
+
+## Parámetros opcionales
+
+| Parámetro | Tipo | Descripción |
+|---|---|---|
+| `templateId` | string | **Requerido.** El ID de la plantilla a renderizar. |
+| `data` | object \| array | **Requerido.** Variables que se fusionan con la plantilla. Array = una página por elemento. |
+| `async` | boolean | Envía para procesamiento en segundo plano y recibe un correo al terminar. Por defecto `false`. |
+| `sendEmail` | string[] | Una o más direcciones de correo para recibir el PDF generado. |
+
+## Siguientes pasos
+
+- [Referencia de API — Generar PDF](/es/docs/api-reference/generate-pdf) para la especificación completa del endpoint y los códigos de error.
+- [Plantillas](/es/docs/api-reference/templates) para aprender a subir y administrar tus propias plantillas Handlebars.
+- [Instalar el CLI](/es/docs/getting-started/cli-install) para administrar todo desde tu terminal.

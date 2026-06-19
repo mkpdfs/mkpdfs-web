@@ -3,4 +3,30 @@ title: "Introducción"
 description: "Qué es mkpdfs y cómo están organizados los documentos."
 ---
 
-Esta página estará disponible próximamente. El contenido completo se agregará en una actualización futura.
+## ¿Qué es mkpdfs?
+
+mkpdfs es un servicio de generación de PDFs basado en plantillas [Handlebars](https://handlebarsjs.com/). Escribes una plantilla HTML/CSS con marcadores `{{variable}}`, la subes una vez, y luego generas PDFs perfectos bajo demanda enviando tus datos a la API.
+
+Está pensado para desarrolladores que necesitan generar facturas, reportes, certificados o cualquier otro documento a escala, sin tener que administrar un navegador headless por su cuenta.
+
+## Tres formas de usar mkpdfs
+
+**API REST** — la interfaz principal. Envía una solicitud `POST` con el ID de tu plantilla y los datos, y recibes de vuelta una URL con tiempo limitado para descargar el PDF. Autentícate con una clave de API (`x-api-key: tlfy_...`). Funciona desde cualquier lenguaje o entorno.
+
+**CLI (`mkp`)** — una herramienta de línea de comandos escrita en Go para flujos de trabajo locales. Sube y descarga plantillas, genera PDFs a partir de archivos JSON y administra tu cuenta desde la terminal. Se instala con Homebrew.
+
+**Panel de control web** — la forma visual de administrar plantillas, crear claves de API, ver el uso y comprar créditos. Disponible en [mkpdfs.com](https://mkpdfs.com).
+
+## Créditos
+
+mkpdfs usa un modelo de créditos prepagados. **$10 compra 1.000 créditos; un crédito genera una página de PDF.** Los créditos no expiran. Cada cuenta nueva recibe **10 créditos de bienvenida** para que puedas probar el servicio antes de comprar.
+
+## Qué encontrarás en esta documentación
+
+| Sección | Contenido |
+|---|---|
+| **Primeros pasos** | Registro, primera llamada a la API, instalación del CLI |
+| **Referencia de API** | Todos los endpoints — parámetros, respuestas, códigos de error |
+| **CLI** | Todos los comandos y opciones de `mkp` |
+
+Empieza con [Inicio rápido](/es/docs/getting-started/quickstart) si quieres generar tu primer PDF en los próximos dos minutos, o ve directamente a la [Referencia de API](/es/docs/api-reference/generate-pdf) si ya sabes lo que necesitas.

@@ -3,4 +3,66 @@ title: "Instalar el CLI"
 description: "Instala el CLI de mkpdfs en macOS, Linux o Windows."
 ---
 
-Esta página estará disponible próximamente. El contenido completo se agregará en una actualización futura.
+El CLI `mkp` te permite administrar plantillas, consultar tu saldo de créditos y generar PDFs directamente desde la terminal. Está escrito en Go y se distribuye mediante Homebrew.
+
+## Instalación
+
+```bash
+brew install mkpdfs/mkpdfs/mkpdfs
+```
+
+Verifica la instalación:
+
+```bash
+mkp --version
+```
+
+## Iniciar sesión
+
+`mkp` usa un flujo de inicio de sesión por dispositivo — tu navegador maneja la autenticación para que nunca tengas que pegar una contraseña en la terminal.
+
+```bash
+mkp auth login
+```
+
+El CLI muestra un código corto y abre `mkpdfs.com/cli/authorize` en tu navegador. Aprueba la solicitud y el CLI guardará un token en `~/Library/Application Support/mkpdfs/config.json`. A partir de ese momento, todos los comandos `mkp` usarán tu cuenta automáticamente.
+
+## Genera tu primer PDF
+
+Una vez que hayas iniciado sesión, toma el ID de una plantilla del panel de control y crea un archivo JSON con los datos a fusionar:
+
+```bash
+cat data.json
+```
+
+```json
+{ "name": "Mundo" }
+```
+
+Luego genera el PDF:
+
+```bash
+mkp pdf generate -t <tu-template-id> -d data.json
+```
+
+El CLI imprime la URL pre-firmada del PDF generado.
+
+## Trabajar con plantillas
+
+Descarga una plantilla desde la nube a tu sistema local:
+
+```bash
+mkp templates pull <template-id>
+```
+
+Edita el archivo `.hbs` localmente y luego vuelve a subirlo:
+
+```bash
+mkp templates push <template-id> template.hbs
+```
+
+## Siguientes pasos
+
+- [CLI — Descripción general](/es/docs/cli/overview) para la lista completa de comandos y opciones.
+- [CLI — Plantillas](/es/docs/cli/templates) para la referencia completa de administración de plantillas.
+- [CLI — Créditos](/es/docs/cli/credits) para consultar tu saldo y ver el uso desde la terminal.
