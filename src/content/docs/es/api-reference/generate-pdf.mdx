@@ -15,7 +15,7 @@ POST https://apis.mkpdfs.com/v1/pdf/generate
 
 | Encabezado | Valor |
 |---|---|
-| `x-api-key` | `tlfy_...` — obligatorio. Consulta [Autenticación](/es/docs/api-reference/authentication). |
+| `x-api-key` | `tlfy_...` — obligatorio. Consulta [Autenticación](/docs/api-reference/authentication). |
 | `Content-Type` | `application/json` |
 
 **Cuerpo**
@@ -97,7 +97,7 @@ Cuando `async: true`:
 
 **Se descuenta un crédito por página generada.** Si `data` es un objeto, `pagesGenerated` es 1 y se descuenta 1 crédito. Si `data` es un array de N elementos, se descuentan N créditos. Los créditos se descuentan tras una respuesta 200 exitosa; una solicitud fallida no consume créditos.
 
-Si tu cuenta no tiene créditos suficientes, la API devuelve `402 INSUFFICIENT_CREDITS`. Consulta [Errores](/es/docs/api-reference/errors) o visita el [panel](https://mkpdfs.com/billing) para comprar créditos.
+Si tu cuenta no tiene créditos suficientes, la API devuelve `402 INSUFFICIENT_CREDITS`. Consulta [Errores](/docs/api-reference/errors) o visita el [panel](https://mkpdfs.com/billing) para comprar créditos.
 
 ## Límites
 
@@ -109,7 +109,7 @@ Si tu cuenta no tiene créditos suficientes, la API devuelve `402 INSUFFICIENT_C
 
 ## Códigos de error
 
-Consulta la página de [Errores](/es/docs/api-reference/errors) para la lista completa. Casos comunes:
+Consulta la página de [Errores](/docs/api-reference/errors) para la lista completa. Casos comunes:
 
 | Estado | Significado |
 |---|---|

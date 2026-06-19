@@ -17,7 +17,7 @@ Abre el panel de control y ve a **API Keys**. Haz clic en **New API Key**, ponle
 
 ## Paso 3 — Genera un PDF
 
-Usa cualquier plantilla del mercado o [sube la tuya propia](/es/docs/api-reference/templates). Para este inicio rápido, reemplaza el ID de plantilla con uno real de tu panel de control.
+Usa cualquier plantilla del mercado o [sube la tuya propia](/docs/api-reference/templates). Para este inicio rápido, reemplaza el ID de plantilla con uno real de tu panel de control.
 
 ```bash
 curl -X POST https://apis.mkpdfs.com/v1/pdf/generate \
@@ -59,17 +59,17 @@ curl -X POST https://apis.mkpdfs.com/v1/pdf/generate \
 
 La respuesta incluirá `"pagesGenerated": 2`.
 
-## Parámetros opcionales
+## Parámetros
 
 | Parámetro | Tipo | Descripción |
 |---|---|---|
 | `templateId` | string | **Requerido.** El ID de la plantilla a renderizar. |
 | `data` | object \| array | **Requerido.** Variables que se fusionan con la plantilla. Array = una página por elemento. |
-| `async` | boolean | Envía para procesamiento en segundo plano y recibe un correo al terminar. Por defecto `false`. |
+| `async` | boolean | Envía para procesamiento en segundo plano en lugar de esperar la respuesta. Por defecto `false`. Combínalo con `sendEmail` para recibir el PDF generado por correo. |
 | `sendEmail` | string[] | Una o más direcciones de correo para recibir el PDF generado. |
 
 ## Siguientes pasos
 
-- [Referencia de API — Generar PDF](/es/docs/api-reference/generate-pdf) para la especificación completa del endpoint y los códigos de error.
-- [Plantillas](/es/docs/api-reference/templates) para aprender a subir y administrar tus propias plantillas Handlebars.
-- [Instalar el CLI](/es/docs/getting-started/cli-install) para administrar todo desde tu terminal.
+- [Referencia de API — Generar PDF](/docs/api-reference/generate-pdf) para la especificación completa del endpoint y los códigos de error.
+- [Plantillas](/docs/api-reference/templates) para aprender a subir y administrar tus propias plantillas Handlebars.
+- [Instalar el CLI](/docs/getting-started/cli-install) para administrar todo desde tu terminal.

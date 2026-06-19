@@ -59,13 +59,13 @@ curl -X POST https://apis.mkpdfs.com/v1/pdf/generate \
 
 The response includes `"pagesGenerated": 2`.
 
-## Optional parameters
+## Parameters
 
 | Parameter | Type | Description |
 |---|---|---|
 | `templateId` | string | **Required.** The ID of the template to render. |
 | `data` | object \| array | **Required.** Variables merged into the template. Array = one page per element. |
-| `async` | boolean | Submit for background processing and receive an email when done. Default `false`. |
+| `async` | boolean | Submit for background processing instead of waiting for the response. Default `false`. Combine with `sendEmail` to receive the finished PDF by email. |
 | `sendEmail` | string[] | One or more email addresses to receive the finished PDF. |
 
 ## Next steps
