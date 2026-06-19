@@ -1,6 +1,86 @@
 ---
 title: Errors
-description: Error codes, status codes, and retry guidance.
+description: HTTP status codes, error body shape, and how to handle each error.
 ---
 
-All API errors return a JSON body with `code` and `message` fields; HTTP 402 means insufficient credits, 429 means rate-limited. _(Full content coming.)_
+All mkpdfs API errors return a JSON body with a `message` field. An optional `error` field is included when there is additional diagnostic detail (for example, a Handlebars compile error on template upload).
+
+```json
+{
+  "message": "Unauthorized: x-api-key header with a valid API token is required"
+}
+```
+
+```json
+{
+  "message": "Invalid Handlebars template",
+  "error": "Parse error on line 4: ..."
+}
+```
+
+## Status codes
+
+| Status | Code / condition | Description |
+|---|---|---|
+| `400` | Bad request | The request body failed validation. Check the `message` field for details (e.g. missing required field, template syntax error, `data` array exceeds 50 items). |
+| `401` | Unauthorized | No `x-api-key` header, or the key is invalid, inactive, or expired. Check that the key starts with `tlfy_` and was copied correctly. |
+| `402` | `INSUFFICIENT_CREDITS` | Your credit balance is zero or negative. Purchase credits at [mkpdfs.com/billing](https://mkpdfs.com/billing) and retry. |
+| `403` | Forbidden | The authenticated user does not have permission to access the requested resource (e.g. trying to read another user's template). |
+| `404` | Not found | The resource does not exist or does not belong to your account. Verify the `templateId` or `jobId`. |
+| `429` | Too many requests / limit reached | Either a rate limit was hit, or a plan limit was reached (e.g. 500-template cap on the default plan). |
+| `500` | Internal server error | An unexpected server-side error occurred. If the problem persists, contact support. |
+
+## 401 — Authentication errors
+
+The most common cause is a missing or malformed header. The header name is `x-api-key` (lowercase) and the value must start with `tlfy_`:
+
+```bash
+curl -X POST https://apis.mkpdfs.com/v1/pdf/generate \
+  -H "x-api-key: tlfy_your_key_here" \
+  ...
+```
+
+Note that `Authorization: Bearer <token>` is explicitly rejected on `/v1/*` endpoints. See [Authentication](/docs/api-reference/authentication) for details.
+
+## 402 — Insufficient credits
+
+```json
+{
+  "message": "Insufficient credits. Please purchase more credits to continue generating PDFs."
+}
+```
+
+Credits are deducted after a successful response (one credit per page). If your balance reaches zero, subsequent requests return `402` until you purchase more credits. Visit [mkpdfs.com/billing](https://mkpdfs.com/billing) or use the dashboard to top up.
+
+New accounts receive **10 welcome credits** at sign-up.
+
+## 400 — Validation errors
+
+Template upload or update returns `400` with an `error` field when the Handlebars source is syntactically invalid:
+
+```json
+{
+  "message": "Invalid Handlebars template",
+  "error": "Parse error on line 12: Expecting 'ID', 'STRING', 'NUMBER'..."
+}
+```
+
+Fix the template syntax and retry.
+
+## Retrying safely
+
+| Status | Should retry? |
+|---|---|
+| `400` | No — fix the request first. |
+| `401` | No — fix the API key. |
+| `402` | No — purchase credits first. |
+| `403` | No — verify the resource belongs to your account. |
+| `404` | No — verify the ID. |
+| `429` | Yes — after a short backoff. |
+| `500` | Yes — with exponential backoff; contact support if it recurs. |
+
+## Related pages
+
+- [Authentication](/docs/api-reference/authentication)
+- [Generate a PDF](/docs/api-reference/generate-pdf)
+- [Templates](/docs/api-reference/templates)

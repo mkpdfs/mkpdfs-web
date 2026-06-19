@@ -1,6 +1,54 @@
 ---
-title: "Autenticación"
-description: "Cómo autenticar solicitudes a la API con claves y JWT."
+title: Autenticación
+description: Cómo autenticar solicitudes a la API de mkpdfs con claves de API.
 ---
 
-Esta página estará disponible próximamente. El contenido completo se agregará en una actualización futura.
+Todas las solicitudes servidor-a-servidor se autentican con una clave de API enviada en el encabezado `x-api-key`. El formato de la clave es `tlfy_` seguido de una cadena aleatoria de 32 bytes.
+
+```bash
+curl -X POST https://apis.mkpdfs.com/v1/pdf/generate \
+  -H "x-api-key: tlfy_tu_clave_aqui" \
+  -H "Content-Type: application/json" \
+  -d '{"templateId":"<id-de-plantilla>","data":{"nombre":"Mundo"}}'
+```
+
+## Crear una clave de API
+
+**Desde el panel:** Abre [mkpdfs.com](https://mkpdfs.com), ve a **API Keys**, haz clic en **New API Key**, dale un nombre y copia el valor completo. Solo verás la clave sin procesar una vez — cópiala antes de cerrar el diálogo.
+
+**Desde la CLI:** Si tienes instalada la CLI `mkp`, ejecuta:
+
+```bash
+mkp tokens create --name "mi-servicio"
+```
+
+La clave se muestra una sola vez y no vuelve a aparecer.
+
+## Alcance de la clave
+
+Las claves de API son claves de cuenta completa. Una clave puede llamar a todos los endpoints `/v1/*` (generar PDFs, listar plantillas, subir plantillas, etc.) bajo la cuenta que la creó. Por el momento no existen ámbitos por endpoint ni claves de solo lectura.
+
+## Solo para rutas servidor-a-servidor
+
+Las rutas `/v1/*` (por ejemplo, `POST /v1/pdf/generate`, `GET /v1/templates`) **no tienen un autorizador de API Gateway**. Esto es intencional: estas rutas están diseñadas únicamente para uso servidor-a-servidor.
+
+- Envía `x-api-key: tlfy_...` — siempre aceptado.
+- `Authorization: Bearer <JWT>` es **rechazado** en `/v1/*`. El backend solo valida firmas JWT cuando hay un autorizador de API Gateway presente; sin él, aceptar tokens Bearer permitiría falsificar firmas. No envíes JWTs a estos endpoints.
+
+Los endpoints orientados al panel (`/templates`, `/billing`, `/usage`, etc.) usan autenticación JWT de Cognito y son consumidos por la aplicación web de mkpdfs, no por tu código de backend.
+
+## Rotar una clave
+
+Para rotar una clave, crea una nueva en el panel o con `mkp tokens create`, actualiza tus variables de entorno y luego elimina la clave antigua desde el panel o con `mkp tokens delete <token-id>`. Las claves desactivadas en el panel son rechazadas de inmediato por la API.
+
+## Lista de verificación de seguridad
+
+- Almacena las claves en variables de entorno o en un gestor de secretos — nunca las confirmes en el control de versiones.
+- Rota las claves si se exponen accidentalmente.
+- Elimina las claves que ya no estén en uso.
+
+## Páginas relacionadas
+
+- [Generar un PDF](/es/docs/api-reference/generate-pdf)
+- [Plantillas](/es/docs/api-reference/templates)
+- [Errores](/es/docs/api-reference/errors)

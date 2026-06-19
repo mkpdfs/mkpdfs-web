@@ -1,6 +1,86 @@
 ---
-title: "Errores"
-description: "Códigos de error, códigos de estado y guía de reintentos."
+title: Errores
+description: Códigos de estado HTTP, forma del cuerpo de error y cómo manejar cada error.
 ---
 
-Esta página estará disponible próximamente. El contenido completo se agregará en una actualización futura.
+Todos los errores de la API de mkpdfs devuelven un cuerpo JSON con un campo `message`. Se incluye un campo opcional `error` cuando hay detalle diagnóstico adicional (por ejemplo, un error de compilación de Handlebars al subir una plantilla).
+
+```json
+{
+  "message": "Unauthorized: x-api-key header with a valid API token is required"
+}
+```
+
+```json
+{
+  "message": "Invalid Handlebars template",
+  "error": "Parse error on line 4: ..."
+}
+```
+
+## Códigos de estado
+
+| Estado | Código / condición | Descripción |
+|---|---|---|
+| `400` | Solicitud incorrecta | El cuerpo de la solicitud no superó la validación. Revisa el campo `message` para más detalles (p. ej. campo obligatorio faltante, error de sintaxis en la plantilla, array `data` supera 50 elementos). |
+| `401` | No autorizado | Sin encabezado `x-api-key`, o la clave es inválida, inactiva o expirada. Verifica que la clave comience con `tlfy_` y se haya copiado correctamente. |
+| `402` | `INSUFFICIENT_CREDITS` | El saldo de créditos es cero o negativo. Compra créditos en [mkpdfs.com/billing](https://mkpdfs.com/billing) y reintenta. |
+| `403` | Prohibido | El usuario autenticado no tiene permiso para acceder al recurso solicitado (p. ej. intentar leer la plantilla de otro usuario). |
+| `404` | No encontrado | El recurso no existe o no pertenece a tu cuenta. Verifica el `templateId` o `jobId`. |
+| `429` | Demasiadas solicitudes / límite alcanzado | Se alcanzó un límite de velocidad o un límite del plan (p. ej. el tope de 500 plantillas en el plan predeterminado). |
+| `500` | Error interno del servidor | Ocurrió un error inesperado en el servidor. Si el problema persiste, contacta a soporte. |
+
+## 401 — Errores de autenticación
+
+La causa más común es un encabezado faltante o mal formado. El nombre del encabezado es `x-api-key` (en minúsculas) y el valor debe comenzar con `tlfy_`:
+
+```bash
+curl -X POST https://apis.mkpdfs.com/v1/pdf/generate \
+  -H "x-api-key: tlfy_tu_clave_aqui" \
+  ...
+```
+
+Ten en cuenta que `Authorization: Bearer <token>` es rechazado explícitamente en los endpoints `/v1/*`. Consulta [Autenticación](/es/docs/api-reference/authentication) para más detalles.
+
+## 402 — Créditos insuficientes
+
+```json
+{
+  "message": "Insufficient credits. Please purchase more credits to continue generating PDFs."
+}
+```
+
+Los créditos se descuentan tras una respuesta exitosa (un crédito por página). Si tu saldo llega a cero, las solicitudes posteriores devuelven `402` hasta que compres más créditos. Visita [mkpdfs.com/billing](https://mkpdfs.com/billing) o usa el panel para recargar.
+
+Las cuentas nuevas reciben **10 créditos de bienvenida** al registrarse.
+
+## 400 — Errores de validación
+
+La subida o actualización de una plantilla devuelve `400` con un campo `error` cuando el código fuente Handlebars es sintácticamente inválido:
+
+```json
+{
+  "message": "Invalid Handlebars template",
+  "error": "Parse error on line 12: Expecting 'ID', 'STRING', 'NUMBER'..."
+}
+```
+
+Corrige la sintaxis de la plantilla y vuelve a intentarlo.
+
+## Reintentos seguros
+
+| Estado | ¿Reintentar? |
+|---|---|
+| `400` | No — corrige la solicitud primero. |
+| `401` | No — corrige la clave de API. |
+| `402` | No — compra créditos primero. |
+| `403` | No — verifica que el recurso pertenece a tu cuenta. |
+| `404` | No — verifica el ID. |
+| `429` | Sí — después de una breve espera. |
+| `500` | Sí — con retroceso exponencial; contacta a soporte si el problema persiste. |
+
+## Páginas relacionadas
+
+- [Autenticación](/es/docs/api-reference/authentication)
+- [Generar un PDF](/es/docs/api-reference/generate-pdf)
+- [Plantillas](/es/docs/api-reference/templates)

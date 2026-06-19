@@ -1,6 +1,119 @@
 ---
-title: "Generar un PDF"
-description: "Referencia de POST /v1/pdf/generate — cuerpo, respuesta y errores."
+title: Generar un PDF
+description: POST /v1/pdf/generate — referencia completa del endpoint de generación de PDFs.
 ---
 
-Esta página estará disponible próximamente. El contenido completo se agregará en una actualización futura.
+`POST /v1/pdf/generate` es el endpoint principal. Envía el ID de tu plantilla y los datos, y recibe una URL prefirmada para descargar el PDF generado.
+
+## Solicitud
+
+```
+POST https://apis.mkpdfs.com/v1/pdf/generate
+```
+
+**Encabezados**
+
+| Encabezado | Valor |
+|---|---|
+| `x-api-key` | `tlfy_...` — obligatorio. Consulta [Autenticación](/es/docs/api-reference/authentication). |
+| `Content-Type` | `application/json` |
+
+**Cuerpo**
+
+| Campo | Tipo | Obligatorio | Descripción |
+|---|---|---|---|
+| `templateId` | string | Sí | El UUID de la plantilla que se va a renderizar. |
+| `data` | object \| array | Sí | Variables que se fusionan con la plantilla Handlebars. Pasa un array para generar un PDF de varias páginas — cada elemento se convierte en una página. Máximo 50 elementos por solicitud. |
+| `async` | boolean | No | Envía para procesamiento en segundo plano. Por defecto `false`. Cuando es `true`, la API responde de inmediato y envía el PDF por correo cuando esté listo. |
+| `sendEmail` | string[] | No | Una o más direcciones de correo que recibirán el PDF terminado. |
+
+## Ejemplo con curl
+
+```bash
+curl -X POST https://apis.mkpdfs.com/v1/pdf/generate \
+  -H "x-api-key: tlfy_tu_clave_aqui" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "templateId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "data": {
+      "nombreCliente": "Acme Corp",
+      "numeroFactura": "FAC-0042",
+      "total": "1.200,00"
+    }
+  }'
+```
+
+## Ejemplo de múltiples páginas
+
+Pasa un array en `data` para producir una página por elemento:
+
+```bash
+curl -X POST https://apis.mkpdfs.com/v1/pdf/generate \
+  -H "x-api-key: tlfy_tu_clave_aqui" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "templateId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "data": [
+      {"nombre": "Alicia", "puntuacion": 98},
+      {"nombre": "Roberto", "puntuacion": 87}
+    ]
+  }'
+```
+
+## Respuesta exitosa — 200 OK
+
+```json
+{
+  "success": true,
+  "pdfUrl": "https://mkpdfs-prod-bucket.s3.amazonaws.com/users/.../pdfs/....pdf?...",
+  "expiresIn": "5 days",
+  "size": 84213,
+  "pagesGenerated": 1
+}
+```
+
+| Campo | Tipo | Descripción |
+|---|---|---|
+| `success` | boolean | Siempre `true` en una respuesta 200. |
+| `pdfUrl` | string | URL prefirmada de S3. Abre o descarga en un plazo de 5 días. |
+| `expiresIn` | string | Vida útil legible de la URL: `"5 days"`. |
+| `size` | number | Tamaño del PDF en bytes. |
+| `pagesGenerated` | number | Número de páginas renderizadas. |
+
+## Respuesta asíncrona — 200 OK
+
+Cuando `async: true`:
+
+```json
+{
+  "success": true,
+  "message": "PDF generation started. You will receive an email when ready.",
+  "async": true,
+  "pagesGenerated": 2
+}
+```
+
+## Créditos
+
+**Se descuenta un crédito por página generada.** Si `data` es un objeto, `pagesGenerated` es 1 y se descuenta 1 crédito. Si `data` es un array de N elementos, se descuentan N créditos. Los créditos se descuentan tras una respuesta 200 exitosa; una solicitud fallida no consume créditos.
+
+Si tu cuenta no tiene créditos suficientes, la API devuelve `402 INSUFFICIENT_CREDITS`. Consulta [Errores](/es/docs/api-reference/errors) o visita el [panel](https://mkpdfs.com/billing) para comprar créditos.
+
+## Límites
+
+| Límite | Valor |
+|---|---|
+| Páginas por solicitud | 50 |
+| Tiempo de espera de la solicitud | 29 segundos (síncrono) |
+| Usa `async: true` para documentos grandes que puedan superar el tiempo de espera. | |
+
+## Códigos de error
+
+Consulta la página de [Errores](/es/docs/api-reference/errors) para la lista completa. Casos comunes:
+
+| Estado | Significado |
+|---|---|
+| 401 | `x-api-key` ausente o inválida. |
+| 402 | Créditos insuficientes — compra más en mkpdfs.com/billing. |
+| 404 | `templateId` no encontrado o no pertenece a tu cuenta. |
+| 400 | Validación del cuerpo fallida (p. ej. array `data` supera 50 elementos). |

@@ -1,6 +1,195 @@
 ---
 title: Templates
-description: Manage Handlebars templates via the REST API.
+description: CRUD API for managing Handlebars templates — list, get, upload, update, and delete.
 ---
 
-Create, update, and delete Handlebars templates through the REST API; each template is validated at upload time. _(Full content coming.)_
+Templates are Handlebars (`.hbs`) files that mkpdfs compiles with your data at PDF generation time. All template endpoints live under `/v1/templates` and require an API key. See [Authentication](/docs/api-reference/authentication).
+
+## List templates
+
+```
+GET https://apis.mkpdfs.com/v1/templates
+```
+
+Returns all templates belonging to your account.
+
+```bash
+curl https://apis.mkpdfs.com/v1/templates \
+  -H "x-api-key: tlfy_your_key_here"
+```
+
+**Response — 200 OK**
+
+```json
+{
+  "templates": [
+    {
+      "userId": "us-east-1:...",
+      "templateId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+      "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+      "name": "Invoice v2",
+      "description": "Standard invoice template",
+      "s3Key": "users/.../templates/a1b2c3d4....hbs",
+      "fileSize": 3847,
+      "contentVersion": "...",
+      "createdAt": "2026-06-01T12:00:00.000Z",
+      "updatedAt": "2026-06-10T09:15:00.000Z",
+      "thumbnailUrl": null
+    }
+  ]
+}
+```
+
+## Get a template
+
+```
+GET https://apis.mkpdfs.com/v1/templates/{templateId}
+```
+
+Returns the template metadata and its full Handlebars source.
+
+```bash
+curl https://apis.mkpdfs.com/v1/templates/a1b2c3d4-e5f6-7890-abcd-ef1234567890 \
+  -H "x-api-key: tlfy_your_key_here"
+```
+
+**Response — 200 OK**
+
+```json
+{
+  "template": {
+    "userId": "us-east-1:...",
+    "templateId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "name": "Invoice v2",
+    "description": "Standard invoice template",
+    "s3Key": "users/.../templates/a1b2c3d4....hbs",
+    "fileSize": 3847,
+    "contentVersion": "...",
+    "createdAt": "2026-06-01T12:00:00.000Z",
+    "updatedAt": "2026-06-10T09:15:00.000Z",
+    "content": "<!DOCTYPE html>\n<html>..."
+  }
+}
+```
+
+The `content` field contains the raw Handlebars source.
+
+## Upload a template
+
+```
+POST https://apis.mkpdfs.com/v1/templates/upload
+```
+
+Creates a new template. Send the Handlebars source as a base64-encoded string in a JSON body.
+
+**Body**
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `name` | string | Yes | Display name for the template. |
+| `content` | string | Yes | The Handlebars template source, base64-encoded. |
+| `contentEncoding` | string | Yes | Must be `"base64"`. |
+| `description` | string | No | Optional description. |
+
+```bash
+# Encode your template file
+CONTENT=$(base64 -i invoice.hbs)
+
+curl -X POST https://apis.mkpdfs.com/v1/templates/upload \
+  -H "x-api-key: tlfy_your_key_here" \
+  -H "Content-Type: application/json" \
+  -d "{
+    \"name\": \"Invoice v2\",
+    \"description\": \"Standard invoice template\",
+    \"content\": \"$CONTENT\",
+    \"contentEncoding\": \"base64\"
+  }"
+```
+
+> The API Gateway payload limit is approximately **6.5 MiB**. Templates larger than this must be reduced before uploading.
+
+The Handlebars source is validated server-side. If the template contains a syntax error the request returns `400` with an `error` field containing the compiler message.
+
+**Response — 201 Created**
+
+```json
+{
+  "userId": "us-east-1:...",
+  "templateId": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
+  "id": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
+  "name": "Invoice v2",
+  "description": "Standard invoice template",
+  "s3Key": "users/.../templates/b2c3d4e5....hbs",
+  "fileSize": 3847,
+  "contentVersion": "...",
+  "createdAt": "2026-06-18T10:00:00.000Z",
+  "updatedAt": "2026-06-18T10:00:00.000Z"
+}
+```
+
+## Update a template
+
+```
+PUT https://apis.mkpdfs.com/v1/templates/{templateId}
+```
+
+Replaces the template content in place. The `templateId` stays the same, so any existing PDF generation calls that reference this ID will immediately use the new template. Metadata fields are optional — omit them to keep their current values.
+
+**Body**
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `content` | string | Yes | New Handlebars source, base64-encoded. |
+| `contentEncoding` | string | Yes | Must be `"base64"`. |
+| `name` | string | No | New display name. Existing name is kept if omitted. |
+| `description` | string | No | New description. |
+
+```bash
+NEW_CONTENT=$(base64 -i invoice-v3.hbs)
+
+curl -X PUT https://apis.mkpdfs.com/v1/templates/b2c3d4e5-f6a7-8901-bcde-f12345678901 \
+  -H "x-api-key: tlfy_your_key_here" \
+  -H "Content-Type: application/json" \
+  -d "{
+    \"name\": \"Invoice v3\",
+    \"content\": \"$NEW_CONTENT\",
+    \"contentEncoding\": \"base64\"
+  }"
+```
+
+**Response — 200 OK**
+
+Returns the full updated template object (same shape as the upload response).
+
+## Delete a template
+
+```
+DELETE https://apis.mkpdfs.com/v1/templates/{templateId}
+```
+
+Permanently removes the template metadata and its stored file. PDF URLs generated before deletion remain valid for their original 5-day window.
+
+```bash
+curl -X DELETE https://apis.mkpdfs.com/v1/templates/b2c3d4e5-f6a7-8901-bcde-f12345678901 \
+  -H "x-api-key: tlfy_your_key_here"
+```
+
+**Response — 200 OK**
+
+```json
+{
+  "message": "Template deleted successfully",
+  "templateId": "b2c3d4e5-f6a7-8901-bcde-f12345678901"
+}
+```
+
+## Plan limits
+
+The default plan allows up to **500 templates**. Uploading when the limit is reached returns `429`. Enterprise accounts have unlimited templates.
+
+## Related pages
+
+- [Authentication](/docs/api-reference/authentication)
+- [Generate a PDF](/docs/api-reference/generate-pdf)
+- [Errors](/docs/api-reference/errors)
