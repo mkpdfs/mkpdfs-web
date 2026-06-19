@@ -39,7 +39,7 @@ Dashboard-facing endpoints (`/templates`, `/billing`, `/usage`, etc.) use Cognit
 
 ## Rotating a key
 
-To rotate a key, create a new one in the dashboard or with `mkp tokens create`, update your environment variables, then delete the old key from the dashboard or with `mkp tokens delete <token-id>`. Keys deactivated in the dashboard are immediately rejected by the API.
+To rotate a key, create a new one in the dashboard or with `mkp tokens create`, update your environment variables, then delete the old key from the dashboard or with `mkp tokens revoke <token-id>`. Keys deactivated in the dashboard are immediately rejected by the API.
 
 ## Security checklist
 

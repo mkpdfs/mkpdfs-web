@@ -1,7 +1,7 @@
 'use client'
 
 import { Link, usePathname } from '@/i18n/routing'
-import { docsNav, type Locale } from '@/lib/docs/nav'
+import { docsNav, landingSlug, type Locale } from '@/lib/docs/nav'
 
 interface SidebarProps {
   locale: Locale
@@ -10,7 +10,7 @@ interface SidebarProps {
 export function Sidebar({ locale }: SidebarProps) {
   const pathname = usePathname()
   // pathname is locale-stripped by next-intl's usePathname, e.g. /docs/quickstart
-  const activeSlug = pathname.replace(/^\/docs\/?/, '') || ''
+  const activeSlug = pathname.replace(/^\/docs\/?/, '') || landingSlug
 
   return (
     <nav

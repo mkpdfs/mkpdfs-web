@@ -1,6 +1,6 @@
 import { MetadataRoute } from 'next'
 import { locales, defaultLocale } from '@/i18n/config'
-import { allDocSlugs } from '@/lib/docs/nav'
+import { allDocSlugs, landingSlug } from '@/lib/docs/nav'
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://mkpdfs.com'
 
@@ -25,7 +25,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: '/login', priority: 0.5, changeFrequency: 'monthly' as const },
     { path: '/register', priority: 0.5, changeFrequency: 'monthly' as const },
     { path: '/docs', priority: 0.8, changeFrequency: 'weekly' as const },
-    ...allDocSlugs.map((slug) => ({ path: `/docs/${slug}`, priority: 0.7, changeFrequency: 'weekly' as const })),
+    ...allDocSlugs.filter((s) => s !== landingSlug).map((slug) => ({ path: `/docs/${slug}`, priority: 0.7, changeFrequency: 'weekly' as const })),
   ]
   const entries: MetadataRoute.Sitemap = []
 

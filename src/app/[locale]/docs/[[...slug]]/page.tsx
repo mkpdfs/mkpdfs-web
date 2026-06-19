@@ -31,7 +31,7 @@ export async function generateMetadata(
   const resolved = resolveSlug(slug)
   if (!isValidSlug(resolved)) return {}
   const { title, description } = getDocSource(locale as Locale, resolved)
-  const path = `/docs${slug && slug.length ? '/' + slug.join('/') : ''}`
+  const path = resolved === landingSlug ? '/docs' : `/docs/${resolved}`
   return pageMetadata({ locale, path, title: `${title} — mkpdfs docs`, description })
 }
 

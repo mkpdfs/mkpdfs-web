@@ -154,7 +154,10 @@
   overflow-x: auto;
   border-radius: 0.5rem;
   border: 1px solid rgb(var(--surface-overlay));
-  background: rgb(var(--surface-raised));
+  /* Fixed dark background so github-dark shiki tokens always render on a dark
+     panel regardless of the app color scheme — prevents low contrast in light mode. */
+  background: #0d1117;
+  color: #e6edf3;
   padding: 1rem 1.25rem;
   margin-bottom: 1.5rem;
   tab-size: 2;
@@ -203,7 +206,8 @@
 
 /* dark theme adjustments */
 .dark .mk-docs pre {
-  background: rgb(var(--surface-raised));
+  /* Keep the same fixed dark background as light mode — github-dark tokens need it. */
+  background: #0d1117;
   border-color: rgb(var(--surface-overlay));
 }
 
