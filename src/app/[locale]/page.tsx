@@ -19,6 +19,7 @@ import {
   FeaturesGrid,
   TemplatesGallery,
   TwoWays,
+  McpSection,
   PricingCredits,
   FinalCta,
   LandingFooter,
@@ -82,6 +83,7 @@ export default async function LandingPage({ params }: Props) {
         <FeaturesGrid />
         <TemplatesGallery />
         <TwoWays />
+        <McpSection />
         <PricingCredits />
         <FinalCta />
       </main>

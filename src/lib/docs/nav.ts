@@ -33,6 +33,13 @@ export const docsNav: DocSection[] = [
       { slug: 'cli/credits', label: { en: 'Credits', es: 'Créditos' } },
     ],
   },
+  {
+    id: 'integrations',
+    label: { en: 'Integrations', es: 'Integraciones' },
+    pages: [
+      { slug: 'integrations/mcp', label: { en: 'MCP Server', es: 'Servidor MCP' } },
+    ],
+  },
 ]
 
 // Flattened in nav order. The FIRST slug is the /docs landing.

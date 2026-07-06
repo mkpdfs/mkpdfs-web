@@ -163,6 +163,18 @@
       "mockCustomerValue": "Acme Corp",
       "mockGenerate": "Generar PDF"
     },
+    "mcp": {
+      "eyebrow": "Para agentes de IA",
+      "title": "Conecta mkpdfs a tu agente",
+      "cardTitle": "Servidor MCP hospedado",
+      "cardTagline": "Model Context Protocol — nada que instalar",
+      "body": "Claude, Cursor o cualquier cliente MCP puede generar PDFs y gestionar tus plantillas directamente. Apúntalo al endpoint con tu API key y tu agente obtiene seis herramientas — misma autenticación, mismos créditos y mismos límites que la API.",
+      "docsCta": "Lee la documentación de integración",
+      "configComment": "agrega a la config MCP de tu cliente",
+      "promptLabel": "Tú:",
+      "promptExample": "\"Hazme una factura para Acme Corp\"",
+      "resultNote": "lista en segundos"
+    },
     "pricing": {
       "eyebrow": "Precios",
       "title": "Créditos que prácticamente nunca se acaban",

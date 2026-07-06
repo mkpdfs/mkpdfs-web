@@ -1,0 +1,147 @@
+---
+title: MCP Server
+description: Connect AI agents to mkpdfs over the Model Context Protocol — generate PDFs and manage templates with your API key, no SDK required.
+---
+
+mkpdfs exposes a hosted [MCP](https://modelcontextprotocol.io) (Model Context Protocol) server, so AI agents — Claude, Cursor, or anything that speaks MCP — can generate PDFs and manage your templates directly, using the same API key as the REST API.
+
+```
+POST https://apis.mkpdfs.com/v1/mcp
+```
+
+There is nothing to install or host on your side. Point your MCP client at the endpoint, pass your API key in the `x-api-key` header, and the six tools below become available to your agent. Authentication, credits, and plan limits behave exactly like the REST API — an MCP tool call can do exactly what the equivalent `curl` with the same key could do, nothing more.
+
+## Connect your client
+
+The server uses the **Streamable HTTP** transport in stateless mode. Any MCP client that supports remote HTTP servers with custom headers can connect.
+
+### Claude Code
+
+```bash
+claude mcp add mkpdfs https://apis.mkpdfs.com/v1/mcp \
+  --transport http \
+  --header "x-api-key: tlfy_your_key_here"
+```
+
+### Claude Desktop / other JSON-config clients
+
+Add the server to your client's MCP configuration:
+
+```json
+{
+  "mcpServers": {
+    "mkpdfs": {
+      "type": "http",
+      "url": "https://apis.mkpdfs.com/v1/mcp",
+      "headers": {
+        "x-api-key": "tlfy_your_key_here"
+      }
+    }
+  }
+}
+```
+
+### Cursor
+
+In `.cursor/mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "mkpdfs": {
+      "url": "https://apis.mkpdfs.com/v1/mcp",
+      "headers": {
+        "x-api-key": "tlfy_your_key_here"
+      }
+    }
+  }
+}
+```
+
+> Create and revoke API keys from the [dashboard](https://mkpdfs.com/api-keys) or with `mkp tokens create`. Keys are full-account credentials — treat them like passwords. See [Authentication](/docs/api-reference/authentication).
+
+## Available tools
+
+| Tool | What it does |
+|---|---|
+| `generate_pdf` | Render a template with data. Returns a download URL valid for 5 days. |
+| `list_templates` | List all templates in your account. |
+| `get_template` | Fetch one template's metadata and full Handlebars source. |
+| `upload_template` | Create a new template from Handlebars source. |
+| `update_template` | Replace an existing template's source in place (same `templateId`). |
+| `delete_template` | Permanently delete a template. |
+
+### `generate_pdf`
+
+| Argument | Type | Required | Description |
+|---|---|---|---|
+| `templateId` | string | Yes | The template to render. |
+| `data` | object or array | Yes | Template data. A single object renders 1 page; an array renders 1 page per item (max 50). |
+
+Generation is synchronous: the tool call returns when the PDF is ready, with a presigned download URL, the file size, and the page count. Each page consumes 1 credit — the same billing as the REST API.
+
+### Template tools
+
+`upload_template` takes `name`, `content` (Handlebars source as plain text — no base64 needed), and an optional `description`. `update_template` takes `templateId` and `content`. `get_template` and `delete_template` take just `templateId`.
+
+## A typical agent session
+
+An agent connected to mkpdfs can go from idea to document without you leaving the conversation:
+
+1. `list_templates` — see what already exists.
+2. `get_template` — read a template's Handlebars source to learn its data shape.
+3. `generate_pdf` — render it with real data and hand you the download link.
+4. Or author something new: `upload_template` with fresh Handlebars, then `generate_pdf` to preview it, then `update_template` to iterate.
+
+## Errors
+
+Failures surface as MCP **tool errors** (`isError: true`) with the same JSON bodies the REST API returns, so the agent can read and react to them:
+
+| Situation | Body |
+|---|---|
+| No or malformed API key | `{"message": "Unauthorized: x-api-key header with a valid API token is required"}` |
+| Invalid / revoked key | `{"message": "Unauthorized: invalid, inactive or expired API token"}` |
+| Out of credits | `{"error": "INSUFFICIENT_CREDITS", ...}` — top up at [mkpdfs.com/billing](https://mkpdfs.com/billing) |
+| Template not found | `{"message": "Template not found"}` |
+
+See [Errors](/docs/api-reference/errors) for the full catalogue.
+
+## Calling it raw
+
+The endpoint is plain JSON-RPC over HTTP — useful for debugging or minimal clients. Two headers are required: `x-api-key`, and `Accept: application/json, text/event-stream` (the MCP transport rejects requests without the latter with `406`).
+
+```bash
+curl -X POST https://apis.mkpdfs.com/v1/mcp \
+  -H "content-type: application/json" \
+  -H "accept: application/json, text/event-stream" \
+  -H "x-api-key: tlfy_your_key_here" \
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}'
+```
+
+```bash
+curl -X POST https://apis.mkpdfs.com/v1/mcp \
+  -H "content-type: application/json" \
+  -H "accept: application/json, text/event-stream" \
+  -H "x-api-key: tlfy_your_key_here" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 2,
+    "method": "tools/call",
+    "params": {
+      "name": "generate_pdf",
+      "arguments": {
+        "templateId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+        "data": { "customer": "Acme Corp", "total": "$1,250.00" }
+      }
+    }
+  }'
+```
+
+The server is stateless: no session to initialize or resume, every request stands alone. For local development, `dev.apis.mkpdfs.com/v1/mcp` serves the dev environment with dev API keys.
+
+## Related pages
+
+- [Authentication](/docs/api-reference/authentication)
+- [Generate a PDF](/docs/api-reference/generate-pdf)
+- [Templates](/docs/api-reference/templates)
+- [Errors](/docs/api-reference/errors)
