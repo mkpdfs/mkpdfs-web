@@ -1,22 +1,15 @@
 /**
- * Scroll-pinned section (desktop only): the content sticks to the top of the
- * viewport while the user scrolls through `extraVh` of invisible runway below
- * it, so each section "holds" before the next one slides in right behind it.
- * Pure CSS (sticky + runway) — natural content heights, no centering, no
- * clipping, no dead gaps between sections. Normal flow on <lg screens.
+ * Scroll-pinned section, stacking-cards pattern (desktop only): every section
+ * is sticky at the top of the viewport with an opaque background, so the next
+ * section slides in OVER the pinned one — the previous section visibly stops
+ * while the visitor keeps scrolling, with zero empty runway in the document
+ * (no dead gaps between sections). Sections shorter than the viewport are
+ * vertically centered. Normal flow on <lg screens.
  */
-export function PinnedSection({
-  children,
-  extraVh = 50,
-}: {
-  children: React.ReactNode
-  extraVh?: number
-}) {
+export function PinnedSection({ children }: { children: React.ReactNode }) {
   return (
-    <div className="lg:relative">
-      <div className="lg:sticky lg:top-0">{children}</div>
-      {/* runway: scrolled through while the content above stays pinned */}
-      <div aria-hidden style={{ height: `${extraVh}vh` }} className="hidden lg:block" />
+    <div className="lg:sticky lg:top-0 lg:flex lg:min-h-screen lg:flex-col lg:justify-center lg:bg-surface">
+      {children}
     </div>
   )
 }

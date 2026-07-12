@@ -80,31 +80,34 @@ export default async function LandingPage({ params }: Props) {
         {/* Each block pins while the visitor scrolls through extra height,
             so sections "hold" before releasing to the next (desktop only). */}
         {/* Hero flows naturally (taller than one viewport with the terminal);
-            the pin-and-hold rhythm starts at the MCP section. */}
+            the stacking pin rhythm starts at the MCP section. */}
         <LandingHero />
         {/* MCP walkthrough typed live — replaces the old cURL/Node demo */}
         <McpTerminalHero />
         {/* MCP right after the hero — agent DX is the flagship story. */}
-        <PinnedSection extraVh={70}>
+        <PinnedSection>
           <McpSection />
         </PinnedSection>
-        <PinnedSection extraVh={45}>
+        <PinnedSection>
           <LogoStrip />
           <HowItWorks />
         </PinnedSection>
-        <PinnedSection extraVh={50}>
+        <PinnedSection>
           <FeaturesGrid />
         </PinnedSection>
-        <PinnedSection extraVh={50}>
+        <PinnedSection>
           <TemplatesGallery />
         </PinnedSection>
-        <PinnedSection extraVh={50}>
+        <PinnedSection>
           <TwoWays />
         </PinnedSection>
-        <PinnedSection extraVh={45}>
+        <PinnedSection>
           <PricingCredits />
         </PinnedSection>
-        <FinalCta />
+        {/* opaque + relative so it slides over the pinned pricing section */}
+        <div className="relative bg-surface">
+          <FinalCta />
+        </div>
       </main>
       <LandingFooter />
     </div>
