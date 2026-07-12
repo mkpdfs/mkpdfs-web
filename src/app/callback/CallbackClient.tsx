@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { Hub } from 'aws-amplify/utils'
 import { getCurrentUser, fetchUserAttributes } from 'aws-amplify/auth'
 import { initializeAuth } from '@/lib/auth'
+import { rum } from '@/lib/rum-logger'
 import { sanitizeRedirectPath } from '@/lib/utils'
 import { PageLoader } from '@/components/ui'
 
@@ -24,34 +25,36 @@ export default function CallbackClient() {
       try {
         // Try to get the current user - if OAuth was successful, user should be available
         const user = await getCurrentUser()
-        const attributes = await fetchUserAttributes()
+        await fetchUserAttributes()
 
-        console.info('[Callback] OAuth successful, user:', user.userId, attributes.email)
+        // userId only — the email is PII and this log ships to RUM.
+        rum.info('Callback', 'OAuth successful, user:', user.userId)
 
         // Redirect to the preserved destination, or dashboard by default
         router.replace(redirectTargetRef.current ?? '/dashboard')
       } catch (err) {
-        console.error('[Callback] Auth check failed:', err)
-        // If no user yet, wait for the Hub event
+        // Expected while the OAuth code exchange is still in flight — the Hub
+        // event re-runs this. warn, not error, to keep RUM error counts clean.
+        rum.warn('Callback', 'Auth check failed (waiting for Hub event):', err)
       }
     }
 
     // Listen for auth events
     const unsubscribe = Hub.listen('auth', ({ payload }) => {
-      console.info('[Callback] Auth event:', payload.event)
+      rum.info('Callback', 'Auth event:', payload.event)
 
       switch (payload.event) {
         case 'signInWithRedirect':
-          console.info('[Callback] Sign in redirect completed')
+          rum.info('Callback', 'Sign in redirect completed')
           checkAuth()
           break
         case 'signInWithRedirect_failure':
-          console.error('[Callback] Sign in redirect failed:', payload.data)
+          rum.error('Callback', 'Sign in redirect failed:', payload.data)
           setError('Failed to sign in with Google. Please try again.')
           redirectTimeoutRef.current = setTimeout(() => router.replace('/login'), 3000)
           break
         case 'customOAuthState': {
-          console.info('[Callback] Custom OAuth state:', payload.data)
+          rum.info('Callback', 'Custom OAuth state:', payload.data)
           const target = sanitizeRedirectPath(
             typeof payload.data === 'string' ? payload.data : null
           )

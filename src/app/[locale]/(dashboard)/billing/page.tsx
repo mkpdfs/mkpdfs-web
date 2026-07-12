@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { Loader2, ExternalLink, AlertTriangle } from 'lucide-react'
 import { useProfile, useUsage } from '@/hooks/useApi'
 import { createCheckoutSession, createPortalSession, updateAutoRecharge, getCreditLedger } from '@/lib/api'
+import { rum } from '@/lib/rum-logger'
 import { formatNumber } from '@/lib/utils'
 import type { LedgerEntry } from '@/types'
 import { useTranslations } from 'next-intl'
@@ -60,7 +61,7 @@ export default function BillingPage() {
       const { url } = await createCheckoutSession()
       window.location.href = url
     } catch (error) {
-      console.error('Failed to create checkout session:', error)
+      rum.error('Billing', 'Failed to create checkout session:', error)
       alert(errors('generic'))
       setLoadingBuy(false)
     }
@@ -72,7 +73,7 @@ export default function BillingPage() {
       const { url } = await createPortalSession()
       window.location.href = url
     } catch (error) {
-      console.error('Failed to create portal session:', error)
+      rum.error('Billing', 'Failed to create portal session:', error)
       alert(errors('generic'))
       setLoadingPortal(false)
     }
@@ -84,7 +85,7 @@ export default function BillingPage() {
       await updateAutoRecharge(enabled, effectiveThreshold)
       await refetch()
     } catch (error) {
-      console.error('Failed to update auto-recharge:', error)
+      rum.error('Billing', 'Failed to update auto-recharge:', error)
       alert(errors('generic'))
     } finally {
       setSavingAutoRecharge(false)

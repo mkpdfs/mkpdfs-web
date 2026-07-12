@@ -6,6 +6,7 @@
  */
 
 import { getIdToken } from './auth'
+import { rum } from './rum-logger'
 import type {
   Template,
   TemplateWithContent,
@@ -74,6 +75,10 @@ async function authFetch<T>(
 
   if (!response.ok) {
     const error = await response.json().catch(() => ({}))
+    rum.error(
+      'API',
+      `Request failed: ${options.method || 'GET'} ${endpoint} → ${response.status}${error.code ? ` ${error.code}` : ''}`
+    )
     throw new ApiError(
       error.message || `API Error: ${response.status}`,
       response.status,
@@ -138,6 +143,8 @@ export async function uploadTemplate(
     headers['Authorization'] = `Bearer ${idToken}`
   }
 
+  rum.info('Upload', 'Template upload starting:', file.name, file.type, Math.round(file.size / 1024) + 'KB')
+
   const response = await fetch(`${API_URL}/templates/upload`, {
     method: 'POST',
     headers,
@@ -146,9 +153,11 @@ export async function uploadTemplate(
 
   if (!response.ok) {
     const error = await response.json().catch(() => ({}))
+    rum.error('Upload', `Template upload failed: ${response.status}`, error.message || '')
     throw new Error(error.message || 'Failed to upload template')
   }
 
+  rum.info('Upload', 'Template upload complete:', name)
   return response.json()
 }
 
@@ -415,6 +424,7 @@ export async function uploadImageToS3(
   })
 
   if (!response.ok) {
+    rum.error('Upload', `AI image S3 upload failed: ${response.status}`)
     throw new Error(`Failed to upload image: ${response.status}`)
   }
 }
@@ -472,7 +482,10 @@ export async function uploadLogoFile(file: File): Promise<string> {
     { method: 'POST', body: JSON.stringify({ contentType: file.type }) }
   )
   const put = await fetch(uploadUrl, { method: 'PUT', body: file, headers: { 'Content-Type': file.type } })
-  if (!put.ok) throw new Error(`Logo upload failed: ${put.status}`)
+  if (!put.ok) {
+    rum.error('Upload', `Logo upload failed: ${put.status}`)
+    throw new Error(`Logo upload failed: ${put.status}`)
+  }
   return s3Key
 }
 

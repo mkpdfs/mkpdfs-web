@@ -6,6 +6,7 @@ import { useEffect } from 'react'
 import { useTranslations } from 'next-intl'
 import { Link } from '@/i18n/routing'
 import { Button } from '@/components/ui/Button'
+import { rum } from '@/lib/rum-logger'
 
 export default function LocaleError({
   error,
@@ -17,8 +18,7 @@ export default function LocaleError({
   const t = useTranslations('common')
 
   useEffect(() => {
-    // Surface the error to the console (and any RUM/console capture) for triage.
-    console.error('[ErrorBoundary]', error)
+    rum.error('App', 'ErrorBoundary:', error)
   }, [error])
 
   return (

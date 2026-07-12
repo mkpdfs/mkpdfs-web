@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import { Inter } from 'next/font/google'
 import { getLocale } from 'next-intl/server'
+import { RumInit } from '@/components/RumInit'
 import { OG_IMAGE, TWITTER_CARD } from '@/lib/seo'
 import './globals.css'
 
@@ -154,6 +155,7 @@ export default async function RootLayout({ children }: Props) {
         />
       </head>
       <body className={`${inter.variable} font-sans antialiased`}>
+        <RumInit />
         {children}
       </body>
     </html>

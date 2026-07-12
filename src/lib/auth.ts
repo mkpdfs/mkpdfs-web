@@ -28,6 +28,7 @@ import {
 } from 'aws-amplify/auth'
 
 import type { MkpdfsUser } from '@/types'
+import { rum } from './rum-logger'
 
 // Auth result types
 export interface AuthResult<T = void> {
@@ -92,8 +93,9 @@ export function initializeAuth(): boolean {
   const config = getAmplifyConfig()
 
   if (!config.Auth?.Cognito?.userPoolId) {
-    console.warn(
-      '[Auth] Cognito not configured. Set NEXT_PUBLIC_COGNITO_USER_POOL_ID and NEXT_PUBLIC_COGNITO_CLIENT_ID.'
+    rum.warn(
+      'Auth',
+      'Cognito not configured. Set NEXT_PUBLIC_COGNITO_USER_POOL_ID and NEXT_PUBLIC_COGNITO_CLIENT_ID.'
     )
     return false
   }
@@ -101,14 +103,14 @@ export function initializeAuth(): boolean {
   try {
     Amplify.configure(config, { ssr: true })
     isConfigured = true
-    console.info('[Auth] Amplify configured successfully')
+    rum.info('Auth', 'Amplify configured successfully')
 
     const hasIdentityPool = !!config.Auth?.Cognito?.identityPoolId
-    console.info('[Auth] Identity Pool configured:', hasIdentityPool)
+    rum.info('Auth', 'Identity Pool configured:', hasIdentityPool)
 
     return true
   } catch (error) {
-    console.error('[Auth] Failed to configure Amplify:', error)
+    rum.error('Auth', 'Failed to configure Amplify:', error)
     return false
   }
 }
@@ -143,7 +145,7 @@ export async function signUp(
       },
     }
   } catch (error) {
-    console.error('[Auth] Sign up error:', error)
+    rum.error('Register', 'Sign up error:', error)
 
     const errorMessage = error instanceof Error ? error.message : 'Failed to sign up'
     const errorCode = (error as { name?: string })?.name
@@ -168,7 +170,7 @@ export async function confirmSignUp(email: string, code: string): Promise<AuthRe
 
     return { success: true }
   } catch (error) {
-    console.error('[Auth] Confirm sign up error:', error)
+    rum.error('Register', 'Confirm sign up error:', error)
 
     return {
       success: false,
@@ -185,7 +187,7 @@ export async function resendConfirmationCode(email: string): Promise<AuthResult>
     await amplifyResendCode({ username: email })
     return { success: true }
   } catch (error) {
-    console.error('[Auth] Resend code error:', error)
+    rum.error('Register', 'Resend code error:', error)
 
     return {
       success: false,
@@ -224,7 +226,7 @@ export async function signIn(
       },
     }
   } catch (error) {
-    console.error('[Auth] Sign in error:', error)
+    rum.error('Login', 'Sign in error:', error)
 
     const errorMessage = error instanceof Error ? error.message : 'Failed to sign in'
     const errorCode = (error as { name?: string })?.name
@@ -233,7 +235,7 @@ export async function signIn(
       errorCode === 'UserAlreadyAuthenticatedException' ||
       errorMessage.includes('already a signed in user')
     ) {
-      console.info('[Auth] User already authenticated, treating as success')
+      rum.info('Login', 'User already authenticated, treating as success')
       return {
         success: true,
         data: { isSignedIn: true },
@@ -263,7 +265,7 @@ export async function signOut(): Promise<AuthResult> {
     await amplifySignOut({ global: true })
     return { success: true }
   } catch (error) {
-    console.error('[Auth] Sign out error:', error)
+    rum.error('Auth', 'Sign out error:', error)
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Failed to sign out',
@@ -279,7 +281,7 @@ export async function forgotPassword(email: string): Promise<AuthResult> {
     await amplifyResetPassword({ username: email })
     return { success: true }
   } catch (error) {
-    console.error('[Auth] Forgot password error:', error)
+    rum.error('Password', 'Forgot password error:', error)
 
     return {
       success: false,
@@ -305,7 +307,7 @@ export async function confirmForgotPassword(
 
     return { success: true }
   } catch (error) {
-    console.error('[Auth] Confirm reset password error:', error)
+    rum.error('Password', 'Confirm reset password error:', error)
 
     return {
       success: false,
@@ -429,7 +431,7 @@ export async function updatePassword(
     await amplifyUpdatePassword({ oldPassword, newPassword })
     return { success: true }
   } catch (error) {
-    console.error('[Auth] Update password error:', error)
+    rum.error('Password', 'Update password error:', error)
 
     const errorCode = (error as { name?: string })?.name
     let errorMessage = error instanceof Error ? error.message : 'Failed to update password'
@@ -465,7 +467,7 @@ export async function signInWithGoogle(customState?: string): Promise<void> {
       ...(customState ? { customState } : {}),
     })
   } catch (error) {
-    console.error('[Auth] Google sign in error:', error)
+    rum.error('Login', 'Google sign in error:', error)
     throw error
   }
 }

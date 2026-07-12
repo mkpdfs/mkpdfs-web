@@ -10,6 +10,7 @@ import { toast } from '@/hooks/useToast'
 import { useApiError } from '@/hooks/useApiError'
 import { useTranslations } from 'next-intl'
 import type { StructuredQuestion, QuestionAnswer, ImageAnalysis } from '@/lib/api'
+import { rum } from '@/lib/rum-logger'
 
 interface AIGenerateSectionProps {
   onSaveComplete?: () => void
@@ -122,7 +123,7 @@ export function AIGenerateSection({ onSaveComplete }: AIGenerateSectionProps) {
         setPreviewUrl(pdfResult.pdfUrl)
       }
     } catch (previewErr) {
-      console.error('Preview generation failed:', previewErr)
+      rum.error('AIGenerate', 'Preview generation failed:', previewErr)
     } finally {
       setIsPreviewLoading(false)
     }

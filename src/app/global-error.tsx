@@ -5,6 +5,7 @@
 // cannot rely on globals.css or translations, so styles are inline and copy is
 // in English (the default locale).
 import { useEffect } from 'react'
+import { rum } from '@/lib/rum-logger'
 
 export default function GlobalError({
   error,
@@ -14,7 +15,7 @@ export default function GlobalError({
   reset: () => void
 }) {
   useEffect(() => {
-    console.error('[GlobalErrorBoundary]', error)
+    rum.error('App', 'GlobalErrorBoundary:', error)
   }, [error])
 
   return (
