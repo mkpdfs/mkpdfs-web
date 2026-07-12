@@ -55,8 +55,10 @@ export function Sidebar() {
   const common = useTranslations('common')
   const { data: profile } = useProfile()
 
+  // creditBalance is in CREDITS (1 credit = 1 page), not dollars.
   const balance = profile?.subscription?.creditBalance ?? 0
-  const pagesLeft = Math.floor(balance / PRICE_PER_PAGE)
+  const balanceUsd = balance * PRICE_PER_PAGE
+  const pagesLeft = Math.max(0, Math.floor(balance))
   const barPct = Math.max(0, Math.min(100, (balance / STANDARD_PACK) * 100))
 
   const navigation = [
@@ -111,7 +113,7 @@ export function Sidebar() {
               {tp('credits')}
             </span>
             <span className="font-geist-mono text-[13px] font-semibold text-fg">
-              ${balance.toFixed(2)}
+              ${balanceUsd.toFixed(2)}
             </span>
           </div>
           <div className="mt-2.5 h-1 overflow-hidden rounded-sm bg-ink/[0.08]">
