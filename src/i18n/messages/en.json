@@ -168,12 +168,14 @@
       "title": "Plug mkpdfs into your agent",
       "cardTitle": "Hosted MCP server",
       "cardTagline": "Model Context Protocol — nothing to install",
-      "body": "Claude, Cursor, or any MCP client can generate PDFs and manage your templates directly. Point it at the endpoint with your API key and your agent gets six tools — same auth, same credits, same limits as the API.",
+      "body": "Claude, Cursor, or any MCP client can generate PDFs and manage your templates directly. Point it at the endpoint with your API key and your agent gets seven tools — same auth, same credits, same limits as the API.",
       "docsCta": "Read the integration docs",
       "configComment": "add to your client's MCP config",
       "promptLabel": "You:",
       "promptExample": "\"Make an invoice for Acme Corp\"",
-      "resultNote": "ready in seconds"
+      "resultNote": "ready in seconds",
+      "copy": "Copy config",
+      "copied": "Copied!"
     },
     "pricing": {
       "eyebrow": "Pricing",

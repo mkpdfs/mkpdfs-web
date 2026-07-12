@@ -1,10 +1,12 @@
 import { getTranslations } from 'next-intl/server'
 import { Link } from '@/i18n/routing'
 import { Bot } from 'lucide-react'
+import { CopyButton } from './CopyButton'
 import { ScrollReveal } from './ScrollReveal'
 
 // Tool names are literal MCP identifiers — never translated.
 const MCP_TOOLS = [
+  'get_authoring_guide',
   'generate_pdf',
   'list_templates',
   'get_template',
@@ -12,6 +14,16 @@ const MCP_TOOLS = [
   'update_template',
   'delete_template',
 ]
+
+// What the copy button puts on the clipboard — keep in sync with the JSX below.
+const MCP_CONFIG = `{
+  "mcpServers": {
+    "mkpdfs": {
+      "url": "https://apis.mkpdfs.com/v1/mcp",
+      "headers": { "x-api-key": "tlfy_YOUR_API_KEY" }
+    }
+  }
+}`
 
 export async function McpSection() {
   const t = await getTranslations('marketing.mcp')
@@ -63,8 +75,10 @@ export async function McpSection() {
 
           <div className="border-t border-ink/[0.08] p-8 lg:border-l lg:border-t-0">
             <div className="rounded-[11px] border border-ink/[0.08] bg-surface p-4 font-geist-mono text-[12.5px] leading-[1.8] text-fg-muted">
-              <span className="text-fg-dim">{'// '}{t('configComment')}</span>
-              <br />
+              <div className="mb-1 flex items-center justify-between gap-3">
+                <span className="text-fg-dim">{'// '}{t('configComment')}</span>
+                <CopyButton text={MCP_CONFIG} label={t('copy')} copiedLabel={t('copied')} />
+              </div>
               {'{'}
               <br />
               {'  "mcpServers": {'}

@@ -34,7 +34,8 @@ Key facts for agents:
 - Generate a PDF: \`POST ${API_URL}/v1/pdf/generate\` with \`{"templateId": "...", "data": {...}}\` → returns a presigned PDF URL.
 - Headless template CRUD: \`GET|PUT|DELETE ${API_URL}/v1/templates[/{templateId}]\` and \`POST ${API_URL}/v1/templates/upload\` (same \`x-api-key\` auth).
 - Hosted MCP server (Model Context Protocol, streamable HTTP — nothing to install):
-  endpoint \`${API_URL}/v1/mcp\`, auth via \`x-api-key\` header. Exposes six tools:
+  endpoint \`${API_URL}/v1/mcp\`, auth via \`x-api-key\` header. Exposes seven tools:
+  get_authoring_guide (template format + helpers + worked example — call it first),
   generate_pdf, list_templates, get_template, upload_template, update_template,
   delete_template. Setup guide: ${BASE_URL}/docs/integrations/mcp
 - CLI: \`brew install mkpdfs/tap/mkp\`; \`mkp instructions --agent\` prints an offline

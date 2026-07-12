@@ -9,7 +9,7 @@ mkpdfs exposes a hosted [MCP](https://modelcontextprotocol.io) (Model Context Pr
 POST https://apis.mkpdfs.com/v1/mcp
 ```
 
-There is nothing to install or host on your side. Point your MCP client at the endpoint, pass your API key in the `x-api-key` header, and the six tools below become available to your agent. Authentication, credits, and plan limits behave exactly like the REST API — an MCP tool call can do exactly what the equivalent `curl` with the same key could do, nothing more.
+There is nothing to install or host on your side. Point your MCP client at the endpoint, pass your API key in the `x-api-key` header, and the seven tools below become available to your agent. Authentication, credits, and plan limits behave exactly like the REST API — an MCP tool call can do exactly what the equivalent `curl` with the same key could do, nothing more.
 
 ## Connect your client
 
@@ -64,6 +64,7 @@ In `.cursor/mcp.json`:
 
 | Tool | What it does |
 |---|---|
+| `get_authoring_guide` | Returns the template-authoring guide: format, helper signatures, and a worked example. Agents should call it before writing their first template. |
 | `generate_pdf` | Render a template with data. Returns a download URL valid for 5 days. |
 | `list_templates` | List all templates in your account. |
 | `get_template` | Fetch one template's metadata and full Handlebars source. |
@@ -91,7 +92,9 @@ An agent connected to mkpdfs can go from idea to document without you leaving th
 1. `list_templates` — see what already exists.
 2. `get_template` — read a template's Handlebars source to learn its data shape.
 3. `generate_pdf` — render it with real data and hand you the download link.
-4. Or author something new: `upload_template` with fresh Handlebars, then `generate_pdf` to preview it, then `update_template` to iterate.
+4. Or author something new: `get_authoring_guide` to learn the format and helpers, `upload_template` with fresh Handlebars, then `generate_pdf` to preview it, then `update_template` to iterate.
+
+The server also sends a compact format primer as MCP `instructions` on connect, so well-behaved clients get the basics before the first tool call.
 
 ## Errors
 
