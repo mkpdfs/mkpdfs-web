@@ -6,10 +6,20 @@
  * (enhanced auth flow — only the identity pool id is needed). When the
  * NEXT_PUBLIC_RUM_* vars are absent (e.g. local dev), RUM stays off and
  * the rum-logger degrades to plain console output.
+ *
+ * rum-logger calls can fire before <RumInit />'s effect runs (other client
+ * components' effects, module init), so records made pre-init are buffered
+ * (bounded) and flushed right after the client is constructed.
  */
 import { AwsRum, AwsRumConfig } from 'aws-rum-web'
 
+type LogEventData = { level: 'info' | 'warn' | 'error'; area: string; message: string }
+type Pending = { event?: LogEventData; error?: unknown }
+
+const MAX_PENDING = 20
+
 let client: AwsRum | null = null
+let pending: Pending[] = []
 
 export function initRum(): void {
   if (client || typeof window === 'undefined') return
@@ -27,6 +37,30 @@ export function initRum(): void {
       enableXRay: false,
     }
     client = new AwsRum(appMonitorId, '1.0.0', region, config)
+    for (const p of pending) {
+      if (p.event) client.recordEvent('mkpdfs.log', p.event)
+      if (p.error !== undefined) client.recordError(p.error)
+    }
+  } catch {
+    // Telemetry must never break the app.
+  } finally {
+    pending = []
+  }
+}
+
+export function rumRecordEvent(data: LogEventData): void {
+  try {
+    if (client) client.recordEvent('mkpdfs.log', data)
+    else if (typeof window !== 'undefined' && pending.length < MAX_PENDING) pending.push({ event: data })
+  } catch {
+    // Telemetry must never break the app.
+  }
+}
+
+export function rumRecordError(error: unknown): void {
+  try {
+    if (client) client.recordError(error)
+    else if (typeof window !== 'undefined' && pending.length < MAX_PENDING) pending.push({ error })
   } catch {
     // Telemetry must never break the app.
   }

@@ -15,7 +15,7 @@
  *   rum.warn('Auth', 'Session expired')
  *   rum.error('Upload', 'Failed:', error)
  */
-import { getRum } from './rum'
+import { rumRecordError, rumRecordEvent } from './rum'
 
 type LogArea =
   | 'App' // error boundaries, app-level lifecycle
@@ -43,13 +43,11 @@ function printable(d: unknown): string {
 
 function record(level: 'info' | 'warn' | 'error', area: LogArea, message: string, data: unknown[]): void {
   try {
-    const client = getRum()
-    if (!client) return
     const text = [message, ...data.map(printable)].join(' ').slice(0, MAX_EVENT_CHARS)
-    client.recordEvent('mkpdfs.log', { level, area, message: text })
+    rumRecordEvent({ level, area, message: text })
     if (level === 'error') {
       const err = data.find((d): d is Error => d instanceof Error)
-      client.recordError(err ?? new Error(`[${area}] ${text}`))
+      rumRecordError(err ?? new Error(`[${area}] ${text}`))
     }
   } catch {
     // Telemetry must never break the app.

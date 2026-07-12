@@ -75,10 +75,12 @@ async function authFetch<T>(
 
   if (!response.ok) {
     const error = await response.json().catch(() => ({}))
-    rum.error(
-      'API',
-      `Request failed: ${options.method || 'GET'} ${endpoint} → ${response.status}${error.code ? ` ${error.code}` : ''}`
-    )
+    const line = `Request failed: ${options.method || 'GET'} ${endpoint} → ${response.status}${error.code ? ` ${error.code}` : ''}`
+    // 4xx are mostly expected outcomes (402 no credits, stale-session 401…)
+    // and RUM's http telemetry already counts failed fetches — only 5xx are
+    // recorded as errors so the RUM error rate stays meaningful.
+    if (response.status >= 500) rum.error('API', line)
+    else rum.warn('API', line)
     throw new ApiError(
       error.message || `API Error: ${response.status}`,
       response.status,
@@ -143,7 +145,8 @@ export async function uploadTemplate(
     headers['Authorization'] = `Bearer ${idToken}`
   }
 
-  rum.info('Upload', 'Template upload starting:', file.name, file.type, Math.round(file.size / 1024) + 'KB')
+  // type/size only — file and template names are user content (PII risk in RUM)
+  rum.info('Upload', 'Template upload starting:', file.type, Math.round(file.size / 1024) + 'KB')
 
   const response = await fetch(`${API_URL}/templates/upload`, {
     method: 'POST',
@@ -157,7 +160,7 @@ export async function uploadTemplate(
     throw new Error(error.message || 'Failed to upload template')
   }
 
-  rum.info('Upload', 'Template upload complete:', name)
+  rum.info('Upload', 'Template upload complete')
   return response.json()
 }
 

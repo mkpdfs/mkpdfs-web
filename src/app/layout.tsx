@@ -89,7 +89,7 @@ const jsonLd = {
   description: 'Generate beautiful PDFs at scale. Upload Handlebars templates, call our API, and get professional PDFs instantly.',
   applicationCategory: 'BusinessApplication',
   operatingSystem: 'Web',
-  url: 'https://mkpdfs.com',
+  url: BASE_URL,
   offers: {
     '@type': 'Offer',
     name: 'Pay-as-you-go credits',

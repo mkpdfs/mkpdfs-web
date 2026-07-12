@@ -61,10 +61,20 @@ const nextConfig = {
       'upgrade-insecure-requests',
     ].join('; ')
 
+    // Non-prod deployments (dev.mkpdfs.com, localhost) must never be indexed —
+    // dev is a full mirror of prod and competes as duplicate content. A global
+    // X-Robots-Tag beats robots.txt Disallow here: crawlers must be able to
+    // FETCH the pages to see the noindex, or already-indexed URLs never drop.
+    const isProdSite = process.env.NEXT_PUBLIC_SITE_URL === 'https://mkpdfs.com'
+    const noindexHeaders = isProdSite
+      ? []
+      : [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }]
+
     return [
       {
         source: '/:path*',
         headers: [
+          ...noindexHeaders,
           {
             key: 'Content-Security-Policy',
             value: csp,

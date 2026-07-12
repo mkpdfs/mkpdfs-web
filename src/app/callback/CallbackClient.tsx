@@ -49,15 +49,21 @@ export default function CallbackClient() {
           checkAuth()
           break
         case 'signInWithRedirect_failure':
-          rum.error('Callback', 'Sign in redirect failed:', payload.data)
+          // Only the Error itself — the raw payload may carry OAuth params.
+          rum.error(
+            'Callback',
+            'Sign in redirect failed:',
+            (payload.data as { error?: Error })?.error ?? 'unknown'
+          )
           setError('Failed to sign in with Google. Please try again.')
           redirectTimeoutRef.current = setTimeout(() => router.replace('/login'), 3000)
           break
         case 'customOAuthState': {
-          rum.info('Callback', 'Custom OAuth state:', payload.data)
           const target = sanitizeRedirectPath(
             typeof payload.data === 'string' ? payload.data : null
           )
+          // Log the sanitized path, never the raw state.
+          rum.info('Callback', 'Custom OAuth state target:', target ?? '(invalid)')
           if (target) {
             redirectTargetRef.current = target
             // Re-run in case the signInWithRedirect handler already navigated
