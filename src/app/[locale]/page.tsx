@@ -78,12 +78,13 @@ export default async function LandingPage({ params }: Props) {
       <main>
         <LandingHero />
         <Terminal />
+        {/* MCP right after the hero — agent DX is the flagship story. */}
+        <McpSection />
         <LogoStrip />
         <HowItWorks />
         <FeaturesGrid />
         <TemplatesGallery />
         <TwoWays />
-        <McpSection />
         <PricingCredits />
         <FinalCta />
       </main>

@@ -166,16 +166,25 @@
     "mcp": {
       "eyebrow": "Para agentes de IA",
       "title": "Conecta mkpdfs a tu agente",
-      "cardTitle": "Servidor MCP hospedado",
-      "cardTagline": "Model Context Protocol — nada que instalar",
       "body": "Claude, Cursor o cualquier cliente MCP puede generar PDFs y gestionar tus plantillas directamente. Apúntalo al endpoint con tu API key y tu agente obtiene siete herramientas — misma autenticación, mismos créditos y mismos límites que la API.",
       "docsCta": "Lee la documentación de integración",
-      "configComment": "agrega a la config MCP de tu cliente",
-      "promptLabel": "Tú:",
-      "promptExample": "\"Hazme una factura para Acme Corp\"",
-      "resultNote": "lista en segundos",
       "copy": "Copiar config",
-      "copied": "¡Copiado!"
+      "copied": "¡Copiado!",
+      "configTitle": "Cualquier cliente MCP",
+      "configComment": "agrega a la config MCP de tu cliente",
+      "toolsTitle": "Lo que obtiene tu agente",
+      "term": {
+        "s1": "1 · Conecta mkpdfs a Claude Code (una sola vez)",
+        "ok1": "Added HTTP MCP server \"mkpdfs\"",
+        "s2": "2 · Abre Claude y verifica la conexión",
+        "ok2": "mkpdfs — conectado · 7 herramientas",
+        "s3": "3 · El agente aprende el formato solo",
+        "p3": "Lee la guía de mkpdfs y sube un template hola-mundo que liste invitados con un for",
+        "s4": "4 · Genera el PDF desde la conversación",
+        "p4": "Ahora renderízalo con Ana, Luis y Marta",
+        "ok4": "hello-world.pdf · 1 página · 1 crédito",
+        "s5": "5 · El mismo template, directo desde tu código"
+      }
     },
     "pricing": {
       "eyebrow": "Precios",
