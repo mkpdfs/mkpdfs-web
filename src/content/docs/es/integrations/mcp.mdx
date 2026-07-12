@@ -17,6 +17,23 @@ El servidor usa el transporte **Streamable HTTP** en modo stateless. Cualquier c
 
 ### Claude Code
 
+El camino más rápido es el plugin oficial — configura el servidor MCP e incluye
+una skill de autoría de plantillas:
+
+```bash
+export MKPDFS_API_KEY="tlfy_tu_key_aqui"   # agrégalo a tu shell profile
+```
+
+Después, dentro de Claude Code:
+
+```
+/plugin marketplace add mkpdfs/mkpdfs-claude-plugin
+/plugin install mkpdfs@mkpdfs
+```
+
+Reinicia Claude Code al terminar (las variables de entorno se leen al arrancar).
+O agrega solo el servidor MCP sin el plugin:
+
 ```bash
 claude mcp add mkpdfs https://apis.mkpdfs.com/v1/mcp \
   --transport http \

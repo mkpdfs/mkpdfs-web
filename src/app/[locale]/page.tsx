@@ -13,13 +13,14 @@ import {
 import {
   LandingNav,
   LandingHero,
-  Terminal,
+  McpTerminalHero,
   LogoStrip,
   HowItWorks,
   FeaturesGrid,
   TemplatesGallery,
   TwoWays,
   McpSection,
+  PinnedSection,
   PricingCredits,
   FinalCta,
   LandingFooter,
@@ -76,16 +77,33 @@ export default async function LandingPage({ params }: Props) {
 
       <LandingNav />
       <main>
+        {/* Each block pins while the visitor scrolls through extra height,
+            so sections "hold" before releasing to the next (desktop only). */}
+        {/* Hero flows naturally (taller than one viewport with the terminal);
+            the pin-and-hold rhythm starts at the MCP section. */}
         <LandingHero />
-        <Terminal />
+        {/* MCP walkthrough typed live — replaces the old cURL/Node demo */}
+        <McpTerminalHero />
         {/* MCP right after the hero — agent DX is the flagship story. */}
-        <McpSection />
-        <LogoStrip />
-        <HowItWorks />
-        <FeaturesGrid />
-        <TemplatesGallery />
-        <TwoWays />
-        <PricingCredits />
+        <PinnedSection extraVh={70}>
+          <McpSection />
+        </PinnedSection>
+        <PinnedSection extraVh={45}>
+          <LogoStrip />
+          <HowItWorks />
+        </PinnedSection>
+        <PinnedSection extraVh={50}>
+          <FeaturesGrid />
+        </PinnedSection>
+        <PinnedSection extraVh={50}>
+          <TemplatesGallery />
+        </PinnedSection>
+        <PinnedSection extraVh={50}>
+          <TwoWays />
+        </PinnedSection>
+        <PinnedSection extraVh={45}>
+          <PricingCredits />
+        </PinnedSection>
         <FinalCta />
       </main>
       <LandingFooter />

@@ -184,7 +184,8 @@
         "p4": "Now render it for Ana, Luis and Marta",
         "ok4": "hello-world.pdf · 1 page · 1 credit",
         "s5": "5 · Same template, straight from your code"
-      }
+      },
+      "pluginComment": "or install the Claude Code plugin"
     },
     "pricing": {
       "eyebrow": "Pricing",

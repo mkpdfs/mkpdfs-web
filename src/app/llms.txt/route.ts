@@ -38,6 +38,9 @@ Key facts for agents:
   get_authoring_guide (template format + helpers + worked example — call it first),
   generate_pdf, list_templates, get_template, upload_template, update_template,
   delete_template. Setup guide: ${BASE_URL}/docs/integrations/mcp
+- Claude Code plugin (MCP server + template-authoring skill preinstalled):
+  \`/plugin marketplace add mkpdfs/mkpdfs-claude-plugin\` then \`/plugin install mkpdfs@mkpdfs\`
+  (requires MKPDFS_API_KEY in the environment). Repo: https://github.com/mkpdfs/mkpdfs-claude-plugin
 - CLI: \`brew install mkpdfs/tap/mkp\`; \`mkp instructions --agent\` prints an offline
   end-to-end walkthrough written for AI coding agents (template authoring + push + generate).
 - Templates are Handlebars over arbitrary HTML/CSS, rendered with headless Chromium

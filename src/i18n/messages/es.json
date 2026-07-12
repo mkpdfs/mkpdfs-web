@@ -184,7 +184,8 @@
         "p4": "Ahora renderízalo con Ana, Luis y Marta",
         "ok4": "hello-world.pdf · 1 página · 1 crédito",
         "s5": "5 · El mismo template, directo desde tu código"
-      }
+      },
+      "pluginComment": "o instala el plugin de Claude Code"
     },
     "pricing": {
       "eyebrow": "Precios",
