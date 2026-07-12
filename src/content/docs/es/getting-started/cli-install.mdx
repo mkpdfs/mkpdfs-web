@@ -58,8 +58,13 @@ mkp templates pull <template-id>
 Edita el archivo `.hbs` localmente y luego vuelve a subirlo:
 
 ```bash
-mkp templates push <template-id> template.hbs
+mkp templates push template.hbs
+# o, explícito:
+mkp templates push template.hbs --id <template-id>
 ```
+
+`push` recibe solo el archivo; la plantilla a la que pertenece queda registrada
+en `.mkpdfs.json` (lo escribe `pull`), o fuerza un destino con `--id`.
 
 ## Siguientes pasos
 

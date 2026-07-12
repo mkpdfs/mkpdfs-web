@@ -51,10 +51,14 @@ Pull a template from the cloud to your local filesystem:
 mkp templates pull <template-id>
 ```
 
-Edit the `.hbs` file locally, then push it back:
+Edit the `.hbs` file locally, then push it back — `push` takes only the file;
+the template it belongs to is remembered in `.mkpdfs.json` (written by `pull`),
+or force a target with `--id`:
 
 ```bash
-mkp templates push <template-id> template.hbs
+mkp templates push template.hbs
+# or, explicitly:
+mkp templates push template.hbs --id <template-id>
 ```
 
 ## Next steps
