@@ -16,6 +16,7 @@ import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Label } from '@/components/ui/Label'
 import { useContactEnterprise } from '@/hooks/useApi'
+import { track } from '@/lib/rum'
 import { CheckCircle2, AlertCircle } from 'lucide-react'
 
 const contactSchema = z.object({
@@ -54,16 +55,21 @@ export function ContactEnterpriseModal({
   const onSubmit = async (data: ContactFormData) => {
     try {
       await contactMutation.mutateAsync(data)
+      track('contact_submit', { ok: true, reason: 'sent' })
       setStatus('success')
       reset()
     } catch (error) {
       if (error instanceof Error && error.message.includes('Rate limit')) {
+        track('contact_submit', { ok: false, reason: 'rate_limit' })
         setStatus('rateLimit')
       } else {
+        track('contact_submit', { ok: false, reason: 'error' })
         setStatus('error')
       }
     }
   }
+
+  const onInvalid = () => track('contact_submit', { ok: false, reason: 'validation' })
 
   const handleClose = () => {
     setStatus('idle')
@@ -88,7 +94,7 @@ export function ContactEnterpriseModal({
             <Button onClick={handleClose}>{common('close')}</Button>
           </div>
         ) : (
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={handleSubmit(onSubmit, onInvalid)} className="space-y-4">
             {status === 'error' && (
               <div className="flex items-center gap-2 rounded-md bg-destructive/10 p-3 text-destructive">
                 <AlertCircle className="h-4 w-4 flex-shrink-0" />
