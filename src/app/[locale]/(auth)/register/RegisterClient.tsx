@@ -20,6 +20,7 @@ import {
 } from '@/components/auth/primitives'
 import { Eye, EyeOff, Check, X } from 'lucide-react'
 import { useTranslations } from 'next-intl'
+import { track } from '@/lib/rum'
 
 export default function RegisterClient() {
   const router = useRouter()
@@ -108,6 +109,8 @@ export default function RegisterClient() {
     const result = await confirmSignUp(email, verificationCode)
 
     if (result.success) {
+      // Account confirmed = signup complete (funnel metric, observability#56)
+      track('signup_complete', { method: 'email' })
       // Auto-login after verification
       const signInResult = await signIn(email, password)
       if (signInResult) {
