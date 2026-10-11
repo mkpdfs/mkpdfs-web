@@ -5,6 +5,7 @@ import { Loader2, ExternalLink, AlertTriangle } from 'lucide-react'
 import { useProfile, useUsage } from '@/hooks/useApi'
 import { createCheckoutSession, createPortalSession, updateAutoRecharge, getCreditLedger } from '@/lib/api'
 import { rum } from '@/lib/rum-logger'
+import { track } from '@/lib/rum'
 import { formatNumber } from '@/lib/utils'
 import type { LedgerEntry } from '@/types'
 import { useTranslations } from 'next-intl'
@@ -58,6 +59,7 @@ export default function BillingPage() {
   const handleBuy = async () => {
     try {
       setLoadingBuy(true)
+      track('checkout_iniciado', { plan: 'credits', credits: PACK_CREDITS })
       const { url } = await createCheckoutSession()
       window.location.href = url
     } catch (error) {

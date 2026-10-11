@@ -14,7 +14,8 @@
 import { AwsRum, AwsRumConfig } from 'aws-rum-web'
 
 type LogEventData = { level: 'info' | 'warn' | 'error'; area: string; message: string }
-type Pending = { event?: LogEventData; error?: unknown }
+type EventData = Record<string, string | number | boolean>
+type Pending = { event?: { type: string; data: object }; error?: unknown }
 
 const MAX_PENDING = 20
 
@@ -38,7 +39,7 @@ export function initRum(): void {
     }
     client = new AwsRum(appMonitorId, '1.0.0', region, config)
     for (const p of pending) {
-      if (p.event) client.recordEvent('mkpdfs.log', p.event)
+      if (p.event) client.recordEvent(p.event.type, p.event.data)
       if (p.error !== undefined) client.recordError(p.error)
     }
   } catch {
@@ -48,13 +49,28 @@ export function initRum(): void {
   }
 }
 
-export function rumRecordEvent(data: LogEventData): void {
+function recordOrQueue(type: string, data: object): void {
   try {
-    if (client) client.recordEvent('mkpdfs.log', data)
-    else if (typeof window !== 'undefined' && pending.length < MAX_PENDING) pending.push({ event: data })
+    if (client) client.recordEvent(type, data)
+    else if (typeof window !== 'undefined' && pending.length < MAX_PENDING) pending.push({ event: { type, data } })
   } catch {
     // Telemetry must never break the app.
   }
+}
+
+export function rumRecordEvent(data: LogEventData): void {
+  recordOrQueue('mkpdfs.log', data)
+}
+
+/**
+ * Product/funnel event (observability#56). `name` is the bare event name;
+ * it ships as the RUM custom event type `mkpdfs.<name>` (the dashboard turns
+ * these into metrics via metric filters on the RUM log group). Queued
+ * (max 20) until the client exists; no-op when RUM is off (local dev).
+ * Never pass PII — only coarse, low-cardinality fields.
+ */
+export function track(name: string, data: EventData = {}): void {
+  recordOrQueue(`mkpdfs.${name}`, data)
 }
 
 export function rumRecordError(error: unknown): void {
